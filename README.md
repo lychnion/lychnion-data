@@ -20,6 +20,8 @@ The AI models are not here: the app downloads them from Hugging Face
 | `jp.bousai.core.sqlite` | Knowledge package "防災（基本）": passages from official Japanese pages on disaster preparedness, with their sources |
 | `jp.map.nishinomiya.pmtiles` | Base map of the Nishinomiya area (eastern Kobe to western Osaka), vector tiles, zoom 0 to 15 |
 | `jp.map.nishinomiya.sites.sqlite` | Evacuation sites in the same area, from GSI |
+| `jp.map.nishinomiya.routes.bin` | Walking routes for the same area: roads and paths from OpenStreetMap, with the ground height and the expected tsunami inundation of every point (from release 2026.11.1) |
+| `jp.map.nishinomiya.inundation.mbtiles` | Expected tsunami inundation areas for the same area as map tiles, coloured by depth (from release 2026.11.1) |
 | `catalog.json` | List of the files with version, size and SHA-256 |
 
 ## Sources and licences
@@ -46,6 +48,26 @@ edited (加工).
 © OpenStreetMap contributors, under the
 [Open Database License (ODbL)](https://opendatacommons.org/licenses/odbl/).
 Built with [Protomaps](https://protomaps.com/).
+
+### Walking routes
+
+Roads and paths: © OpenStreetMap contributors, under the
+[Open Database License (ODbL)](https://opendatacommons.org/licenses/odbl/),
+from the [Geofabrik](https://download.geofabrik.de/) Kansai extract.
+
+Heights: 出典：国土地理院 標高タイル（基盤地図情報 数値標高モデル DEM5A・DEM10B）を加工して作成.
+Used under the [国土地理院コンテンツ利用規約](https://www.gsi.go.jp/kikakuchousei/kikakuchousei40182.html).
+
+### Tsunami inundation areas
+
+出典：「国土数値情報（津波浸水想定データ）」（国土交通省）
+(https://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-A40-2024.html),
+兵庫県 2016 and 大阪府 2023 data, cut to the map area and turned into map
+tiles and per-point values (fieldkit が加工). Under
+[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/deed.ja).
+
+These are the prefectures' expected inundation for the largest assumed
+tsunami. A real tsunami can be larger or smaller.
 
 ### Evacuation sites
 
