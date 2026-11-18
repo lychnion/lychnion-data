@@ -189,6 +189,18 @@ String _sqliteMeta(String path, String key) {
   return (r.stdout as String).trim();
 }
 
+final _areaCode = RegExp(r'^[A-Z]{2}(-[A-Z0-9]{1,3})?$');
+
+/// The build tools check codes against the region file; this only checks
+/// the form, so a hand-written area in the items file cannot be garbage.
+List<String> _checkedArea(String id, List<String> area) {
+  for (final c in area) {
+    if (!_areaCode.hasMatch(c)) _fail('$id: area code $c is not like JP-30');
+  }
+  if (area.toSet().length != area.length) _fail('$id: area lists a code twice');
+  return area;
+}
+
 /// `2026-11-18T09:00:00+09:00`
 String _now() {
   final t = DateTime.now();
@@ -277,6 +289,9 @@ Future<Map<String, Object?>> _recordFor(
   final version = item['version']! as String;
   final files = <Map<String, Object?>>[];
   Map<String, Object?>? notice = (item['notice'] as Map?)?.cast();
+  // Places the item is for ('JP', 'JP-30'); none means anywhere. From the
+  // items file, else from the built package or map (tool/regions.py).
+  var area = (item['area'] as List?)?.cast<String>();
   for (final f in (item['files']! as List).cast<Map>()) {
     final name = f['name']! as String;
     final path = f['path'] as String?;
@@ -301,6 +316,13 @@ Future<Map<String, Object?>> _recordFor(
         notice = (jsonDecode(n) as Map).cast();
       }
     }
+    final builtArea =
+        (item['kind'] == 'package' && name.endsWith('.sqlite')) ||
+        (item['kind'] == 'map' && name.endsWith('.sites.sqlite'));
+    if (area == null && builtArea) {
+      final a = _sqliteMeta(path, 'area');
+      if (a.isNotEmpty) area = (jsonDecode(a) as List).cast<String>();
+    }
   }
   return {
     'format': 1,
@@ -314,6 +336,7 @@ Future<Map<String, Object?>> _recordFor(
     if (notice != null && notice.isNotEmpty) 'notice': notice,
     if (item['role'] != null) 'role': item['role'],
     if (item['desktop'] == true) 'desktop': true,
+    if (area != null && area.isNotEmpty) 'area': _checkedArea(id, area),
     'files': files,
     'signed': _now(),
   };

@@ -97,6 +97,16 @@ the app (`packages/lychnion_format` in
 [lychnion/lychnion](https://github.com/lychnion/lychnion)); `pubspec.lock`
 pins its commit, `dart pub upgrade lychnion_format` moves it.
 
+**Area.** A package or map area can say which places it is for, as ISO
+3166 codes: `"area": ["JP"]` for Japan, `["JP-30"]` for Wakayama. No area
+means anywhere (first aid). Package manifests set it by hand; map areas
+get it from the regions their evacuation sites are in (Nishinomiya:
+`JP-27`, `JP-28`). The signed record carries it, so the app can show and
+rank downloads for the user's region before downloading. Codes are checked
+against the region file the app ships with (`assets/regions/regions.sqlite`
+in the app repository, found next to this checkout or by
+`LYCHNION_REGIONS`; `tool/check_areas.py` checks all manifests).
+
 **Packages the app ships with.** The app bundles some packages and the
 Nishinomiya evacuation sites, and its own copy of the catalog. After a
 release, copy `build/packages/*.sqlite`, the bundled areas'

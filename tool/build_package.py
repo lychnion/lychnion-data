@@ -26,6 +26,7 @@ import sqlite3
 import subprocess
 import sys
 import urllib.request
+import importlib.util
 from html.parser import HTMLParser
 from pathlib import Path
 
@@ -155,8 +156,23 @@ def squash(s):
     return re.sub(r"\s+", "", s)
 
 
+def area_meta(manifest, where):
+    """The manifest's optional "area" (places the package is for, e.g.
+    ["JP"] or ["JP-30"]; none: anywhere), checked against the app's region
+    file, as stored in meta (JSON, or "" for none)."""
+    area = manifest.get("area")
+    if area is None:
+        return ""
+    spec = importlib.util.spec_from_file_location("regions", ROOT / "tool" / "regions.py")
+    regions = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(regions)
+    regions.Regions().check(area, where)
+    return json.dumps(area)
+
+
 def main(manifest_path, max_chars=MAX_CHARS):
     manifest = json.loads(Path(manifest_path).read_text(encoding="utf-8"))
+    area = area_meta(manifest, manifest_path)
     if max_chars != MAX_CHARS:
         # A different cut is a different package: vectors cached per version.
         manifest["version"] += f"+c{max_chars}"
@@ -256,6 +272,8 @@ def main(manifest_path, max_chars=MAX_CHARS):
     db.execute("INSERT INTO meta VALUES('name',?)", (json.dumps(manifest.get("name", {}), ensure_ascii=False),))
     db.execute("INSERT INTO meta VALUES('icon',?)", (manifest.get("icon", ""),))
     db.execute("INSERT INTO meta VALUES('suggestions',?)", (json.dumps(manifest.get("suggestions", {}), ensure_ascii=False),))
+    # Places the package is for (see tool/regions.py); "" for anywhere.
+    db.execute("INSERT INTO meta VALUES('area',?)", (area,))
     db.execute("INSERT INTO meta VALUES('gaps',?)", (json.dumps(manifest.get("gaps", []), ensure_ascii=False),))
     # Query expansion for keyword search, until vector search is added.
     db.execute("INSERT INTO meta VALUES('synonyms',?)", (json.dumps(manifest.get("synonyms", {}), ensure_ascii=False),))
@@ -288,7 +306,7 @@ if __name__ == "__main__":
         chars = int(args[i + 1])
         del args[i:i + 2]
     if "--meta-only" in args:
-        # Update the notice, title and note of a built package without
+        # Update the notice, title, note and area of a built package without
         # rebuilding it (keeps its passages and vectors).
         args.remove("--meta-only")
         m = json.loads(Path(args[0]).read_text(encoding="utf-8"))
@@ -297,7 +315,8 @@ if __name__ == "__main__":
                      ("name", json.dumps(m.get("name", {}), ensure_ascii=False)),
                      ("icon", m.get("icon", "")),
                      ("suggestions", json.dumps(m.get("suggestions", {}), ensure_ascii=False)),
-                     ("title", m.get("title", "")), ("note", m.get("note", ""))):
+                     ("title", m.get("title", "")), ("note", m.get("note", "")),
+                     ("area", area_meta(m, args[0]))):
             db.execute("INSERT OR REPLACE INTO meta VALUES(?,?)", (k, v))
         db.commit()
         db.close()

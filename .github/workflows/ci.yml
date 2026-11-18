@@ -21,6 +21,13 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+      # The region file the app ships with, for checking areas.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: lychnion/lychnion
+          path: app
+          sparse-checkout: assets/regions
+          persist-credentials: false
       - uses: dart-lang/setup-dart@6afc89df92d6eb3834022f73cd65adc8cdfcb92d # v1.8.1
         with:
           sdk: 3.12.2
@@ -36,5 +43,9 @@ jobs:
           for f in items.json packages/*.json maps/*.json packages/translations/*.json; do
             python -I -m json.tool "$f" > /dev/null || { echo "bad JSON: $f"; exit 1; }
           done
+      - name: Areas use known region codes
+        env:
+          LYCHNION_REGIONS: app/assets/regions/regions.sqlite
+        run: python -I tool/check_areas.py
       - name: Every signed record verifies
         run: dart run tool/records.dart check-records records

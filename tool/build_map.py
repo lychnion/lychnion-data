@@ -8,6 +8,8 @@ Writes:
                                   the app bundles the areas without
                                   "bundle": false (copy them to its
                                   assets/maps/)
+                                  meta "area": the regions its sites are
+                                  in (or the manifest's "area")
   build/maps/<id>.pmtiles         base map (OpenStreetMap via Protomaps; not in git)
 
 Needs the `pmtiles` command (brew install pmtiles). The GSI data comes with
@@ -15,6 +17,7 @@ usage notes that must reach the user; they are stored in the SQLite file and
 shown by the app.
 """
 import csv
+import importlib.util
 import io
 import json
 import shutil
@@ -83,6 +86,19 @@ def main(manifest_path):
     if not rows:
         sys.exit("no sites inside the bounding box")
 
+    # The regions the area is for: where its sites are, unless the manifest
+    # says ("area": ["JP-30"]). The app shows and ranks maps by it.
+    spec = importlib.util.spec_from_file_location("regions", ROOT / "tool" / "regions.py")
+    regions_mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(regions_mod)
+    regions = regions_mod.Regions()
+    area = m.get("area")
+    if area is None:
+        area = sorted({c for c in (regions.code_at(r[4], r[5]) for r in rows) if c})
+        if not area:
+            sys.exit("no site lies in a known region; set \"area\" in the manifest")
+    regions.check(area, manifest_path)
+
     # Areas without "bundle": false also ship inside the app: copy their
     # sites file to the app's assets/maps/.
     sites_dir = ROOT / "build" / "maps"
@@ -102,6 +118,7 @@ def main(manifest_path):
         "sites_licence": sites["licence"], "sites_licence_url": sites["licence_url"],
         "sites_attribution": sites["attribution"], "sites_notice": notice.strip(),
         "basemap_attribution": m["basemap"]["attribution"],
+        "area": json.dumps(area),
     }
     db.executemany("INSERT INTO meta VALUES(?,?)", meta.items())
     db.executemany("INSERT INTO sites VALUES(?,?,?,?,?,?,?,?)", rows)
@@ -109,7 +126,8 @@ def main(manifest_path):
     db.execute("VACUUM")
     db.close()
     em = sum(1 for r in rows if r[1] == "emergency")
-    print(f"wrote {out.relative_to(ROOT)}: {em} emergency sites, {len(rows) - em} shelters")
+    print(f"wrote {out.relative_to(ROOT)}: {em} emergency sites, {len(rows) - em} shelters, "
+          f"area {', '.join(area)}")
 
     tiles = ROOT / "build" / "maps" / f"{m['id']}.pmtiles"
     if not tiles.exists():
