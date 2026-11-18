@@ -238,7 +238,12 @@ def _normalize(text, lang):
         t = re.sub(r"(胸[^。、\d]{0,6}?)(\d+)回(?:連続で)?押|(\d+)回(?:連続で)?(胸[^。、\d]{0,6}?)押",
                    lambda m: f"{m[1] or ''}{m[2] or m[3]}compression{m[4] or ''}", t)
         t = re.sub(r"(\d+)回(?:、)?(?:息を)?吹き込", r"\1breath", t)
-        t = re.sub(r"(\d+)回(?:噴霧|吸入|スプレー|噴射)", r"\1spray", t)
+        # N回噴霧 is N sprays, except after 1日, 週 or 月 (1日3回噴霧 = 3 times a day);
+        # in an inhaler or spray text, 各鼻孔に1回 and 1回ずつ are sprays per dose.
+        t = re.sub(r"(?<![日週月])(?<![日週月]に)(\d+)回(?:噴霧|吸入|スプレー|噴射)", r"\1spray", t)
+        if re.search(r"噴霧|吸入|スプレー|噴射|点鼻", t):
+            t = re.sub(r"(各[^、。\d]{0,8}?)(\d+)回(?:ずつ)?|(?<![日週月\d])(?<![日週月]に)(\d+)回ずつ",
+                       lambda m: f"{m[1] or ''}{m[2] or m[3]}spray", t)
         # 1対1 = 1:1
         t = re.sub(r"(\d+(?:\.\d+)?)対(\d+(?:\.\d+)?)", r"\1:\2", t)
         # 週3回, 月に1回 = per week 3 times; 1回2錠 = 2 tablets per time

@@ -398,6 +398,19 @@ class Numbers(unittest.TestCase):
             with self.subTest(correct=ja):
                 self.assertEqual(ct.check_numbers(en, "en", ja, "ja"), [])
 
+    def test_inhaler_frequency_swaps(self):
+        for en, ja in (("Use 3 sprays once a day.", "各鼻孔に1回、1日3回噴霧"),
+                       ("Use 2 sprays once a day.", "各鼻孔に1回ずつ、1日2回噴霧"),
+                       ("Take 2 puffs once a day.", "1回ずつ吸入、1日2回"),
+                       ("Use 1 spray 3 times a day.", "各鼻孔に3回、1日1回噴霧")):
+            with self.subTest(swapped=ja):
+                self.assertTrue(ct.check_numbers(en, "en", ja, "ja"))
+        for en, ja in (("Use 1 spray 3 times a day.", "各鼻孔に1回、1日3回噴霧"),
+                       ("Use 1 spray twice a day.", "各鼻孔に1回ずつ、1日2回噴霧"),
+                       ("Take 2 puffs 3 times a day.", "1日3回、2回吸入")):
+            with self.subTest(correct=ja):
+                self.assertEqual(ct.check_numbers(en, "en", ja, "ja"), [])
+
     def test_weekly_dose_and_more(self):
         for en, ja in (("Take 2 tablets once a week.", "週1回2錠。"), ("Take 2 mg once a week", "週1回2mg"),
                        ("Take 2 tablets once a month.", "月1回2錠。"), ("sleep 8 hours a night", "毎晩8時間眠る"),
