@@ -170,6 +170,13 @@ def area_meta(manifest, where):
     return json.dumps(area)
 
 
+def _check_translations():
+    spec = importlib.util.spec_from_file_location("check_translations", ROOT / "tool" / "check_translations.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
 def main(manifest_path, max_chars=MAX_CHARS):
     manifest = json.loads(Path(manifest_path).read_text(encoding="utf-8"))
     area = area_meta(manifest, manifest_path)
@@ -214,12 +221,13 @@ def main(manifest_path, max_chars=MAX_CHARS):
     # Foreign sources: the phone model must never translate safety advice
     # itself (it turned "snug but not too tight" into 「しっかりと縛って」).
     # Each passage gets a translation made once, stored in the repository
-    # (translations/<id>.<lang>.json, checked by a person), and the original
-    # is kept next to it.
+    # (translations/<id>.<lang>.json, with its original, checked by
+    # tool/check_translations.py and by a person), and the original is kept
+    # next to it in the package.
     originals = {}
     lang = manifest.get("translate_to")
     if lang:
-        tpath = Path(manifest_path).parent / "translations" / f"{manifest['id']}.{lang}.json"
+        tpath = (Path(manifest_path).parent / "translations" / f"{manifest['id']}.{lang}.json").resolve()
         tr = json.loads(tpath.read_text(encoding="utf-8")) if tpath.exists() else {"headings": {}, "passages": {}}
         missing = [{"key": passage_key(t), "heading": h, "text": t} for _, h, t in rows
                    if passage_key(t) not in tr["passages"]]
@@ -228,9 +236,15 @@ def main(manifest_path, max_chars=MAX_CHARS):
             Path(EXPORT).write_text(json.dumps({"headings": missing_h, "passages": missing},
                                                ensure_ascii=False, indent=1), encoding="utf-8")
             sys.exit(f"exported {len(missing)} passages and {len(missing_h)} headings to {EXPORT}")
+        checks = _check_translations()
+        # Updates: which passages are new or changed since the translation.
+        checks.print_changes(tr, [(h, t) for _, h, t in rows], str(tpath.relative_to(ROOT)))
         if missing or missing_h:
             sys.exit(f"{len(missing)} passages and {len(missing_h)} headings have no {lang} translation "
                      f"in {tpath.relative_to(ROOT)}; export them with --export-untranslated FILE")
+        # Numbers must match; degree and negation words are listed for the reviewer.
+        if checks.check_file(tpath)[0]:
+            sys.exit(f"translation check failed: see build/translation-checks/{tpath.stem}.md")
         translated = []
         for sid, h, t in rows:
             e = tr["passages"][passage_key(t)]
