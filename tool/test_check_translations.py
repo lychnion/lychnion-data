@@ -449,6 +449,20 @@ class Numbers(unittest.TestCase):
         ct.numbers("やけど" + "大さじ" * 20000, "ja")
         self.assertLess(time.monotonic() - start, 2)
 
+    def test_regressions_against_main(self):
+        for en, ja in (("Check every 1 week.", "1週間ごとに確認する。"), ("Check every 1 hour.", "1時間ごとに確認する。"),
+                       ("A ratio of 3 to 1.", "3対1の割合。"), ("Mix 3 to 1.", "3対1で混ぜる。"), ("Ratio 1 to 10", "1対10"),
+                       ("The minimum daily liquid requirement is about 3.75 quarts (3.5 liters) per day.",
+                        "水分の最低量は、1日あたり約3.75クオート（3.5リットル）です。"),
+                       ("2 capsules", "2カプセル"), ("wait 3 to 5 days", "3〜5日待つ")):
+            with self.subTest(ja=ja):
+                self.assertEqual(ct.check_numbers(en, "en", ja, "ja"), [])
+        self.assertTrue(ct.check_numbers("Take 2 tablets.", "en", "2カプセルを服用する。", "ja"))
+        self.assertTrue(ct.check_numbers("A ratio of 3 to 1.", "en", "1対3の割合。", "ja"))
+        en = "The daily need is 3.5 liters a day; drink it over the day."
+        self.assertTrue(ct.check_numbers("The need is 3.5 liters a day and 1 liter a day for children.", "en",
+                                         "1日に3.5リットル、子どもは1週に1リットル。", "ja"))
+
     def test_weekly_dose_and_more(self):
         for en, ja in (("Take 2 tablets once a week.", "週1回2錠。"), ("Take 2 mg once a week", "週1回2mg"),
                        ("Take 2 tablets once a month.", "月1回2錠。"), ("sleep 8 hours a night", "毎晩8時間眠る"),
