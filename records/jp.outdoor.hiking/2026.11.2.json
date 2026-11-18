@@ -1,0 +1,36 @@
+{
+  "format": 1,
+  "id": "jp.outdoor.hiking",
+  "kind": "package",
+  "version": "2026.11.2",
+  "publisher": "lychnion",
+  "title": {
+    "ja": "登山（基本）",
+    "en": "Hiking (basics)"
+  },
+  "note": {
+    "ja": "アプリ内蔵版より新しい版があれば更新",
+    "en": "Updates the copy built into the app"
+  },
+  "licence": "PDL 1.0（出典は各回答に表示）",
+  "notice": {
+    "ja": [
+      "登山計画や、天気・火山・登山道の状況の判断の代わりにはなりません。出発前に最新の公式情報を確認してください。",
+      "雪崩の危険度の判断には使えません。"
+    ],
+    "en": [
+      "Not a substitute for planning your hike or judging weather, volcanoes and trail conditions. Check current official information before you go.",
+      "Not suitable for judging avalanche risk."
+    ]
+  },
+  "files": [
+    {
+      "name": "jp.outdoor.hiking.sqlite",
+      "size": 442368,
+      "sha256": "e03f42539d8dbf582d794b96309860c12d54f304442d5060619ec4ad04224c7f"
+    }
+  ],
+  "signed": "2026-11-18T13:24:41+09:00",
+  "key": "vRIbo4Gi",
+  "signature": "p97m03BJOyiJSG2kIf-7qe4la5P0-mEe6B_7Bm8shRnCzdK3LScPSksqVucWn7f1PZBdS6r8zwnMVoYYPqq9Cg"
+}
