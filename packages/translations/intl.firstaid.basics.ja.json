@@ -121,6 +121,7 @@
     {
      "check": "numbers",
      "item": "2",
+     "for": "3dbaeabf79673a0d",
      "reason": "The source cuts this sentence (\"the two major kinds\") across two passages; the translation puts the whole sentence in f87cb180bc21e44a."
     }
    ]
@@ -133,6 +134,7 @@
     {
      "check": "numbers",
      "item": "2",
+     "for": "ee0f2f687d9a6e10",
      "reason": "The start of this sentence is in the previous passage (b28cd2e37a95f3b0); 2種類 = \"the two major kinds\"."
     }
    ]
@@ -355,11 +357,13 @@
     {
      "check": "numbers",
      "item": "26.6",
+     "for": "68b7b0a42a4d7822",
      "reason": "The source cuts the sentence on severe hypothermia (below 80°F, 26.6°C) across two passages; the translation finishes it here."
     },
     {
      "check": "numbers",
      "item": "80",
+     "for": "68b7b0a42a4d7822",
      "reason": "Same sentence as 26.6, finished here."
     }
    ]
@@ -372,11 +376,13 @@
     {
      "check": "numbers",
      "item": "26.6",
+     "for": "3494b417f88ca9ee",
      "reason": "The start of this passage (\"below 80ºF (26.6°C)\") ends a sentence translated in 9a4bc05cf930eef1."
     },
     {
      "check": "numbers",
      "item": "80",
+     "for": "3494b417f88ca9ee",
      "reason": "Same as 26.6."
     }
    ]
@@ -404,21 +410,25 @@
     {
      "check": "numbers",
      "item": "1",
+     "for": "8f22e66efd9da35f",
      "reason": "The US Army stock number NSN 6515-01-532-8056 of the kit is left out: it does not help a user in Japan."
     },
     {
      "check": "numbers",
      "item": "532",
+     "for": "8f22e66efd9da35f",
      "reason": "The US Army stock number NSN 6515-01-532-8056 of the kit is left out: it does not help a user in Japan."
     },
     {
      "check": "numbers",
      "item": "6515",
+     "for": "8f22e66efd9da35f",
      "reason": "The US Army stock number NSN 6515-01-532-8056 of the kit is left out: it does not help a user in Japan."
     },
     {
      "check": "numbers",
      "item": "8056",
+     "for": "8f22e66efd9da35f",
      "reason": "The US Army stock number NSN 6515-01-532-8056 of the kit is left out: it does not help a user in Japan."
     }
    ]
@@ -461,6 +471,7 @@
     {
      "check": "numbers",
      "item": "2",
+     "for": "200994e3927e6c9a",
      "reason": "二人一組 is the usual Japanese for \"buddy system\" (pairs of two)."
     }
    ]
@@ -508,6 +519,7 @@
     {
      "check": "numbers",
      "item": "1",
+     "for": "e65fe86ebb55b52b",
      "reason": "\"daily\" is translated as 1日に (per day); the original says \"daily\" and \"per day\" too."
     }
    ]

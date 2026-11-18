@@ -105,6 +105,44 @@ class Numbers(unittest.TestCase):
         self.assertEqual(ct.check_numbers("Wait 5 minutes, then 20 minutes.", "en", "五分待ち、次に二十分待ちます。", "ja"), [])
         self.assertEqual(ct.check_numbers("Rest enough. Never again.", "en", "十分に休み、二度としません。", "ja"), [])
 
+    def test_same_number_with_two_units(self):
+        src = "Give 5 mg and wait 5 minutes."
+        self.assertEqual(ct.check_numbers(src, "en", "5 mgを与え、5分待ちます。", "ja"), [])
+        for ja in ("5 mgを与え、5時間待ちます。", "5を与え、5分待ちます。"):
+            with self.subTest(ja=ja):
+                self.assertEqual([n for n, _ in ct.check_numbers(src, "en", ja, "ja")], ["5"])
+
+    def test_rates(self):
+        self.assertEqual(len(ct.check_numbers("Give 0.1 mg/kg.", "en", "0.1 mgを与えます。", "ja")), 1)
+        self.assertEqual(len(ct.check_numbers("Give 5 mg per kg.", "en", "5 mgを与えます。", "ja")), 1)
+        self.assertEqual(len(ct.check_numbers("Press 100 per minute.", "en", "100回/時間押します。", "ja")), 1)
+        self.assertEqual(ct.check_numbers("時速200kmで流れる", "ja", "flows at 200 km/h", "en"), [])
+        self.assertEqual(ct.check_numbers("時速200kmで流れる", "ja", "flows at 200 km per hour", "en"), [])
+
+    def test_below_zero(self):
+        self.assertEqual(len(ct.check_numbers("5 degrees below zero", "en", "5度", "ja")), 2)
+        self.assertEqual(ct.check_numbers("5 degrees below zero", "en", "氷点下5度", "ja"), [])
+        self.assertEqual(ct.check_numbers("negative 5°C", "en", "零下5℃", "ja"), [])
+
+    def test_doses_in_words(self):
+        self.assertEqual(len(ct.check_numbers("Take one tablet.", "en", "二錠飲みます。", "ja")), 2)
+        self.assertEqual(ct.check_numbers("Take one tablet.", "en", "1錠飲みます。", "ja"), [])
+        self.assertEqual(len(ct.check_numbers("Take 5 tablets.", "en", "5飲みます。", "ja")), 1)
+
+    def test_wrong_year_in_brackets(self):
+        self.assertEqual(len(ct.check_numbers("令和8年", "ja", "Reiwa 8 (2020)", "en")), 1)
+
+    def test_month_names(self):
+        self.assertEqual(ct.check_numbers("March to the shelter.", "en", "避難所へ向かいます。", "ja"), [])
+        self.assertEqual(ct.check_numbers("例年1~3月に集中", "ja", "mostly from January to March", "en"), [])
+        self.assertEqual(ct.check_numbers("Wait 1 second.", "en", "1秒待ちます。", "ja"), [])
+
+    def test_swapped_numbers_warn(self):
+        self.assertEqual(ct.check_order("Give 5 mg of A, then 10 mg of B.", "en", "Aを10 mg、Bを5 mg与えます。", "ja"),
+                         [("order", "numbers with units in another order: 5, 10 in the original, "
+                                    "10, 5 in the translation")])
+        self.assertEqual(ct.check_order("Give 5 mg of A, then 10 mg of B.", "en", "Aを5 mg、Bを10 mg与えます。", "ja"), [])
+
     def test_phone_number(self):
         self.assertEqual(ct.check_numbers("119番に電話します", "ja", "Call 110.", "en"),
                          [("110", "110 in the translation, not in the original"),
@@ -140,19 +178,36 @@ class Words(unittest.TestCase):
 class Exceptions(unittest.TestCase):
     SRC, DST = "Rest for 2 hours.", "休みます。"
 
+    def accept(self, reason="said in the next sentence", text=DST):
+        return [{"check": "numbers", "item": "2", "for": ct.passage_key(text), "reason": reason}]
+
     def test_accepted_with_reason(self):
-        found, unused = flags(self.SRC, self.DST,
-                              accept=[{"check": "numbers", "item": "2", "reason": "said in the next sentence"}])
+        found, unused = flags(self.SRC, self.DST, accept=self.accept())
         self.assertEqual([lvl for _, _, _, lvl in found], ["accepted"])
         self.assertEqual(unused, [])
 
     def test_exception_without_reason_does_not_count(self):
-        found, _ = flags(self.SRC, self.DST, accept=[{"check": "numbers", "item": "2", "reason": " "}])
+        found, _ = flags(self.SRC, self.DST, accept=self.accept(" "))
         self.assertEqual([lvl for _, _, _, lvl in found], ["error"])
 
+    def test_edited_translation_brings_the_flag_back(self):
+        found, unused = flags(self.SRC, "少し休みます。", accept=self.accept())
+        self.assertEqual([lvl for _, _, _, lvl in found], ["error"])
+        self.assertIn(ct.passage_key("少し休みます。"), found[0][2])  # tells what to set
+        self.assertEqual(len(unused), 1)
+        self.assertIn("another translation text", unused[0])
+
     def test_unused_exception_is_listed(self):
-        _, unused = flags(self.SRC, "2時間休みます。", accept=[{"check": "numbers", "item": "2", "reason": "x"}])
-        self.assertEqual(unused, ["numbers 2"])
+        _, unused = flags(self.SRC, "2時間休みます。", accept=self.accept(text="2時間休みます。"))
+        self.assertEqual(unused, ["numbers 2: no such flag any more; remove it"])
+
+    def test_heading_exception(self):
+        accept = [{"check": "numbers", "item": "1", "for": ct.passage_key("Hourly forecast"), "reason": "1時間ごと"}]
+        found, _ = ct.check_heading("1時間 ごとの予報", "Hourly forecast", accept, "ja", "en")
+        self.assertEqual([lvl for _, _, _, lvl in found], [])  # hourly = 1 hour: no flag
+        found, unused = ct.check_heading("2時間ごとの予報", "Forecast", accept, "ja", "en")
+        self.assertEqual([lvl for _, _, _, lvl in found], ["error"])
+        self.assertEqual(len(unused), 1)
 
 
 class Integrity(unittest.TestCase):
@@ -168,10 +223,15 @@ class Integrity(unittest.TestCase):
 class BadEntries(unittest.TestCase):
     def test_bad_shapes_are_integrity_errors(self):
         for e in ({"source": "Rest.", "text": None}, {"source": "Rest.", "text": "休む", "accept": "x"},
-                  {"source": "Rest.", "text": "休む", "accept": ["x"]}, "text"):
+                  {"source": "Rest.", "text": "休む", "accept": ["x"]}, "text", {"source": "Rest.", "text": ["x"]}):
             with self.subTest(e=e):
                 found, _ = ct.check_entry(ct.passage_key("Rest."), e, "en", "ja", TERMS)
                 self.assertIn("error", [lvl for _, _, _, lvl in found])
+
+
+    def test_bad_heading_is_an_error(self):
+        found, _ = ct.check_heading("見出し", None, [], "ja", "en")
+        self.assertEqual([lvl for _, _, _, lvl in found], ["error"])
 
 
 class FileAndReport(unittest.TestCase):
