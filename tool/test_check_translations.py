@@ -166,7 +166,8 @@ class Numbers(unittest.TestCase):
                 self.assertTrue(ct.check_numbers(en, "en", "塩大さじ2", "ja"))
                 self.assertEqual(ct.check_numbers(en, "en", "塩小さじ2", "ja"), [])
         self.assertEqual(ct.check_numbers("1 tablespoon of sugar", "en", "砂糖大さじ一", "ja"), [])
-        self.assertTrue(ct.check_numbers("1 cup of water", "en", "水1杯", "ja"))
+        self.assertEqual(ct.check_numbers("1 cup of water", "en", "水1杯", "ja"), [])
+        self.assertTrue(ct.check_numbers("1 cup of water", "en", "水1 tbsp", "ja"))
 
     def test_lost_frequency_and_time(self):
         self.assertTrue(ct.check_numbers("Give 5 mg daily.", "en", "5mgを与えます。", "ja"))
@@ -318,6 +319,17 @@ class Numbers(unittest.TestCase):
                         or ct.check_order("Take 2 tablets, 3 times a day.", "en", "1回3錠、1日2回服用する。", "ja"))
         self.assertTrue(ct.check_numbers("Drink 2 liters of water a day.", "en", "2リットルの水を飲む。", "ja"))
         self.assertTrue(ct.check_numbers("Store at 38 °C.", "en", "2度塗る。", "ja"))
+
+    def test_time_a_day_and_or_ranges(self):
+        for en, ja in (("Apply for 10 minutes a day.", "1日10分当てる。"), ("2 hours a day", "1日2時間"),
+                       ("1 day 3 hours", "1日3時間"), ("1 or 2 tablets", "1〜2錠"), ("1 or 2 minutes", "1〜2分"),
+                       ("at 10-minute intervals", "10分間隔で"), ("a 2-hour wait", "2時間の待機"),
+                       ("Drink 2 cups a day.", "1日2杯飲む。"), ("once every 2 weeks", "2週間に1回"),
+                       ("a 1:1 ratio", "1対1の割合")):
+            with self.subTest(ja=ja):
+                self.assertEqual(ct.check_numbers(en, "en", ja, "ja"), [])
+        self.assertTrue(ct.check_numbers("Apply for 10 minutes a day.", "en", "1日20分当てる。", "ja"))
+        self.assertTrue(ct.check_numbers("Apply for 10 minutes a week.", "en", "1日10分当てる。", "ja"))
 
     def test_phone_number(self):
         self.assertEqual(ct.check_numbers("119番に電話します", "ja", "Call 110.", "en"),
