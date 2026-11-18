@@ -68,8 +68,8 @@ KANJI = {"一": 1, "二": 2, "三": 3, "四": 4, "五": 5, "六": 6, "七": 7, "
 # What follows a number, by language: canonical unit names.
 UNITS = {
     "en": [(r"°\s?c\b|degrees? (?:celsius|c\b)|℃", "°C"), (r"°\s?f\b|degrees? (?:fahrenheit|f\b)", "°F"),
-           (r"°|degrees?\b", "deg"), (r"mcg\b|µg\b|μg\b|micrograms?\b", "mcg"), (r"mmhg\b", "mmHg"),
-           (r"iu\b|international units?\b|units?\b", "IU"), (r"cc\b", "ml"), (r"(?:tablet|pill)s?\b", "tablet"),
+           (r"°|degrees?\b", "deg"), (r"mcg\b|µg\b|μg\b|ug\b|micrograms?\b", "mcg"), (r"mmhg\b", "mmHg"),
+           (r"iu\b|international units?\b|units?\b", "IU"), (r"cc\b", "ml"), (r"(?:tablet|pill|capsule)s?\b", "tablet"),
            (r"drops?\b", "drop"), (r"gm\b", "g"), (r"tsp\b|teaspoons?\b", "tsp"),
            (r"tbsp\b|tablespoons?\b", "tbsp"), (r"cups?\b", "cup"),
            (r"min(?:ute)?s?\b", "min"), (r"h(?:ou)?rs?\b|hours?\b|h\b", "h"), (r"sec(?:ond)?s?\b", "s"),
@@ -81,9 +81,9 @@ UNITS = {
            (r"%|percent\b|per cent\b", "%"), (r"people\b|persons?\b", "person"),
            (r"times\b", "times")],
     # 度 alone is Celsius in Japanese (or an angle, which English writes as degrees)
-    "ja": [(r"℃|°C", "°C"), (r"°F", "°F"), (r"°|度(?!と|目|ずつ)", "°C"), (r"tsp", "tsp"), (r"tbsp", "tbsp"),
-           (r"カップ|cup", "cup"), (r"mcg|µg|μg|マイクログラム", "mcg"),
-           (r"mmHg", "mmHg"), (r"IU|単位", "IU"), (r"cc", "ml"), (r"錠", "tablet"), (r"滴", "drop"),
+    "ja": [(r"℃|°C", "°C"), (r"°F", "°F"), (r"°|度(?!と|目|ずつ|の?熱傷|のやけど|に分け)", "°C"), (r"tsp", "tsp"), (r"tbsp", "tbsp"),
+           (r"カップ|cup", "cup"), (r"mcg|µg|μg|ug|マイクログラム", "mcg"),
+           (r"mmHg", "mmHg"), (r"IU|単位", "IU"), (r"cc", "ml"), (r"錠|カプセル", "tablet"), (r"滴", "drop"),
            (r"分(?!の)", "min"), (r"時間", "h"), (r"秒", "s"),
            (r"日", "day"), (r"週間?", "week"), (r"[かカヶケ]月", "month"), (r"年", "year"),
            (r"cm|センチ", "cm"), (r"mm|ミリ(?!リットル|グラム)", "mm"), (r"km|キロ(?!グラム)", "km"),
@@ -100,8 +100,8 @@ TEMPERATURE = {"°C", "°F", "deg"}  # deg: English "degrees" without a scale
 SHORT_TIMES = {"min", "h", "s"}
 # A rate after a unit: 0.1 mg/kg, 5 mg/kg/dose. Rates per time are read as
 # numbers instead (per minute = 1 minute, /日 = 1日), so both languages agree.
-RATE = {"en": r"\s*(?:/|per\s+)\s*(kg|kilograms?|dose|ml|millilit(?:er|re)s?|l|lit(?:er|re)s?|m|cm|m2)\b",
-        "ja": r"\s*/\s*(kg|回|ml|l|m|cm|m2)(?![a-zA-Z])"}
+RATE = {"en": r"\s*(?:/|per\s+)\s*(kg|kilograms?|dose|ml|millilit(?:er|re)s?|dl|l|lit(?:er|re)s?|m2|m|cm)\b",
+        "ja": r"\s*/\s*(kg|回|ml|dl|l|m2|cm|m)(?![a-zA-Z0-9])"}
 RATE_NAMES = {"kilogram": "kg", "kilograms": "kg", "回": "dose", "milliliter": "ml", "milliliters": "ml",
               "millilitre": "ml", "millilitres": "ml", "liter": "l", "liters": "l", "litre": "l", "litres": "l"}
 # Minus sign from words (マイナス, 氷点下, minus): always a sign.
@@ -144,11 +144,13 @@ def _normalize(text, lang):
         t = re.sub(r"\b(daily|weekly|monthly|hourly|yearly|annually|nightly)\b"
                    r"(?! (?:life|lives|living|use|routine|activities))",
                    lambda m: f" 1 per-{_per(FREQ[m[1].lower()])} ", t, flags=re.I)
+        t = re.sub(r"\b(?:at a|per|each|every) (time|dose)\b", " 1 per-time ", t, flags=re.I)
         t = re.sub(r"\b(?:every|each) (night|morning|evening|year|time)\b",
                    lambda m: f" 1 per-{_per(m[1])} ", t, flags=re.I)
         t = re.sub(r"\b(" + TENS + r")[- ](" + ONES + r")\b",
                    lambda m: str(WORDS[m[1].lower()] + ONE_TO_NINE[m[2].lower()]), t, flags=re.I)
         t = re.sub(r"\ba dozen\b", "12", t, flags=re.I)
+        t = re.sub(r"\b(?:an|a) (hour|minute|day|week|month|year)\b", r"1 \1", t, flags=re.I)
         # Reiwa 8 (2026): one year, not two numbers.
         # (a wrong year in brackets stays, so it shows as a difference)
         t = re.sub(r"\b(Reiwa|Heisei|Showa) (\d+)(?: \((\d{4})\))?", _era, t, flags=re.I)
@@ -159,6 +161,9 @@ def _normalize(text, lang):
         t = re.sub(r"(?<!than )\b(?:one|a single)(?= (?:hour|minute|second|day|week|month|year|person|time|tablet|pill"
                    r"|drop|dose|gram|milligram|liter|litre|cup|meter|metre|kilogram|unit)s?\b)", "1", t, flags=re.I)
         t = re.sub(r"\bthe first one\b", "1", t, flags=re.I)
+        # second-degree burn = 2度の熱傷
+        t = re.sub(r"\b(first|second|third|fourth)[- ]degree\b",
+                   lambda m: f"{['first', 'second', 'third', 'fourth'].index(m[1].lower()) + 1} grade", t, flags=re.I)
         # the second (2), not "a second" (time) or "every second"
         t = re.sub(r"(?<!every )(?<!\ba )(?<!\d )\bsecond\b(?! of)|\b(?:third|fourth|fifth)\b(?! of)",
                    lambda m: str(["second", "third", "fourth", "fifth"].index(m[0].lower()) + 2), t)
@@ -179,7 +184,10 @@ def _normalize(text, lang):
         # 隔日 = every other day
         t = re.sub(r"隔日", " 2 per-day ", t)
         t = re.sub(r"\s*/\s*(日|分|時間|秒|週|人|月|min|h|s|day)(?![a-zA-Z])|\s*/\s*(日|分|時間|秒|週|人|月)"
-                   r"|毎(日|週|月|時|分|年|回|朝|晩|夜)", lambda m: f" 1 per-{_per(m[1] or m[2] or m[3])} ", t)
+                   r"|毎(日|週|月|時|分|秒|年|回|朝|晩|夜)", lambda m: f" 1 per-{_per(m[1] or m[2] or m[3])} ", t)
+        # 週3回, 月に1回 = per week 3 times; 1回2錠 = 2 tablets per time
+        t = re.sub(r"(?<![\d.毎一-鿿])(週|月|年)に?(?=\d+(?:\.\d+)?\s?(?:回|日))", lambda m: f" 1 per-{_per(m[1])} ", t)
+        t = re.sub(r"(?<![\d.])1回(?:に|あたり|につき)?(?=\d)", " 1 per-time ", t)
         t = re.sub(r"(?<![\d.月])1\s?(日|分間?|時間|週間?|人)\s?(?:あたり|当たり|につき|ごと|に(?!は)|(?=1\s?日\s?\d)|(?=\d+(?:\.\d+)?\s?(?![\d.]|秒|分|時間|日|週|か月|ヶ月|カ月|年)))",
                    lambda m: f" 1 per-{_per(m[1])} ", t)
         # 時速200km = 200 km/h = 200 km 1時間
@@ -207,7 +215,7 @@ PER = {"day": "day", "日": "day", "person": "person", "人": "person", "minute"
 
 FREQ = {"daily": "day", "weekly": "week", "monthly": "month", "hourly": "hour", "yearly": "year",
         "annually": "year", "nightly": "night"}
-PER.update({"year": "year", "年": "year", "night": "night", "晩": "night", "夜": "night", "morning": "morning",
+PER.update({"dose": "time", "year": "year", "年": "year", "night": "night", "晩": "night", "夜": "night", "morning": "morning",
             "朝": "morning", "evening": "night", "time": "time", "回": "time"})
 
 
@@ -262,7 +270,8 @@ def numbers(text, lang):
         # − (from マイナス, 氷点下, minus) is a sign; "-" is one unless it
         # joins two words or numbers (3-5, TC 4-02, COVID-19), so 「外は-5℃」 keeps it.
         before = t[m.start() - 1] if m.start() else " "
-        sign = "-" if m[1] == MINUS or (m[1] == "-" and not (before.isascii() and before.isalnum())) else ""
+        joined = (before.isascii() and before.isalnum()) or before in "日分時間秒週年月人回歳%℃度個錠"
+        sign = "-" if m[1] == MINUS or (m[1] == "-" and not joined) else ""
         n = sign + _canon(m[2])
         found[n] += 1
         rest = t[m.end():m.end() + 40].lstrip()
