@@ -85,8 +85,8 @@ UNITS = {
     # 度 alone is Celsius in Japanese (or an angle, which English writes as degrees)
     "ja": [(r"dayish", "dayish"), (r"℃|°C", "°C"), (r"°F", "°F"), (r"°|度(?!目|に分け|(?:(?:と|および|または|もしくは|か|、|~|〜|-)\d+度)?の?(?:熱傷|火傷|やけど))", "°C"), (r"tsp", "tsp"), (r"tbsp", "tbsp"),
            (r"カップ|cup", "cup"), (r"mcg|µg|μg|ug|マイクログラム", "mcg"),
-           (r"mmHg", "mmHg"), (r"IU|単位", "IU"), (r"cc", "ml"), (r"錠|カプセル", "tablet"), (r"compression", "compression"), (r"breath", "breath"),
-           (r"噴霧|吸入|プッシュ", "spray"), (r"杯", "cup"), (r"滴", "drop"),
+           (r"mmHg", "mmHg"), (r"IU|単位", "IU"), (r"cc", "ml"), (r"錠|カプセル", "tablet"), (r"compression", "compression"), (r"breath", "breath"), (r"spray", "spray"),
+           (r"噴霧|吸入|プッシュ|パフ", "spray"), (r"杯", "cup"), (r"滴", "drop"),
            (r"分(?!の)", "min"), (r"時間", "h"), (r"秒", "s"),
            (r"日", "day"), (r"週間?", "week"), (r"[かカヶケ]月", "month"), (r"年", "year"),
            (r"cm|センチ", "cm"), (r"mm|ミリ(?!リットル|グラム)", "mm"), (r"km|キロメートル", "km"), (r"キロ(?!グラム)", "kilo"),
@@ -231,13 +231,16 @@ def _normalize(text, lang):
         t = re.sub(r"(\d+)回の?(?:胸骨)?圧迫", r"\1compression", t)
         t = re.sub(r"(?:人工呼吸|息の吹き込み|吹き込み)を?(\d+)回", r"\1breath", t)
         t = re.sub(r"(\d+)回の?(?:人工呼吸|息を吹き込|息の吹き込み|吹き込み)", r"\1breath", t)
+        t = re.sub(r"(\d+)回(?:連続で)?(?:押|圧迫|心臓マッサージ|胸部圧迫)", r"\1compression", t)
+        t = re.sub(r"(\d+)回(?:、)?(?:息を)?吹き込", r"\1breath", t)
+        t = re.sub(r"(\d+)回(?:噴霧|吸入|スプレー|噴射)", r"\1spray", t)
         # 1対1 = 1:1
         t = re.sub(r"(\d+(?:\.\d+)?)対(\d+(?:\.\d+)?)", r"\1:\2", t)
         # 週3回, 月に1回 = per week 3 times; 1回2錠 = 2 tablets per time
         t = re.sub(r"(?<![\d.毎一-鿿かカヶケ])(週|月|年)に?(?=\d+(?:\.\d+)?\s?(?:[~〜-]\s?\d+(?:\.\d+)?\s?)?(?:回|日))", lambda m: f" 1 per-{_per(m[1])} ", t)
         # (only before a dose: 1日1回5mg keeps its "once")
         t = re.sub(r"(?<![\d.第一日週月にでと])(?<!per-week )(?<!per-month )(?<!per-year )1回(?:に|あたり|につき)?"
-                   r"(?=\d+(?:\.\d+)?\s?(?:錠|カプセル|滴|包|粒|mg|g|ml|cc|μg|mcg|ug|IU|単位|杯|tsp|tbsp))|毎回", " ", t,
+                   r"(?=\d+(?:\.\d+)?\s?(?:錠|カプセル|滴|包|粒|mg|g|ml|cc|μg|mcg|ug|IU|単位|杯|tsp|tbsp|吸入|噴霧|パフ|プッシュ))|毎回", " ", t,
                    flags=re.I)
         t = re.sub(r"(?<![\d.月])1\s?(日|分間?|時間|週間?|人|[かカヶケ]月|年)\s?(?:あたり|当たり|につき|ごと|に(?!は)|(?=1\s?日\s?\d)|(?=\d+(?:\.\d+)?\s?(?![\d.]|秒|分|時間|日|週|か月|ヶ月|カ月|年)))",
                    lambda m: f" 1 per-{_per(m[1])} ", t)
@@ -371,6 +374,23 @@ def check_numbers(src, src_lang, dst, dst_lang):
                 units["kg" if other["kg"] else "km"] += units.pop("kilo")
             if units["dayish"]:
                 units["per-day" if other["per-day"] else "day"] += units.pop("dayish")
+    # A plain 回 ("times") can stand for compressions, breaths or sprays the
+    # other side names, one for one (心臓マッサージを30回 = 30 compressions),
+    # but only when its own side names no count of that kind anywhere: in
+    # 「1日2回3噴霧」 the 2回 is not a spray.
+    for x, y in ((au, bu), (bu, au)):
+        named = {c for units in x.values() for c in ("compression", "breath", "spray") if units[c]}
+        for n, units in x.items():
+            other = y.get(n, Counter())
+            for count in ("compression", "breath", "spray"):
+                if count in named:
+                    continue
+                take = min(units["times"], max(0, other[count] - units[count]))
+                if take:
+                    units["times"] -= take
+                    units[count] += take
+            if not units["times"]:
+                units.pop("times", None)
     flags = []
     for n in sorted(set(a) | set(b), key=lambda x: (float(x.split(":")[0]), x)):
         if a[n] > b[n]:
