@@ -71,7 +71,7 @@ UNITS = {
            (r"°|degrees?\b", "deg"), (r"mcg\b|µg\b|μg\b|ug\b|micrograms?\b", "mcg"), (r"mmhg\b", "mmHg"),
            (r"iu\b|international units?\b|units?\b", "IU"), (r"cc\b", "ml"), (r"(?:tablet|pill|capsule)s?\b", "tablet"),
            (r"drops?\b", "drop"), (r"gm\b", "g"), (r"tsp\b|teaspoons?\b", "tsp"),
-           (r"tbsp\b|tablespoons?\b", "tbsp"), (r"cups?\b", "cup"),
+           (r"tbsp\b|tablespoons?\b", "tbsp"), (r"cups?\b|cupfuls?\b|glass(?:es)?\b|mugs?\b|bowls?\b", "cup"), (r"spoonfuls?\b", "tsp"),
            (r"min(?:ute)?s?\b", "min"), (r"h(?:ou)?rs?\b|hours?\b|h\b", "h"), (r"sec(?:ond)?s?\b", "s"),
            (r"days?\b", "day"), (r"weeks?\b", "week"), (r"months?\b", "month"), (r"years?\b", "year"),
            (r"cm\b|centimet(?:er|re)s?\b", "cm"), (r"mm\b|millimet(?:er|re)s?\b", "mm"),
@@ -119,6 +119,7 @@ def _normalize(text, lang):
     # (mg/m² keeps its area: m2; ㎡ is m²)
     text = text.replace("º", "°").replace("㎡", "m²").replace("㎥", "m³")
     t = unicodedata.normalize("NFKC", re.sub(r"(?<!/m)[²³₂₃]", "", text))
+    t = re.sub(r"\d{40,}", lambda m: m[0][:40], t)  # no real number is this long; keeps the regexes fast
     t = re.sub(r"(?<=\d),(?=\d{3}(?!\d))", "", t)  # 3,122
     t = re.sub(r"(?<=\d)(\s?m)[23](?!\d)", r"\1", t)  # 3 m2 = 3㎡
     t = re.sub(r"\bCO2\b", "CO", t)
@@ -132,7 +133,8 @@ def _normalize(text, lang):
         t = re.sub(r"(?m)^\s*\d+-\d+\.\s", " ", t)
         t = re.sub(r"(?m)^(?:Chapter \d+|\d+ (?:TC|ATP) [\d.-]+|(?:TC|ATP) [\d.-]+ \d+|Figure \d+-\d+\..*)$",
                    " ", t)
-        t = re.sub(r"(?<=\d)-(?=(?:second|minute|hour|day|week|month|year|meter|metre|liter|litre|mile|kilometer|km|kg)s?\b)",
+        t = re.sub(r"(?<=\d)-(?=(?:second|minute|hour|day|week|month|year|meter|metre|liter|litre|mile|kilometer|km|kg|mg|mcg|g|ml|l"
+                   r"|tablet|cup|iu|unit)s?\b)",
                    " ", t, flags=re.I)  # a 10-minute walk
         t = re.sub(r"\btwice\b", "2 times", t, flags=re.I)
         t = re.sub(r"\bonce(?= (?:an?|per|every) (?:\d+ )?(?:days?|weeks?|months?|years?|hours?|minutes?)\b| daily\b)",
@@ -145,7 +147,9 @@ def _normalize(text, lang):
         t = re.sub(r"(?:/\s*|\bper\s+)(day|person|minute|min|hour|hr|h|second|sec|s|week|month|year)\b"
                    r"|\b(?:every|each)\s+(day|minute|hour|week|month|year)\b",
                    lambda m: f" 1 per-{_per(m[1] or m[2])} ", t, flags=re.I)
-        t = re.sub(r"\ban? (tablet|pill|capsule|dose|drop)\b", r"1 \1", t, flags=re.I)
+        t = re.sub(r"\ban? (tablet|pill|capsule|dose|drop|glass|cup|mug|bowl|spoonful)\b", r"1 \1", t, flags=re.I)
+        t = re.sub(r"(?<!\bat )(?<!\beven )\bonce(?=\s*(?:[.!?]|$))", "1 times", t, flags=re.I)  # repeat once = もう1回
+        t = re.sub(r"\b(\d+) to (\d+)(?= (?:dilution|ratio|solution|mix))", r"\1:\2", t, flags=re.I)
         t = re.sub(r"(\btimes|\btwice|\bonce|\d+(?:\.\d+)?\s?(?:[a-z%]{1,10}s?)?(?: of \w+)?) an? (day|week|month|year|hour|minute)\b",
                    lambda m: f"{m[1]} 1 per-{_per(m[2])} ", t, flags=re.I)
         t = re.sub(r"\b(daily|weekly|monthly|hourly|yearly|annually|nightly)\b"
@@ -181,6 +185,7 @@ def _normalize(text, lang):
         t = re.sub(r"(?<!every )(?<!\ba )(?<!\d )\bsecond\b(?! of)|\b(?:third|fourth|fifth)\b(?! of)",
                    lambda m: str(["second", "third", "fourth", "fifth"].index(m[0].lower()) + 2), t)
         t = re.sub(r"\b(" + "|".join(WORDS) + r")\b", lambda m: str(WORDS[m[1].lower()]), t, flags=re.I)
+        t = re.sub(r"(?<!below )\bzero\b", "0", t, flags=re.I)
     else:
         t = re.sub(r"(令和|平成|昭和)(元|\d+)年",
                    lambda m: f"{ERAS[m[1]] + (1 if m[2] == '元' else int(m[2]))}年", t)
@@ -210,11 +215,17 @@ def _normalize(text, lang):
                    r"|毎(日|週|月|時|分|秒|年|朝|晩|夜)", lambda m: f" 1 per-{_per(m[1] or m[2] or m[3])} ", t)
         # 1日30分 is "30 minutes a day" or "1 day 30 minutes": either, by the other side
         t = re.sub(r"(?<![\d.月])1日(?=\s?\d+(?:\.\d+)?\s?(?:秒|分|時間))", " 1 dayish ", t)
+        # 3時30分, 3時半 = 3:30; 零度 = 0度
+        t = re.sub(r"(?<![\d.])(\d{1,2})時(?:(\d{1,2})分|(半))", lambda m: f"{m[1]}:{m[2] or 30} ", t)
+        t = re.sub(r"零(?=度|℃)|ゼロ", "0", t)
         # 1対1 = 1:1
         t = re.sub(r"(\d+(?:\.\d+)?)対(\d+(?:\.\d+)?)", r"\1:\2", t)
         # 週3回, 月に1回 = per week 3 times; 1回2錠 = 2 tablets per time
         t = re.sub(r"(?<![\d.毎一-鿿])(週|月|年)に?(?=\d+(?:\.\d+)?\s?(?:回|日))", lambda m: f" 1 per-{_per(m[1])} ", t)
-        t = re.sub(r"(?<![\d.第一])1回(?:に|あたり|につき)?(?=\d)|毎回", " ", t)
+        # (only before a dose: 1日1回5mg keeps its "once")
+        t = re.sub(r"(?<![\d.第一日週月にでと])1回(?:に|あたり|につき)?"
+                   r"(?=\d+(?:\.\d+)?\s?(?:錠|カプセル|滴|包|粒|mg|g|ml|cc|μg|mcg|ug|IU|単位|杯|tsp|tbsp))|毎回", " ", t,
+                   flags=re.I)
         t = re.sub(r"(?<![\d.月])1\s?(日|分間?|時間|週間?|人)\s?(?:あたり|当たり|につき|ごと|に(?!は)|(?=1\s?日\s?\d)|(?=\d+(?:\.\d+)?\s?(?![\d.]|秒|分|時間|日|週|か月|ヶ月|カ月|年)))",
                    lambda m: f" 1 per-{_per(m[1])} ", t)
         # 時速200km = 200 km/h = 200 km 1時間

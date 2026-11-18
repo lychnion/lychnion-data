@@ -229,10 +229,8 @@ class Numbers(unittest.TestCase):
     def test_ratios(self):
         self.assertTrue(ct.check_numbers("Mix bleach and water 1:10.", "en", "漂白剤と水を10:1で混ぜます。", "ja"))
         self.assertEqual(ct.check_numbers("Mix bleach and water 1:10.", "en", "漂白剤と水を1：10で混ぜます。", "ja"), [])
-        self.assertEqual(ct.check_numbers("at 10:30", "en", "10時30分に", "ja"),
-                         [("10", "10 in the translation, not in the original"),
-                          ("10:30", "10:30 in the original, missing in the translation"),
-                          ("30", "30 in the translation, not in the original")])
+        self.assertEqual(ct.check_numbers("at 10:30", "en", "10時30分に", "ja"), [])
+        self.assertTrue(ct.check_numbers("at 10:30", "en", "10時40分に", "ja"))
 
     def test_frequency_on_one_side_only(self):
         self.assertTrue(ct.check_numbers("Use 1 mL monthly.", "en", "1mLを1個使います。", "ja"))
@@ -330,6 +328,25 @@ class Numbers(unittest.TestCase):
                 self.assertEqual(ct.check_numbers(en, "en", ja, "ja"), [])
         self.assertTrue(ct.check_numbers("Apply for 10 minutes a day.", "en", "1日20分当てる。", "ja"))
         self.assertTrue(ct.check_numbers("Apply for 10 minutes a week.", "en", "1日10分当てる。", "ja"))
+
+    def test_once_a_day_and_vessels(self):
+        for en, ja in (("Take 5 mg once a day.", "1日1回5mgを服用する。"), ("Take 2 tablets once a day.", "1日1回2錠"),
+                       ("once a week", "週1回5mg"[:3]), ("Take 5 mg once every 2 days.", "2日に1回5mgを服用する。"),
+                       ("Take 2 tablets, 3 times a day.", "1回2錠、1日3回"), ("Drink 1 glass of water.", "水1杯を飲む。"),
+                       ("a glass of water", "コップ1杯の水"), ("Add 1 spoonful.", "小さじ1杯を加える。"),
+                       ("a 10-mg dose", "10mgの用量"), ("a 1 to 10 dilution", "1対10の希釈"),
+                       ("at 3:30", "3時30分に"), ("at 3:30", "3時半に"), ("Repeat once.", "もう1回繰り返す。"),
+                       ("zero", "0"), ("0 °C", "零度")):
+            with self.subTest(ja=ja):
+                self.assertEqual(ct.check_numbers(en, "en", ja, "ja"), [])
+        self.assertTrue(ct.check_numbers("Take 5 mg once a day.", "en", "1日2回5mgを服用する。", "ja"))
+        self.assertTrue(ct.check_numbers("a 5-mg tablet", "en", "5gの錠剤", "ja"))
+
+    def test_long_digit_runs_are_fast(self):
+        import time
+        start = time.monotonic()
+        ct.check_numbers("1" * 20000, "en", "1" * 20000, "ja")
+        self.assertLess(time.monotonic() - start, 2)
 
     def test_phone_number(self):
         self.assertEqual(ct.check_numbers("119番に電話します", "ja", "Call 110.", "en"),
