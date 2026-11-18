@@ -225,7 +225,7 @@ def _normalize(text, lang):
         # 1対1 = 1:1
         t = re.sub(r"(\d+(?:\.\d+)?)対(\d+(?:\.\d+)?)", r"\1:\2", t)
         # 週3回, 月に1回 = per week 3 times; 1回2錠 = 2 tablets per time
-        t = re.sub(r"(?<![\d.毎一-鿿かカヶケ])(週|月|年)に?(?=\d+(?:\.\d+)?\s?(?:回|日))", lambda m: f" 1 per-{_per(m[1])} ", t)
+        t = re.sub(r"(?<![\d.毎一-鿿かカヶケ])(週|月|年)に?(?=\d+(?:\.\d+)?\s?(?:[~〜-]\s?\d+(?:\.\d+)?\s?)?(?:回|日))", lambda m: f" 1 per-{_per(m[1])} ", t)
         # (only before a dose: 1日1回5mg keeps its "once")
         t = re.sub(r"(?<![\d.第一日週月にでと])1回(?:に|あたり|につき)?"
                    r"(?=\d+(?:\.\d+)?\s?(?:錠|カプセル|滴|包|粒|mg|g|ml|cc|μg|mcg|ug|IU|単位|杯|tsp|tbsp))|毎回", " ", t,
