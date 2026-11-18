@@ -456,11 +456,14 @@ class Numbers(unittest.TestCase):
                         "水分の最低量は、1日あたり約3.75クオート（3.5リットル）です。"),
                        ("2 capsules", "2カプセル"), ("wait 3 to 5 days", "3〜5日待つ"),
                        ("Every year in January to March.", "例年1〜3月に多発します。"),
-                       ("It happens every year.", "毎年起こる。"), ("Mix 3 parts to 1 part.", "3対1で混ぜる。")):
+                       ("It happens every year.", "毎年起こる。"), ("Mix 3 parts to 1 part.", "3対1で混ぜる。"),
+                       ("2 and 1/2 teaspoons", "小さじ2と1/2杯"),
+                       ("Press at 100 to 120 per minute.", "1分間に100〜120回の速さで押す。")):
             with self.subTest(ja=ja):
                 self.assertEqual(ct.check_numbers(en, "en", ja, "ja"), [])
         self.assertTrue(ct.check_numbers("Take 2 tablets.", "en", "2カプセルを服用する。", "ja"))
         self.assertTrue(ct.check_numbers("A ratio of 3 to 1.", "en", "1対3の割合。", "ja"))
+        self.assertTrue(ct.check_numbers("Press at 100 to 120 per minute.", "en", "1分間に100〜120日の速さ", "ja"))
         en = "The daily need is 3.5 liters a day; drink it over the day."
         self.assertTrue(ct.check_numbers("The need is 3.5 liters a day and 1 liter a day for children.", "en",
                                          "1日に3.5リットル、子どもは1週に1リットル。", "ja"))

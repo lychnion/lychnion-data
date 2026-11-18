@@ -130,7 +130,7 @@ def _normalize(text, lang):
     t = re.sub(r"\d{40,}", lambda m: m[0][:40], t)  # no real number is this long; keeps the regexes fast
     t = re.sub(r"(?<=\d),(?=\d{3}(?!\d))", "", t)  # 3,122
     # Fractions are one value: 1/2 = 0.5, 1 1/2 = 1と1/2 = 1.5 (not mg/kg: digits only)
-    t = re.sub(r"(?<![\d./])(?:(\d+)(?:\s|と))?(\d+)/(\d+)(?![\d/])",
+    t = re.sub(r"(?<![\d./])(?:(\d+)(?:\s+and\s+|\s|と))?(\d+)/(\d+)(?![\d/])",
                lambda m: _canon((int(m[1]) if m[1] else 0) + int(m[2]) / int(m[3])) if int(m[3]) else m[0], t)
     t = re.sub(r"(?<=\d)(\s?m)[23](?!\d)", r"\1", t)  # 3 m2 = 3㎡
     t = re.sub(r"\bCO2\b", "CO", t)
@@ -170,6 +170,9 @@ def _normalize(text, lang):
         t = re.sub(r"\b((?:breathe|blow|ventilate)\w*\b[^.;:\d]{0,30}?)(\d+) times\b", r"\1\2 breaths", t, flags=re.I)
         t = re.sub(r"\bonce(?= (?:an?|per|every) (?:\d+ )?(?:days?|weeks?|months?|years?|hours?|minutes?)\b| daily\b)",
                    "1 times", t, flags=re.I)
+        # "100 to 120 per minute": the count is "times" (= 100〜120回/分)
+        t = re.sub(r"(?<![\d.])(\d+(?:\.\d+)?)(?= (?:/|per) (?:minute|min|hour|second|day)\b)", r"\1 times", t,
+                   flags=re.I)
         # Frequencies and rates are "1 per-day" (not a duration "1 day"):
         # per day, a day (after a dose), every day, daily = 1日あたり, 毎日;
         # every other day = 隔日
