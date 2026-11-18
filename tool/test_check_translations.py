@@ -427,6 +427,28 @@ class Numbers(unittest.TestCase):
             with self.subTest(ja=ja):
                 self.assertEqual(ct.check_numbers(en, "en", ja, "ja"), [])
 
+    def test_fractions_and_more_dilution_wordings(self):
+        for en, ja in (("1/2 teaspoon of salt", "塩小さじ1/2"), ("1/4 teaspoon", "小さじ1/4"),
+                       ("1/2 tablespoon", "大さじ1/2"), ("1 1/2 teaspoons", "小さじ1と1/2"), ("5 mg/kg", "5mg/kg")):
+            with self.subTest(ja=ja):
+                self.assertEqual(ct.check_numbers(en, "en", ja, "ja"), [])
+        self.assertTrue(ct.check_numbers("1/2 teaspoon", "en", "小さじ2", "ja"))
+        en = "Mix 1 part bleach with 9 parts water."
+        for ja in ("漂白剤1に水9を加えて混ぜます。", "水9と漂白剤1を混ぜます。", "漂白剤1水9", "漂白剤を1、水を9",
+                   "水と漂白剤を9対1で混ぜます。", "漂白剤と水を1対9の割合で混ぜます。", "漂白剤：水＝1：9"):
+            with self.subTest(correct=ja):
+                self.assertEqual(ct.check_numbers(en, "en", ja, "ja"), [])
+        for ja in ("漂白剤9に水1を加えて混ぜます。", "水と漂白剤を1対9で混ぜます。", "漂白剤：水＝9：1"):
+            with self.subTest(swapped=ja):
+                self.assertTrue(ct.check_numbers(en, "en", ja, "ja"))
+        self.assertEqual(ct.check_numbers("mix 1 part salt with 8 parts water", "en", "塩1に水8", "ja"), [])
+
+    def test_burn_sentences_are_fast(self):
+        import time
+        start = time.monotonic()
+        ct.numbers("やけど" + "大さじ" * 20000, "ja")
+        self.assertLess(time.monotonic() - start, 2)
+
     def test_weekly_dose_and_more(self):
         for en, ja in (("Take 2 tablets once a week.", "週1回2錠。"), ("Take 2 mg once a week", "週1回2mg"),
                        ("Take 2 tablets once a month.", "月1回2錠。"), ("sleep 8 hours a night", "毎晩8時間眠る"),
