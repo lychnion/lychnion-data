@@ -220,6 +220,23 @@ class Numbers(unittest.TestCase):
         self.assertEqual(ct.check_numbers("5 mL/kg", "en", "5mL/Kg", "ja"), [])
         self.assertEqual(ct.check_numbers("for the second time", "en", "2度目", "ja"), [])
 
+    def test_rate_with_an(self):
+        self.assertTrue(ct.check_numbers("Give 100 ml an hour.", "en", "100mlを与えます。", "ja"))
+        self.assertEqual(ct.check_numbers("Give 100 ml an hour.", "en", "1時間に100mlを与えます。", "ja"), [])
+        self.assertEqual(ct.check_numbers("Check once an hour.", "en", "1時間に1回確認します。", "ja"), [])
+
+    def test_ratios(self):
+        self.assertTrue(ct.check_numbers("Mix bleach and water 1:10.", "en", "漂白剤と水を10:1で混ぜます。", "ja"))
+        self.assertEqual(ct.check_numbers("Mix bleach and water 1:10.", "en", "漂白剤と水を1：10で混ぜます。", "ja"), [])
+        self.assertEqual(ct.check_numbers("at 10:30", "en", "10時30分に", "ja"),
+                         [("10", "10 in the translation, not in the original"),
+                          ("10:30", "10:30 in the original, missing in the translation"),
+                          ("30", "30 in the translation, not in the original")])
+
+    def test_frequency_on_one_side_only(self):
+        self.assertTrue(ct.check_numbers("Use 1 mL monthly.", "en", "1mLを1個使います。", "ja"))
+        self.assertEqual(ct.check_numbers("50 km/h", "en", "50km/hで走る", "ja"), [])
+
     def test_phone_number(self):
         self.assertEqual(ct.check_numbers("119番に電話します", "ja", "Call 110.", "en"),
                          [("110", "110 in the translation, not in the original"),
