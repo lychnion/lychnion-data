@@ -1,0 +1,91 @@
+{
+  "id": "intl.firstaid.basics",
+  "title": "応急手当（海外の資料）",
+  "language": "en",
+  "region": "US",
+  "version": "2026.11.1",
+  "note": "First foreign package: universal first aid that Japan has no reusable source for (snake bites, hypothermia, frostbite, heat illness, altitude). US government manuals, public domain (17 U.S.C. 105), 'Approved for public release; distribution is unlimited'. Chosen with the source list of the Survival LLM project (github.com/anonnerdfrenzy/survival-llm, SOURCES.md, checked 2026-10-24). Only the civilian first-aid chapters; snapshots made with tool/pdf_sections.py.",
+  "sources": [
+    {
+      "id": "army-atp-4-02-11",
+      "title": "ATP 4-02.11 Casualty Response, Tactical Combat Casualty Care, and First Aid (2026), chapters 16–17",
+      "publisher": "米国陸軍 (US Army)",
+      "url": "https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN46159-ATP_4-02.11-000-WEB-1.pdf",
+      "licence": "Public domain (17 U.S.C. 105)",
+      "licence_url": "https://www.copyright.gov/title17/92chap1.html#105",
+      "attribution": "出典：米国陸軍 ATP 4-02.11（2026年）（https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN46159-ATP_4-02.11-000-WEB-1.pdf）",
+      "snapshot": "snapshots/army-atp-4-02-11-first-aid.txt",
+      "note": "Kept: bites (no rabies paragraph 16-6: Japan has no rabies), snakebite first aid (not the US species identification), ticks, heat and altitude injuries. Command: python3 -I tool/pdf_sections.py MANUAL.pdf OUT --from '16-1. ' --to '18-1. ' --drop-para '16-6.' --keep ... (see the snapshot's headings). Marine animals left out: its jellyfish advice (ammonia, alcohol, meat tenderizer) looks outdated; needs a medical review first."
+    },
+    {
+      "id": "army-tc-21-3",
+      "title": "TC 21-3 Cold Weather Survival and Operations (2025), cold injuries",
+      "publisher": "米国陸軍 (US Army)",
+      "url": "https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN45217-TC_21-3-000-WEB-1.pdf",
+      "licence": "Public domain (17 U.S.C. 105)",
+      "licence_url": "https://www.copyright.gov/title17/92chap1.html#105",
+      "attribution": "出典：米国陸軍 TC 21-3（2025年）（https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN45217-TC_21-3-000-WEB-1.pdf）",
+      "snapshot": "snapshots/army-tc-21-3-cold-weather.txt",
+      "note": "Kept: trench foot, snow blindness, hypothermia, frostbite, dehydration, carbon monoxide. The frostbite line giving 32°F as 5.68°C (should be 0°C) is dropped."
+    }
+  ],
+  "drop_lines": [
+    "Chapter 16",
+    "Chapter 17",
+    "Chapter 18",
+    "Bites and Stings",
+    "Climatic and Environmental Injuries",
+    "Optimizing Physical Care",
+    "30 September 2025",
+    "￼"
+  ],
+  "drop_lines_containing": [
+    "ATP 4-02.11 23 March 2026",
+    "23 March 2026 ATP 4-02.11",
+    "30 September 2025 TC 21-3",
+    "TC 21-3 30 September 2025",
+    "Dial 911",
+    "immediate medical help to include MEDEVAC",
+    "(5.68°C)"
+  ],
+  "drop_lines_matching": [
+    "\\d{1,3}B",
+    "\\d{1,3}"
+  ],
+  "gaps": [
+    "Text is written for soldiers ('Service member', 'Soldier', 'evacuation'); the advice itself is general first aid.",
+    "Species identification (US snakes, spiders, scorpions) left out on purpose: our rules allow universal topics only.",
+    "Translated to Japanese at build time (packages/translations/intl.firstaid.basics.ja.json); not yet reviewed by a person."
+  ],
+  "synonyms": {
+    "マムシ": [
+      "ヘビ"
+    ],
+    "蛇": [
+      "ヘビ"
+    ],
+    "高山病": [
+      "高地"
+    ],
+    "低体温": [
+      "低体温症"
+    ]
+  },
+  "translate_to": "ja",
+  "notice": {
+    "ja": [
+      "医師の診断や治療の代わりにはなりません。",
+      "米国政府の資料をLychnionが翻訳したものです。公式の訳ではなく、まだ専門家の確認を受けていません。"
+    ],
+    "en": [
+      "Does not replace a doctor's diagnosis or treatment.",
+      "Translated from US government manuals by Lychnion: not an official translation, not yet checked by an expert."
+    ]
+  },
+  "name": {
+    "ja": "応急手当",
+    "en": "First aid"
+  },
+  "icon": "medical_services",
+  "suggestions": {}
+}

@@ -1,0 +1,33 @@
+{
+  "id": "jp.map.kushimoto",
+  "title": "串本町（和歌山県）",
+  "title_en": "Kushimoto (Wakayama)",
+  "bbox": [135.66, 33.43, 135.9, 33.56],
+  "center": [33.4774, 135.7783],
+  "maxzoom": 15,
+  "bundle": false,
+  "basemap": {
+    "source": "https://build.protomaps.com/20261104.pmtiles",
+    "licence": "ODbL 1.0",
+    "attribution": "© OpenStreetMap contributors (ODbL), Protomaps"
+  },
+  "routes": {
+    "source": "https://download.geofabrik.de/asia/japan/kansai-latest.osm.pbf",
+    "licence": "ODbL 1.0",
+    "attribution": "© OpenStreetMap contributors (ODbL)",
+    "heights": "国土地理院 標高タイル（DEM5A・DEM10B）",
+    "heights_licence": "国土地理院コンテンツ利用規約",
+    "inundation": ["A40-16_30_GML/A40-16_30_GML/A40-16_30"],
+    "inundation_source": "https://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-A40-2024.html",
+    "inundation_licence": "CC BY 4.0",
+    "inundation_attribution": "「国土数値情報（津波浸水想定データ）」（国土交通省）和歌山県 2016年 をもとに リクニオンが加工"
+  },
+  "sites": {
+    "prefectures": ["30000"],
+    "base_url": "https://hinanmap.gsi.go.jp/hinanjocp/defaultFtpData/csv/",
+    "notice_url": "https://hinanmap.gsi.go.jp/hinanjocp/assets/notice/%E3%81%94%E5%88%A9%E7%94%A8%E4%B8%8A%E3%81%AE%E6%B3%A8%E6%84%8F.txt",
+    "licence": "国土地理院コンテンツ利用規約",
+    "licence_url": "https://www.gsi.go.jp/kikakuchousei/kikakuchousei40182.html",
+    "attribution": "出典：国土地理院「指定緊急避難場所データ」「指定避難所データ」（リクニオンが範囲を絞って加工）"
+  }
+}

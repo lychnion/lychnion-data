@@ -1,0 +1,360 @@
+{
+  "id": "jp.bousai.core",
+  "title": "防災（基本）",
+  "language": "ja",
+  "version": "2026.11.3",
+  "note": "Spike 2 test package. Small on purpose: covers the eight test questions where official open sources exist.",
+  "sources": [
+    {
+      "id": "kantei-sonae",
+      "title": "災害への備え 事前にできること（防災の手引き）",
+      "publisher": "首相官邸",
+      "url": "https://www.kantei.go.jp/jp/headline/bousai/sonae.html",
+      "licence": "PDL1.0",
+      "licence_url": "https://www.kantei.go.jp/jp/terms.html",
+      "attribution": "出典：首相官邸ホームページ（https://www.kantei.go.jp/jp/headline/bousai/sonae.html）"
+    },
+    {
+      "id": "kantei-jishin",
+      "title": "地震への備えと身の守り方（防災の手引き）",
+      "publisher": "首相官邸",
+      "url": "https://www.kantei.go.jp/jp/headline/bousai/jishin.html",
+      "licence": "PDL1.0",
+      "licence_url": "https://www.kantei.go.jp/jp/terms.html",
+      "attribution": "出典：首相官邸ホームページ（https://www.kantei.go.jp/jp/headline/bousai/jishin.html）"
+    },
+    {
+      "id": "kantei-tsunami",
+      "title": "津波の特徴と避難行動（防災の手引き）",
+      "publisher": "首相官邸",
+      "url": "https://www.kantei.go.jp/jp/headline/bousai/tsunami.html",
+      "licence": "PDL1.0",
+      "licence_url": "https://www.kantei.go.jp/jp/terms.html",
+      "attribution": "出典：首相官邸ホームページ（https://www.kantei.go.jp/jp/headline/bousai/tsunami.html）"
+    },
+    {
+      "id": "kantei-hinan",
+      "title": "避難情報と避難行動（防災の手引き）",
+      "publisher": "首相官邸",
+      "url": "https://www.kantei.go.jp/jp/headline/bousai/hinan.html",
+      "licence": "PDL1.0",
+      "licence_url": "https://www.kantei.go.jp/jp/terms.html",
+      "attribution": "出典：首相官邸ホームページ（https://www.kantei.go.jp/jp/headline/bousai/hinan.html）"
+    },
+    {
+      "id": "kantei-setsugai",
+      "title": "雪害への備え（防災の手引き）",
+      "publisher": "首相官邸",
+      "url": "https://www.kantei.go.jp/jp/headline/bousai/setsugai.html",
+      "licence": "PDL1.0",
+      "licence_url": "https://www.kantei.go.jp/jp/terms.html",
+      "attribution": "出典：首相官邸ホームページ（https://www.kantei.go.jp/jp/headline/bousai/setsugai.html）"
+    },
+    {
+      "id": "kantei-funka",
+      "title": "火山噴火への備えと避難（防災の手引き）",
+      "publisher": "首相官邸",
+      "url": "https://www.kantei.go.jp/jp/headline/bousai/funka.html",
+      "licence": "PDL1.0",
+      "licence_url": "https://www.kantei.go.jp/jp/terms.html",
+      "attribution": "出典：首相官邸ホームページ（https://www.kantei.go.jp/jp/headline/bousai/funka.html）"
+    },
+    {
+      "id": "fdma-shiketsu",
+      "title": "口頭指導要領 止血法",
+      "publisher": "総務省消防庁",
+      "url": "https://www.fdma.go.jp/laws/item/laws014_04_20130517-3w.doc",
+      "licence": "PDL1.0",
+      "licence_url": "https://www.fdma.go.jp/about/others/post3.html",
+      "attribution": "出典：消防庁ホームページ（https://www.fdma.go.jp/laws/item/laws014_04_20130517-3w.doc）"
+    },
+    {
+      "id": "env-kuma",
+      "title": "クマに出会わないためにできることや出会ってしまった時の対処について",
+      "publisher": "環境省",
+      "url": "https://www.env.go.jp/nature/choju/effort/effort12/kuma-bunseki-r0804.pdf",
+      "licence": "PDL1.0",
+      "licence_url": "https://www.env.go.jp/mail.html",
+      "attribution": "出典：環境省ホームページ（https://www.env.go.jp/nature/choju/effort/effort12/kuma-bunseki-r0804.pdf）",
+      "skip_headings": [
+        "p.1",
+        "p.2",
+        "p.8",
+        "p.9",
+        "p.10"
+      ],
+      "note": "OCR. p.8 (do / don't table) skipped: OCR mixes the two columns, which turned \"don't\" into \"do\" in spike 2.",
+      "disabled": "OCR of the two-column PDF mixes the columns on several pages (p.6, p.8). Answers inverted advice (\"don't make noise\", \"drop your bag and run\"). Needs a checked text version before use."
+    },
+    {
+      "id": "gov-online-kuma",
+      "title": "クマに出会わないために。知っておきたい対策",
+      "publisher": "政府広報オンライン",
+      "url": "https://www.gov-online.go.jp/article/202609/entry-11625.html",
+      "licence": "PDL1.0",
+      "licence_url": "https://www.gov-online.go.jp/tos/",
+      "attribution": "出典：政府広報オンライン「クマに出会わないために。知っておきたい対策」（https://www.gov-online.go.jp/article/202609/entry-11625.html）を加工して作成",
+      "snapshot": "snapshots/gov-online-entry-11625.txt",
+      "note": "Article text saved from the browser on 2026-11-05 (the site refuses scripted downloads). Photo (環境省) not used."
+    },
+    {
+      "id": "gov-online-yama",
+      "title": "山の事故を防ごう！登山を楽しむために知っておきたい安全対策",
+      "publisher": "政府広報オンライン",
+      "url": "https://www.gov-online.go.jp/article/201407/entry-9829.html",
+      "licence": "PDL1.0",
+      "licence_url": "https://www.gov-online.go.jp/tos/",
+      "attribution": "出典：政府広報オンライン「山の事故を防ごう！登山を楽しむために知っておきたい安全対策」（https://www.gov-online.go.jp/article/201407/entry-9829.html）を加工して作成",
+      "snapshot": "snapshots/gov-online-entry-9829.txt",
+      "note": "Article text saved from the browser on 2026-11-05 (updated 2025-10-28 on the site). Graphs and link lists not used."
+    }
+  ],
+  "alerts": [
+    {
+      "id": "tsunami-go-high",
+      "all": [
+        [
+          "揺れ",
+          "地震"
+        ],
+        [
+          "海",
+          "海岸",
+          "沿岸",
+          "津波",
+          "浜",
+          "河口"
+        ]
+      ],
+      "source": "kantei-tsunami",
+      "text": "強い揺れや弱くても長い揺れを感じたら、また地震を体で感じなくても、「津波警報」等を見聞きしたら、いち早く海岸から離れ、可能な限り高い場所へ避難してください。震源が陸地に近いと津波警報・注意報が津波の襲来に間に合わないことがあります。",
+      "all_en": [
+        [
+          "shak",
+          "quake",
+          "tremor"
+        ],
+        [
+          "sea",
+          "beach",
+          "coast",
+          "tsunami",
+          "ocean",
+          "shore",
+          "river mouth"
+        ]
+      ],
+      "text_en": "If you feel strong shaking, or weak but long shaking, or if you hear a tsunami warning even without feeling an earthquake, leave the coast at once and evacuate to the highest place you can. If the epicentre is close to land, tsunami warnings may come too late.",
+      "text_en_note": "Translation by Lychnion, not an official text."
+    },
+    {
+      "id": "bear-move-slowly",
+      "all": [
+        [
+          "クマ",
+          "熊"
+        ],
+        [
+          "出会",
+          "遭遇",
+          "会った",
+          "会ってしまった",
+          "出くわ"
+        ]
+      ],
+      "all_en": [
+        [
+          "bear"
+        ],
+        [
+          "meet",
+          "met",
+          "encounter",
+          "see ",
+          "saw",
+          "run into",
+          "ran into"
+        ]
+      ],
+      "source": "gov-online-kuma",
+      "text": "クマに出会ってしまったら、クマを見ながら静かにゆっくり移動することが基本です。",
+      "text_en": "If you meet a bear, the basic rule is to move away quietly and slowly while watching the bear.",
+      "text_en_note": "Translation by Lychnion, not an official text."
+    },
+    {
+      "id": "lost-go-back",
+      "all": [
+        [
+          "道に迷",
+          "迷った",
+          "迷子",
+          "道迷い"
+        ],
+        [
+          "山",
+          "登山",
+          "ハイキング",
+          "下山"
+        ]
+      ],
+      "all_en": [
+        [
+          "lost"
+        ],
+        [
+          "hik",
+          "mountain",
+          "trail",
+          "climb"
+        ]
+      ],
+      "source": "gov-online-yama",
+      "text": "もし、道に迷ってしまったら、そのまま下山をするのではなく、元の道に引き返すようにしましょう。",
+      "text_en": "If you get lost, do not keep going down; go back the way you came.",
+      "text_en_note": "Translation by Lychnion, not an official text."
+    }
+  ],
+  "gaps": [
+    "Bears: 環境省 PDF still disabled (OCR); covered by the 政府広報オンライン article instead.",
+    "2026-11-18 clean-up: tsunami warning table cells, a broken avalanche line and the call-taker flowchart lines of the 消防庁 bleeding page dropped. Two typos in the official 政府広報 text kept as quoted (山岳避難 for 山岳遭難, 避難場所 for 遭難場所); the English text reads correctly."
+  ],
+  "synonyms": {
+    "飲み水": [
+      "飲料水"
+    ],
+    "水": [
+      "飲料水"
+    ],
+    "家の中": [
+      "屋内",
+      "家庭"
+    ],
+    "家": [
+      "家庭",
+      "屋内"
+    ],
+    "揺れ": [
+      "地震"
+    ],
+    "持っていく": [
+      "持ち出し",
+      "非常用持ち出し"
+    ],
+    "避難所": [
+      "避難"
+    ],
+    "血": [
+      "出血",
+      "止血"
+    ],
+    "道に迷": [
+      "道迷い",
+      "遭難"
+    ],
+    "クマ": [
+      "熊"
+    ],
+    "雪崩": [
+      "なだれ"
+    ],
+    "仲間": [
+      "流されている人",
+      "巻き込まれた"
+    ]
+  },
+  "skip_headings_all": [
+    "この記事で伝えたいトピックス",
+    "災害関連X（旧Twitter）",
+    "関連お役立ちサイト"
+  ],
+  "drop_lines_containing": [
+    "をYouTubeで再生",
+    "別タブで開きます",
+    "知らせるよう指示する",
+    "口頭指導を中止する",
+    "救急業務のあり方に関する検討会報告書"
+  ],
+  "notice": {
+    "ja": [
+      "避難するかどうかは、自治体の避難情報と気象庁の警報・注意報を優先して判断してください。"
+    ],
+    "en": [
+      "For evacuation, follow your city's evacuation information and the Japan Meteorological Agency's warnings first."
+    ]
+  },
+  "name": {
+    "ja": "防災",
+    "en": "Disasters"
+  },
+  "icon": "health_and_safety",
+  "suggestions": {
+    "ja": [
+      {
+        "icon": "waves",
+        "text": "海の近くで強い揺れを感じたら？"
+      },
+      {
+        "icon": "healing",
+        "text": "けがをして出血しているときは？"
+      },
+      {
+        "icon": "water_drop",
+        "text": "非常用の水はどれくらい必要？"
+      },
+      {
+        "icon": "forest",
+        "text": "山でクマに出会ったら？"
+      }
+    ],
+    "en": [
+      {
+        "icon": "waves",
+        "text": "Strong shaking near the sea: what should I do?"
+      },
+      {
+        "icon": "healing",
+        "text": "How do I stop heavy bleeding?"
+      },
+      {
+        "icon": "water_drop",
+        "text": "How much emergency water do I need?"
+      },
+      {
+        "icon": "forest",
+        "text": "What if I meet a bear in the mountains?"
+      }
+    ]
+  },
+  "drop_lines": [
+    "津波警報・注意報の種類",
+    "予想される津波の高さ",
+    "想定される被害と取るべき行動",
+    "避難のポイント",
+    "数値での発表",
+    "(発表基準)",
+    "巨大地震の",
+    "場合の表現",
+    "大津波警報",
+    "津波警報",
+    "津波注意報",
+    "最大波の高さ",
+    "巨大",
+    "高い",
+    "(表記しない)",
+    "津波の最大波の高さ",
+    "「落石注意」の標識が設置など",
+    "止血法",
+    "参考１－３",
+    "出血（外傷）に関する内容の聴取",
+    "いいえ",
+    "はい",
+    "出血状態の確認",
+    "「出血は止まっていますか？」",
+    "意識・出血状態の継続観察",
+    "≦1m最大波の高さ"
+  ],
+  "drop_lines_matching": [
+    "\\d+(m|cm)\\S*[<≦].*",
+    "10m 超.*"
+  ]
+}

@@ -1,0 +1,15 @@
+name: lychnion_data
+description: Builds, signs and publishes Lychnion's data packages.
+publish_to: 'none'
+
+environment:
+  sdk: ^3.12.2
+
+dependencies:
+  crypto: ^3.0.8
+  # Signed records, the same code the app uses.
+  lychnion_format:
+    git:
+      url: https://github.com/lychnion/lychnion.git
+      path: packages/lychnion_format
+      ref: main

@@ -1,0 +1,236 @@
+{
+ "headings": {
+  "1．ダニ刺咬の予防について": "1. Preventing tick bites",
+  "2．ダニに刺咬された場合の措置について": "2. What to do if a tick bites you",
+  "2．刺されたときの症状": "2. Symptoms after a sting",
+  "3．蜂災害を防ぐには": "3. How to prevent harm from bees and wasps",
+  "Q1 重症熱性血小板減少症候群（severe fever with thrombocytopenia syndrome: SFTS）とはどのような病気ですか？": "Q1 What kind of disease is severe fever with thrombocytopenia syndrome (重症熱性血小板減少症候群, SFTS)?",
+  "Q11 全てのマダニがSFTSウイルスを保有しているのですか？": "Q11 Do all ticks (マダニ) carry the SFTS virus?",
+  "Q12 マダニに刺されたことにより感染する病気は国内に他にありますか？": "Q12 Are there other diseases in Japan that people can get from tick (マダニ) bites?",
+  "Q13 国内で患者が報告された地域以外でも注意が必要ですか？": "Q13 Is caution needed even outside the areas in Japan where patients have been reported?",
+  "Q14 マダニからSFTSウイルスに感染しないようにするためには、どのように予防すればよいですか？": "Q14 How can I prevent infection with the SFTS virus from ticks (マダニ)?",
+  "Q15 マダニに刺されたら、どうすればよいですか？": "Q15 What should I do if a tick (マダニ) bites me?",
+  "Q17 SFTSにかかりやすい、または、重症化しやすい年齢はありますか？": "Q17 Are there ages at which people are more likely to get SFTS, or more likely to become seriously ill?",
+  "Q22 潜伏期間はどのくらいですか？": "Q22 How long is the incubation period?",
+  "Q23 SFTSにかかると、どのような症状が出ますか？": "Q23 What symptoms appear if you get SFTS?",
+  "Q4 ヒトはどのようにしてSFTSウイルスに感染するのですか？": "Q4 How do people become infected with the SFTS virus?",
+  "Q9 マダニは、屋内で普通に見られるダニとは違うのですか？": "Q9 Are ticks (マダニ) different from the mites commonly found indoors?",
+  "「警戒が必要な範囲」と「とるべき防災対応」": "\"Area requiring caution\" (警戒が必要な範囲) and \"disaster-prevention actions to take\" (とるべき防災対応)",
+  "「雷」による災害": "Disasters caused by lightning (雷)",
+  "マダニが媒介する感染症には重症熱性血小板減少症候群（SFTS)・ダニ媒介脳炎・日本紅斑熱・つつが虫病・ライム病などがあります。": "Infectious diseases carried by ticks (マダニ) include severe fever with thrombocytopenia syndrome (重症熱性血小板減少症候群, SFTS), tick-borne encephalitis, Japanese spotted fever, tsutsugamushi disease (scrub typhus) and Lyme disease.",
+  "噴火警戒レベル": "Volcanic alert level (噴火警戒レベル)",
+  "噴火警戒レベルが運用されている火山": "Volcanoes where the volcanic alert level (噴火警戒レベル) is in use",
+  "噴火警戒レベルとは": "What is the volcanic alert level (噴火警戒レベル)?",
+  "噴火速報の概要": "Overview of the eruption bulletin (噴火速報)",
+  "噴火速報の発表": "When eruption bulletins (噴火速報) are issued",
+  "夏場の林業作業で留意すべきものに蜂刺されがあります。刺す蜂の中で怖いのは、スズメバチとアシナガバチです。特にスズメバチは攻撃性も強く、刺された場合、危険な状態に陥ることもあり、注意が必要です。": "Bee and wasp stings are one of the things to watch out for in forestry work in summer. Among the bees and wasps that sting, the ones to fear are hornets (スズメバチ) and paper wasps (アシナガバチ). Hornets in particular are also highly aggressive, and a sting can sometimes put a person in a dangerous condition, so caution is needed.",
+  "急な大雨や雷・竜巻から身を守るために ～積乱雲が近づいてきたら･･･～": "Protecting yourself from sudden heavy rain, lightning and tornadoes: when a cumulonimbus cloud is approaching...",
+  "急な大雨や雷・竜巻から身を守るために ～積乱雲が近づくサインを見逃さない～": "Protecting yourself from sudden heavy rain, lightning and tornadoes: do not miss the signs of an approaching cumulonimbus cloud",
+  "熱中症はどのようにして起こるのか？": "How does heat illness (熱中症) happen?",
+  "熱中症を予防するにはどうしたらよいの？": "How can I prevent heat illness (熱中症)?",
+  "熱中症を引き起こす３つの要因": "3 factors that cause heat illness (熱中症)",
+  "積乱雲が近づくサイン": "Signs of an approaching cumulonimbus cloud",
+  "積乱雲の外観": "What cumulonimbus clouds look like",
+  "重症熱性血小板減少症候群（SFTS）に関するＱ＆Ａ": "Q&A on severe fever with thrombocytopenia syndrome (重症熱性血小板減少症候群, SFTS)",
+  "Ｑ１．どの火山を対象に噴火速報を発表するのですか。": "Q1. For which volcanoes are eruption bulletins (噴火速報) issued?",
+  "Ｑ２．常時観測火山以外の活火山では発表しないのですか。": "Q2. Are eruption bulletins not issued for active volcanoes other than continuously monitored volcanoes?",
+  "Ｑ３．噴火警戒レベルの引上げや警戒が必要な範囲の拡大を検討する規模の噴火とは、どういった噴火でしょうか。": "Q3. What is an eruption of a size that leads to considering raising the volcanic alert level (噴火警戒レベル) or widening the area requiring caution?",
+  "Ｑ４．山が見えなくても噴火速報は発表されるのでしょうか。": "Q4. Is an eruption bulletin (噴火速報) issued even if the mountain cannot be seen?",
+  "Ｑ５．噴火速報の発表はどのようにして知ることができるのでしょうか。": "Q5. How can I find out that an eruption bulletin (噴火速報) has been issued?",
+  "Ｑ６．噴火速報の発表を知ったらどのような対応をとればよいのでしょうか。": "Q6. What should I do when I learn that an eruption bulletin (噴火速報) has been issued?"
+ },
+ "passages": {
+  "82764aebb96ef50b": {
+   "text": "June 18, Reiwa 8 (2026)\nOverview of mountain accidents in Reiwa 7 (2025), and related matters\nCommunity Safety Planning Division, Community Safety Bureau, National Police Agency\n1 Overview\n(1) Nationwide situation\nMountain accidents in Reiwa 7 (2025) were as follows:\n- Number of accidents: 3,122 (+176 compared with the previous year)\n- People involved in accidents: 3,623 (+266 compared with the previous year)\nOf these, dead or missing:\n332 (+32 compared with the previous year)\nInjured: 1,480 (+90 compared with the previous year)\nRescued unharmed: 1,811 (+144 compared with the previous year)\nLooking at mountain accidents over the past 10 years, they increased 3 years in a row from Reiwa 2 (2020), decreased in Reiwa 6 (2024), and then increased again in Reiwa 7 (2025).\n(2) Situation by prefecture\nBy prefecture, the most accidents were in Nagano Prefecture (358), followed by Hokkaido (199) and Yamanashi Prefecture (192).\n(3) Situation on the main mountains with many people in accidents\nBy mountain, the number of people in accidents on Mount Fuji, which is famous as a tourist site, decreased. However, the numbers on the Hotaka mountains, Mount Takao and others increased compared with a normal year (the average of the past 5 years).\n2 Characteristics\n(1) By purpose and by type of accident",
+   "reviewed": false
+  },
+  "b4db40072e9e08f2": {
+   "text": "Of the 3,623 people in accidents, by purpose, mountain climbing (including hiking, ski mountaineering, stream climbing and rock climbing) was the largest at 79.1%, followed by gathering wild plants and mushrooms at 6.5%.\nBy type of accident, getting lost was the largest at 30.9%, followed by falling over (転倒) at 19.2% and slipping and falling down a slope (滑落) at 17.3%.\n(2) By age group\nOf the people in accidents, 2,739 people aged 40 or over made up 75.6% of the total, and 1,723 people aged 60 or over made up 47.6% of the total.\nAmong the dead or missing, 304 people aged 40 or over made up 91.6% of the total, and 221 people aged 60 or over made up 66.6% of the total.\n(3) Accidents involving solo climbers\nOf the 1,367 people in solo-climbing accidents (including \"gathering wild plants and mushrooms\", \"sightseeing\" and similar), 209 were dead or missing, which is 15.3%. This is 9.8 points higher than the share of dead or missing among people in accidents while climbing in groups (2 or more people) (5.5%).\n- 1 -\n(4) Accidents involving foreign visitors to Japan",
+   "reviewed": false
+  },
+  "4c5b13f57c82a54a": {
+   "text": "Mountain accidents involving foreign visitors to Japan numbered 174, with 246 people involved (6 of them dead or missing). Both figures are the highest since statistics began in Heisei 30 (2018).\n(5) Use of communication devices\nIn 76.3% of the 3,122 accidents, people used a communication device (a mobile phone, or a radio (including amateur radio)) at the accident site to call for rescue.\n3 Measures to prevent mountain accidents\nMany mountain accidents are caused by a lack of knowledge, experience, fitness and so on, such as poor judgement about the weather, or making plans that are too hard physically with inadequate equipment. To prevent accidents, you need to keep the following points in mind.\n- Make a sound climbing plan and prepare your equipment fully\nChoose a mountain that matches the weather conditions and your fitness, skills, experience, physical condition and so on. Make a safe climbing plan: a schedule with time to spare that includes rest times, with attention to the equipment and food you carry.\nWhen you make a climbing plan, find out in advance about dangerous places, such as places where you could slip and fall, and routes you can use to descend partway if trouble occurs (escape routes).",
+   "reviewed": false
+  },
+  "d5f7176e5f77e3e3": {
+   "text": "Also, always keep up with the latest weather information. Prepare your equipment fully: the gear needed for climbing, such as clothing and climbing boots suited to the climate of the mountain you plan to climb, a helmet, rain gear (rainwear), an emergency shelter (ツェルト, a simple tent), maps (including mountain map apps), a compass and food to eat on the move, as well as communication devices to call for help in case you get into trouble (a mobile phone, a radio, spare batteries and so on).\nA mobile phone with GPS is an effective way to call for rescue, for example because you can tell rescue organizations your current position more quickly. However, on many mountains the area with phone coverage is limited, and you need to watch the remaining battery charge.\nNote that with solo climbing, dealing with trouble is often more difficult than in a group. Keep this in mind, and try to climb with several people, led by a leader you can trust.\n- Submit a climbing plan / climbing notification (登山計画書・登山届)\nA climbing plan / climbing notification, shared in advance with your family, workplace and so on, gives clues for a quick search and rescue if the worst",
+   "reviewed": false
+  },
+  "b6da051fc828ef3b": {
+   "text": "happens. It is also a way to check in advance that your plan has no gaps. Be aware of this. Share the climbing plan / climbing notification (登山計画書・登山届) you made with the people you climb with, your family, your workplace and so on. Also submit it to the prefectural police, local governments and others, using the climbing notification box at the trailhead, the internet or a mountain map app.\n- Preventing getting lost\nLearn how to read a map and how to use a compass. Carry a map, a compass and so on when climbing, and make a point of always checking your position.\n- 2 -\nUsing a mountain map app together with a paper map lets you know your position more accurately, which helps prevent getting lost.\n- Preventing slipping and falling (滑落・転落)\nUse regularly maintained equipment, such as climbing boots, an ice axe, crampons and trekking poles, correctly according to the conditions of the climb. Always act carefully, without letting your guard down.\nWhen you pass places where you could slip or fall, always wear a helmet to protect yourself against slipping, falling and rockfall from above.\n- Correct judgement of the situation",
+   "reviewed": false
+  },
+  "1945bc28486d07c3": {
+   "text": "Lightning (雷) can strike anywhere, whether on the sea, on plains or in the mountains, depending on where the cumulonimbus cloud is.\nAlso, if a person is near a tree or similar object that is struck by lightning, the lightning may jump from the tree to the person (this is called a \"side flash\" (側撃雷)).\nIf you hear thunder in the distance, you are already in danger. Lightning could strike where you are at any moment.",
+   "reviewed": false
+  },
+  "a949931c729c5bef": {
+   "text": "When you are outdoors, it is important to check weather information often, always pay attention to changes in the sky, and not miss the signs that a cumulonimbus cloud is approaching.",
+   "reviewed": false
+  },
+  "1ddfe9399601c014": {
+   "text": "If you notice changes like the following, they are signs that a cumulonimbus cloud is approaching.\nHeavy rain and lightning will come soon. There is also a risk of violent gusts of wind, such as tornadoes.\nPitch-black clouds are coming closer\nYou can hear thunder\nA cold wind has suddenly started to blow",
+   "reviewed": false
+  },
+  "2a9d24b289166a46": {
+   "text": "If you notice the signs of an approaching cumulonimbus cloud, move to a safe place quickly.\nViolent weather from a single cumulonimbus cloud often weakens within about 30 minutes to 1 hour. So check the situation with the nowcast (ナウキャスト), and wait in a safe place for the cumulonimbus cloud to pass.\nDisasters are not something that \"surely won't happen\" but something that \"will happen some day\", so do not let your guard down. People tend to think in ways that suit themselves, such as \"it's probably fine\" or \"I'll be fine\" (normalcy bias, 正常化の偏見). When it matters, throw away such thoughts and put safety first.",
+   "reviewed": false
+  },
+  "a4770c9fd0165383": {
+   "text": "The conditions that cause heat illness (熱中症) are thought to come from the \"environment\", the \"body\" and \"behaviour\".\n\"Environment\" factors include high temperature, high humidity and weak wind.\n\"Body\" factors include a large amount of heat being produced in the body by hard work or exercise, and the body not being able to adapt well enough to a hot environment.\nAs a result, heat illness may occur.\nNormally, when body temperature rises, the human body lets heat escape outside through sweat and a rise in skin temperature, so body temperature is regulated naturally",
+   "reviewed": false
+  },
+  "b72855568e8b8be3": {
+   "text": "- Factor 1: Environment\n- Factor 2: Body\n- Factor 3: Behaviour\nWhen the balance between the rise in body temperature and the body's temperature-regulating function breaks down, heat builds up in the body more and more.\nThis condition is heat illness (熱中症).",
+   "reviewed": false
+  },
+  "cf1828e0bf96ec6b": {
+   "text": "Get your body used to the heat gradually, without overdoing it\nMeasure the temperature indoors too\nBe especially careful when you feel unwell",
+   "reviewed": false
+  },
+  "ea22dc99eb880090": {
+   "text": "A SFTS is an infectious disease caused by the SFTS virus, which is carried by ticks (マダニ). The main early symptoms are fever, general fatigue and digestive symptoms (loss of appetite, nausea, vomiting, diarrhoea, abdominal pain). It may become severe and may lead to death.",
+   "reviewed": false
+  },
+  "f7393c76c9c27cad": {
+   "text": "A In most cases, people are infected by being bitten by a tick (マダニ) that carries the virus. There are also reports of the SFTS virus being found in the blood of wild animals and of animals such as cats and dogs, and cases thought to have been infected through contact with cats or dogs infected with the SFTS virus have also been reported. Outside Japan, cases of human-to-human infection, thought to be caused by direct contact with a patient's blood or secretions, have been reported for some time. In March 2024, the first case of human-to-human infection in Japan (patient to healthcare worker) was reported.",
+   "reviewed": false
+  },
+  "9cd23bf28c2dee2a": {
+   "text": "A Ticks (マダニ) are a different kind from the mites that live in homes, such as flour mites (コナダニ) that appear in food and dust mites (ヒョウヒダニ) that appear in clothing and bedding. They are also different from spider mites (ハダニ), which are plant pests.\nTicks are relatively large mites covered with a hard outer skin (it depends on the species, but adults are 3 to 8 mm before feeding on blood and about 10 to 20 mm after). They live mainly in forests and grassland, but they also live in suburbs and urban areas.",
+   "reviewed": false
+  },
+  "e7d317692b085c7c": {
+   "text": "A Not all ticks (マダニ) carry the SFTS virus. A survey in China reported that SFTS virus genes were found in a few percent of Asian longhorned ticks (フタトゲチマダニ) living in areas where patients occur. In Japan, SFTS virus genes have so far been detected in several tick species. The rate of ticks carrying the virus differs by region and season, but it is 0 to a few percent.",
+   "reviewed": false
+  },
+  "5525894f5ed2ed8e": {
+   "text": "A Many infectious diseases, such as Japanese spotted fever and Lyme disease, are known to be carried by ticks (マダニ). In Hokkaido, patients with tick-borne encephalitis, which is carried by ticks, have been reported. There is also tsutsugamushi disease (scrub typhus), which is carried by chiggers (ツツガムシ), a kind of mite.",
+   "reviewed": false
+  },
+  "ae713610ac92ae6c": {
+   "text": "A SFTS patients had been reported mainly in western Japan, but in 2025, cases of infection in the Kanto region and Hokkaido were reported. For this reason, there is thought to be a risk of infection throughout the country, and caution is needed even in areas where no SFTS patients have been confirmed.",
+   "reviewed": false
+  },
+  "e8a5ee23ddd9302b": {
+   "text": "A It is important not to get bitten by ticks (マダニ). The risk of tick bites rises especially from spring to autumn, when ticks are most active. When you enter places where many ticks live, such as grassy areas and thickets, it is important to expose as little skin as possible: wear long sleeves and long trousers (tuck your shirt into your trousers, and tuck the bottoms of your trousers into your socks or boots, or wear hiking gaiters), shoes that fully cover your feet (avoid sandals and similar), a hat and gloves, and wrap a towel around your neck, and so on. Light-coloured clothing is recommended (it makes ticks easier to see). Some insect repellents containing DEET (ディート) or icaridin (イカリジン) are the type used over clothing, and they are said to have a supplementary effect. Also, after outdoor activities, take a bath and check that no ticks have bitten you. Check especially the neck, ears, armpits, groin, wrists and the backs of the knees. If a tick is feeding on your blood, do not try to pull it out by force. See a doctor, such as a dermatologist, and have the tick removed.",
+   "reviewed": false
+  },
+  "1ccc0d4284fe9e45": {
+   "text": "A When most ticks (マダニ) attach to a person or animal, they firmly insert their mouthparts into the skin and feed on blood for a long time (from several days to, in long cases, 10 days or more). However, it is said that people often do not notice that they have been bitten. If you notice a tick feeding on your blood, trying to pull it out by force may leave part of the tick in the skin and cause festering (pus), or may push the tick's body fluids back into you and make it easier for pathogens to enter your body. So have it treated (tick removal, cleaning and so on) at a medical facility (such as a dermatologist). Also, after a tick bite, watch for changes in your health for about several weeks. If symptoms such as fever appear, see a doctor at a medical facility promptly. When you do, tell the doctor that a tick bit you.",
+   "reviewed": false
+  },
+  "71ce710d223843db": {
+   "text": "A The SFTS patients confirmed in Japan so far have been aged from 5 years to their 90s, and about 90% of all patients are aged 60 or over. Many of the patients who died were aged 50 or over, so older people are thought to be more likely to become seriously ill.",
+   "reviewed": false
+  },
+  "067703af8871aff6": {
+   "text": "A It is said to be about 6 days to 2 weeks (after a tick bite). In cases of human-to-human infection (infection from a patient to a healthcare worker) or infection from a cat bite, the incubation period may be shorter.",
+   "reviewed": false
+  },
+  "cc8240509bbb837f": {
+   "text": "A Fever and digestive symptoms (loss of appetite, nausea, vomiting, diarrhoea, abdominal pain) appear. Sometimes headache, muscle pain, neurological symptoms (impaired consciousness, seizures, coma), swollen lymph nodes, symptoms of respiratory failure, and bleeding symptoms (purple spots on the skin (purpura), blood in the stool) appear.",
+   "reviewed": false
+  },
+  "5f814205fb69458f": {
+   "text": "Ticks (マダニ) are found throughout Japan. When working in forests and similar places, please pay attention to the following points.",
+   "reviewed": false
+  },
+  "0555ce9f13949dc9": {
+   "text": "A. Clothing\n(a) Avoid exposing your skin.\n(b) Wear long sleeves, long trousers, long socks and so on. Wear clothes that close well at the cuffs and hems, so that ticks cannot get in at the collar, cuffs or hems.\n(c) Carry tick repellent as needed, and use it.\nEspecially when entering forests in the tick active season (spring to autumn), use tick repellent.\nHowever, do not rely too much on repellent. Combine it with other preventive measures.\nB. Measures during and after work, etc.\n(a) During breaks and rest times, pat your clothes to knock ticks off.\nAlso, take steps such as using a mat, and try not to sit directly on the ground.\n(b) At the end of work, check each other's clothing (including the head, inside and behind the ears, and around the neck) for ticks.",
+   "reviewed": false
+  },
+  "8a56529420ded92c": {
+   "text": "(c) After returning home, when bathing and so on, check for ticks or bite marks on the places where bites are common: the head (in the hair), inside and behind the ears, around the neck, the armpits, the groin, the inner thighs, the backs of the knees and so on.\nC. Other\nDo not touch wild animals and similar animals directly.\nA vaccine to prevent tick-borne encephalitis has also been approved.",
+   "reviewed": false
+  },
+  "29da33608ba5cae0": {
+   "text": "A. What to do when a tick bites you\nDo not try to pull it out by force. Have it treated (tick removal, cleaning and so on) at a medical facility (such as a dermatologist).\nB. What to do if you feel unwell\nIf symptoms appear that may be early symptoms of an infection (headache, fever and so on), get care and treatment at a medical facility.\nC. Watching your health afterwards\nFor about several weeks, watch for changes in your health. If you notice symptoms such as fever, see a doctor at a medical facility.",
+   "reviewed": false
+  },
+  "d5ea9648f6d01e25": {
+   "text": "In Japan, the number of deaths from bee and wasp stings was 18 in Reiwa 6 (2024). Among forestry workers, the number of deaths had been 0 since Heisei 26 (2014), but in Reiwa 5 (2023) the number of deaths was 2 (Figure 1).\n1. How bees and wasps attack\nBees and wasps do not suddenly attack people at random. Taking hornets (スズメバチ) as an example, there are the following 4 stages.\n(a) Watching when someone approaches the nest\nThe hornets at the nest entrance or on its surface watch the approaching person or animal closely, while some leave the nest and fly around the area.\n(b) Threatening when someone approaches the nest\nHornets that left the nest to keep watch approach the person or animal, make a high-pitched buzzing sound, and fly around them up and down and side to side, as if clinging to them.\n(c) Attack in response to indirect disturbance of the nest\nIf you ignore the hornets' threats or do not notice them, or if the nest is shaken, for example, many hornets fly out of the nest in a great commotion. At such times, in addition to the threatening hornets, more and more fly out of the nest one after another, fly straight at the target and sting with their venomous stingers.",
+   "reviewed": false
+  },
+  "78efe5ad7bff66ca": {
+   "text": "(d) Attack in response to direct disturbance of the nest\nIf the nest is disturbed directly or damaged, for example, many hornets fly out of the nest all at once, fly at the target suddenly without any threat display, and sting immediately.",
+   "reviewed": false
+  },
+  "b1e815ddbeb6e371": {
+   "text": "The symptoms of a bee or wasp sting include local symptoms, which appear around the sting site, and whole-body symptoms, which appear not only at the sting site but throughout the body.\nAmong whole-body symptoms, there are cases where it becomes hard even to breathe, the person cannot swallow, the voice becomes hoarse, the whole body loses strength and consciousness fades. In such cases, emergency measures must be taken without a moment's delay.",
+   "reviewed": false
+  },
+  "4ef835391cea272d": {
+   "text": "The eruption bulletin (噴火速報) is information that tells climbers and nearby residents that an eruption has occurred. It is issued to tell people briefly and as early as possible that a volcano has erupted, so that they can take action to protect themselves.\nTo report promptly the fact that an eruption has occurred, it contains only the volcano name and the time of the eruption. An example of the information issued is shown below.\nVolcano name: ○○-san Eruption bulletin\nIssued by the Japan Meteorological Agency: year Reiwa △△, month △△, day △△, △△:△△\n** (Headline) **\n<Eruption has occurred at ○○-san>\n** (Main text) **\nAn eruption occurred at ○○-san at around △△:△△ on year Reiwa △△, month △△, day △△.\nCheck the eruption bulletin page for the latest bulletins.",
+   "reviewed": false
+  },
+  "25780a4245662956": {
+   "text": "Eruption bulletins (噴火速報) are issued in cases like the following:\nWhen an eruption occurs at a continuously monitored volcano for which no eruption warning (噴火警報) has been issued\nWhen, at a continuously monitored volcano for which an eruption warning has been issued, an eruption occurs of a size that leads to considering raising the volcanic alert level (噴火警戒レベル) or widening the area requiring caution (*)\nIn addition, when it is judged that the impact on society is large and the occurrence of the eruption needs to be reported promptly\n(*) If the size of the eruption cannot be confirmed, the bulletin is issued.\nTo confirm that an eruption has occurred, the Japan Meteorological Agency uses not only the data it uses for monitoring but also reports from related organizations and others.",
+   "reviewed": false
+  },
+  "2e7e465e2e7a5470": {
+   "text": "A1. The main targets are continuously monitored volcanoes, where an eruption can be detected through observation with surveillance cameras, seismometers, infrasound sensors (空振計) and so on.",
+   "reviewed": false
+  },
+  "cf42d61ee7ba99c9": {
+   "text": "A2. For active volcanoes other than continuously monitored volcanoes, an eruption bulletin (噴火速報) is issued when an eruption is confirmed through reports from related organizations and others, and it is judged that the eruption needs to be reported promptly, for example because only a short time has passed since the eruption.",
+   "reviewed": false
+  },
+  "d5fb64a8b20ddfc6": {
+   "text": "A3. It is an eruption that has effects, or may have effects, beyond the area requiring caution. For example, it also includes cases where the effects of an eruption whose size cannot be confirmed because of clouds or similar, or a pyroclastic flow that is flowing down, are thought to go beyond the area requiring caution. Note that even when the effects do not go beyond the area requiring caution, an eruption bulletin (噴火速報) may be issued when an eruption occurs that raises the volcanic alert level (噴火警戒レベル) from 4 to 5.",
+   "reviewed": false
+  },
+  "cf2f77117a272d00": {
+   "text": "A4. Even when the volcano cannot be monitored with surveillance cameras because of bad weather or similar, if an eruption can be estimated from seismometer or infrasound sensor (空振計) data, the bulletin is issued saying \"an eruption appears to have occurred\" (噴火したもよう).",
+   "reviewed": false
+  },
+  "3d3af9af7f7bb2b4": {
+   "text": "A5. You can find out from the Japan Meteorological Agency website, TV, radio and so on. For details, see \"How to find out about eruption bulletins\" below.",
+   "reviewed": false
+  },
+  "50569ca45150c2d4": {
+   "text": "A6. It depends on the situation at the time, but take action to protect yourself, such as descending the mountain immediately, taking refuge in a shelter or mountain evacuation hut (避難小屋), hiding behind nearby rocks, or not entering the mountain and moving away from it.",
+   "reviewed": false
+  },
+  "b8b64e0a04c8eb4d": {
+   "text": "Under the \"Act on Special Measures for Active Volcanoes\" (活動火山対策特別措置法), which sets out basic guidelines and other matters for promoting active volcano measures comprehensively across the whole country, the prefecture and municipalities local to each volcano set up a volcanic disaster prevention council (火山防災協議会; made up of the prefecture, municipalities, the meteorological office, erosion control (sabo) departments, the Self-Defense Forces, police, fire services, volcano experts and others). In normal times, they jointly study evacuation in case of an eruption.\nAs a result of the joint study in the volcanic disaster prevention council, the timing for starting evacuation and the areas to be evacuated are set according to the state of volcanic activity. The volcanic alert level (噴火警戒レベル) starts operating (is introduced) at volcanoes where the \"area requiring caution\" and the \"disaster-prevention actions to take\" for each volcanic alert level are set out in the municipal and prefectural \"Regional Disaster Management Plans\" (地域防災計画).",
+   "reviewed": false
+  },
+  "95591709f4279ca9": {
+   "text": "At volcanoes where the volcanic alert level (噴火警戒レベル) is in use, the Japan Meteorological Agency states the \"area requiring caution\", attaches the volcanic alert level, and issues eruption warnings and forecasts as one with the local evacuation plans. This is based on the timing for starting evacuation and the areas to be evacuated, as agreed in the volcanic disaster prevention council in normal times. Disaster-management organizations such as municipalities can then quickly take disaster-prevention actions, such as restricting entry to the mountain and issuing evacuation instructions, for the area agreed in advance. This is expected to help reduce eruption disasters.\n* Since December Heisei 19 (2007), the volcanic alert level has been used in place of the volcanic activity level.\nPoints to note when using the volcanic alert level\n- Depending on the state of the volcano, an eruption may occur without any abnormality being observed, and the levels are not necessarily issued step by step in order (the same applies when levels go down).\n- The state of volcanic activity assumed for each level, and the target areas and specific actions for disaster prevention during an eruption and so on, differ by region.",
+   "reviewed": false
+  },
+  "c1dba8e4249a7d2b": {
+   "text": "- Caution is also needed for phenomena not covered by eruption warnings, such as debris flows during rain. In such cases, also pay attention to other information, such as heavy rain information.",
+   "reviewed": false
+  },
+  "4f48a2abc47561d2": {
+   "text": "Note 1: For the main actions of residents and others, and the measures for climbers and people entering the mountain, typical examples are listed.\nNote 2: The target areas for evacuation, evacuation of older people and others (高齢者等避難), and restrictions on entering the mountain are set for each volcano in Regional Disaster Management Plans and similar, through joint study in the volcanic disaster prevention council. However, depending on the state of volcanic activity, the actual target areas may differ from the areas set in advance.\nNote 3: \"Crater\" in the table means the crater where an eruption is expected, or the zone where a crater could appear (expected crater area). For volcanoes where the eruption site (area) cannot be identified in advance, such as the Izu-Tobu Volcanoes (伊豆東部火山群), the \"seismic activity area\" is treated as the expected crater area.\nNote 4: The volcanic alert level leaflets for each volcano show examples of the phenomena expected at each level, such as \"a large eruption in which large volcanic blocks, pyroclastic flows, snowmelt-type volcanic mudflows and so on reach residential areas is imminent or has occurred\" (for volcanic alert level 5).",
+   "reviewed": false
+  },
+  "8274f109ca0ccf57": {
+   "text": "The volcanic alert level (噴火警戒レベル) is in use at 49 of the 51 continuously monitored volcanoes (as of March, Reiwa 8 (2026)).\nIn the future, including other volcanoes as well, related organizations, including the local meteorological office, will work together to set and improve volcanic alert levels (when, from where and who evacuates), through joint study of evacuation plans (when, from where, who, to where and how to evacuate) in the local volcanic disaster prevention councils.",
+   "reviewed": false
+  },
+  "4aef6f0e0d658687": {
+   "text": "When visibility is poor because of fog (ガス) or a snowstorm, or when you feel unwell, you may get lost or lose your calm, and the risk of slipping and falling and similar accidents rises. If you think \"I may be lost\", do not push on blindly. Judge the situation correctly, for example by retracing the path you just walked (your trace) back to the official trail, and try to stop the climb early.\n- Beware of backcountry skiing accidents\nBackcountry skiing needs the same knowledge, skills and equipment as winter mountaineering, so strictly avoid careless actions.\nAlways check the weather, the snow conditions, and the course and terrain you will ski. Prepare thoroughly in advance, including submitting a climbing plan / climbing notification (登山計画書・登山届) and carrying the necessary equipment.",
+   "reviewed": false
+  },
+  "65d44b40d7fbaeed": {
+   "text": "Cumulonimbus clouds have a distinctive appearance. A growing cumulonimbus cloud has a top that billows upward and is shaped like a cauliflower.\nWhen a cumulonimbus cloud develops further, its top spreads out and takes the shape of a mushroom cap.\nA distant cumulonimbus cloud looks bright white when lit by the sun.\nOn the other hand, because cumulonimbus clouds are tall and thick, they block sunlight. For this reason, the base of a cumulonimbus cloud is pitch black and looks ominous.",
+   "reviewed": false
+  },
+  "a0b38d9b30694da6": {
+   "text": "(9th edition, prepared October 7, Reiwa 8 (2026))\nThe tick-borne infectious disease \"severe fever with thrombocytopenia syndrome\" (重症熱性血小板減少症候群, SFTS) occurs in Japan, and in recent years the areas where it has been reported have spread across the whole country. This Q&A explains what is known so far about severe fever with thrombocytopenia syndrome, based on information from overseas and the results of surveys in Japan so far.",
+   "reviewed": false
+  },
+  "28a13e2aff4cb8ac": {
+   "text": "To prevent harm from bees and wasps, the basic rule is, first of all, not to get stung.\nTo avoid being stung, it is important not to go near nests, not to disturb nests with vibration or the like, and not to work near nests, as well as to wear a bee net and carry insecticide spray for bees and wasps.\nWhen working in places where there is a risk of stings, get tested or examined for bee and wasp allergy in advance. Forestry workers who may have a severe allergic reaction need to take measures such as carrying an auto-injector.\n4. Using an auto-injector\nA self-injection kit to prevent anaphylactic shock caused by bee or wasp venom. To use this injector, you need a prescription from a registered doctor in advance.\nInformation on registered doctors and how to buy it can be found on the website of the \"Japan Forestry and Wood Manufacturing Industry Occupational Safety and Health Association\" (林業・木材製造業労働災害防止協会).\nSource: \"Beware of Bees\" (蜂に注意), published by the Japan Forestry and Wood Manufacturing Industry Occupational Safety and Health Association",
+   "reviewed": false
+  },
+  "736c8ae29f8d671a": {
+   "text": "The volcanic alert level (噴火警戒レベル) is an indicator, issued in 5 levels according to the state of volcanic activity, that shows the \"area requiring caution\" and the \"disaster-prevention actions to take\" for disaster-management organizations, residents and others.\nCheck the latest volcanic alert level for each volcano on the \"Eruption warnings page\" (噴火警報のページ).\nFor the volcanic alert levels set for each volcano, see the \"Leaflets for each volcano\" page.",
+   "reviewed": false
+  }
+ }
+}

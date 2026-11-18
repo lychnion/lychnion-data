@@ -9,7 +9,9 @@ This repository holds:
 - the **signed records** of every package version (`records/`),
 - Lychnion's **public key** (`keys/lychnion.pub`),
 - the data files themselves, in the
-  [releases](https://github.com/lychnion/lychnion-data/releases).
+  [releases](https://github.com/lychnion/lychnion-data/releases),
+- what goes into each package and map area, and the tools that build,
+  sign and publish them ("How packages are made" below).
 
 The AI models are not here. The app downloads them from Hugging Face
 (`ggml-org/gemma-4-E2B-it-GGUF`, `ggml-org/gemma-4-E4B-it-GGUF`,
@@ -46,6 +48,12 @@ The private key is never in this repository or on any server.
 ```text
 keys/lychnion.pub                       Lychnion's public key (Ed25519, base64url)
 records/<id>/<version>.json             one signed record per package version
+packages/<id>.json                      what goes into a knowledge package: sources, licences, notice
+packages/snapshots/, translations/      saved source texts; translations (checked by a person)
+maps/<area>.json                        what goes into a map area
+items.json                              every downloadable item (packages, maps, models)
+tool/                                   the tools that build, sign and publish (below)
+build/                                  built files (not in git; published as release assets)
 ```
 
 Each release contains the files that are new in it, and a `catalog.json`
@@ -55,8 +63,45 @@ at
 `https://github.com/lychnion/lychnion-data/releases/latest/download/catalog.json`,
 so the app finds updates without an app update.
 
-Records and catalogs are made with `tool/records.dart` in the app
-repository.
+## How packages are made
+
+The tools moved here from the app repository on 2026-11-18 (as of
+lychnion/lychnion 57bc3bb). They need Python 3 and, for signing, Dart 3.12+.
+On macOS, `.doc` and PDF sources use `textutil` and Swift.
+
+```sh
+# a knowledge package → build/packages/<id>.sqlite
+python3 -I tool/build_package.py packages/jp.bousai.core.json
+python3 -I tool/add_translations.py build/packages/jp.bousai.core.sqlite en
+# optional: vectors made once by the app (phones then skip indexing)
+python3 -I tool/add_vectors.py build/packages/jp.bousai.core.sqlite <cache>.vectors.json embeddinggemma-2-Q8_0.gguf
+
+# a map area → build/maps/ (sites, base map, walking routes, inundation tiles)
+python3 -I tool/build_map.py maps/kushimoto.json
+python3 -m venv build/route-venv
+build/route-venv/bin/pip install osmium pillow pyshp shapely
+build/route-venv/bin/python -I tool/build_routes.py maps/kushimoto.json
+build/route-venv/bin/python -I tool/build_inundation_tiles.py maps/kushimoto.json
+
+# sign the records and write the catalog (key from 1Password, never on disk)
+dart pub get
+op read op://Private/lychnion-package-signing-key/credential \
+  | dart run tool/records.dart sign --key - --items items.json --records records jp.bousai.core
+dart run tool/records.dart catalog --items items.json --records records \
+  --base https://github.com/lychnion/lychnion-data/releases/download/<release>/ \
+  --out build/catalog.json
+```
+
+The top of each tool says more. Records use the format code shared with
+the app (`packages/lychnion_format` in
+[lychnion/lychnion](https://github.com/lychnion/lychnion)); `pubspec.lock`
+pins its commit, `dart pub upgrade lychnion_format` moves it.
+
+**Packages the app ships with.** The app bundles some packages and the
+Nishinomiya evacuation sites, and its own copy of the catalog. After a
+release, copy `build/packages/*.sqlite`, the bundled areas'
+`build/maps/<id>.sites.sqlite` and `build/catalog.json` to the app's
+`assets/packages/`, `assets/maps/` and `assets/downloads/`.
 
 ## Mirrors
 
@@ -208,3 +253,9 @@ where people stay after the danger has passed.
 Lychnion is not yet released; this data is for testing. Do not rely on it
 alone in an emergency. Follow official warnings and your city's
 instructions.
+
+## Licence
+
+The tools in `tool/` are under the GNU AGPL 3.0 ([LICENSE](LICENSE)), as
+the app. The data keeps the licence of each source (see "Sources and
+licences").

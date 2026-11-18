@@ -1,0 +1,352 @@
+{
+  "id": "jp.outdoor.hiking",
+  "title": "登山（基本）",
+  "language": "ja",
+  "version": "2026.11.2",
+  "note": "First outdoor package: getting lost, lightning, heat, ticks, hornets and volcanoes, from national government pages under PDL1.0. Bears and the 政府広報 mountain article stay in jp.bousai.core.",
+  "sources": [
+    {
+      "id": "npa-sounan-gaikyou-r07",
+      "title": "令和７年における山岳遭難の概況等",
+      "publisher": "警察庁",
+      "url": "https://www.npa.go.jp/publications/statistics/safetylife/r07_sangakusounan_gaikyou.pdf",
+      "licence": "PDL1.0",
+      "licence_url": "https://www.npa.go.jp/rules/index.html",
+      "attribution": "出典：警察庁ウェブサイト（https://www.npa.go.jp/publications/statistics/safetylife/r07_sangakusounan_gaikyou.pdf）",
+      "own_skip_headings_only": true,
+      "min_japanese_ratio": 0.6,
+      "end_marker": "注：％は、小数点以下",
+      "note": " Only the prevention text: everything from the first statistics note on is left out."
+    },
+    {
+      "id": "jma-kaminari-higai",
+      "title": "「雷」による災害",
+      "publisher": "気象庁",
+      "url": "https://www.jma.go.jp/jma/kishou/know/tenki_chuui/tenki_chuui_p4.html",
+      "licence": "PDL1.0",
+      "licence_url": "https://www.jma.go.jp/jma/kishou/info/coment.html",
+      "attribution": "出典：気象庁ホームページ（https://www.jma.go.jp/jma/kishou/know/tenki_chuui/tenki_chuui_p4.html）",
+      "drop_lines_containing": [
+        "※",
+        "写真提供"
+      ],
+      "note": "Lines marked ※ are from a 日本大気電気学会 booklet (third party): dropped.",
+      "skip_headings": [
+        "落雷による災害例"
+      ]
+    },
+    {
+      "id": "jma-sekiranun-sign",
+      "title": "積乱雲が近づくサインを見逃さない",
+      "publisher": "気象庁",
+      "url": "https://www.jma.go.jp/jma/kishou/know/tenki_chuui/tenki_chuui_p8.html",
+      "licence": "PDL1.0",
+      "licence_url": "https://www.jma.go.jp/jma/kishou/info/coment.html",
+      "attribution": "出典：気象庁ホームページ（https://www.jma.go.jp/jma/kishou/know/tenki_chuui/tenki_chuui_p8.html）"
+    },
+    {
+      "id": "jma-sekiranun-hinan",
+      "title": "積乱雲が近づいてきたら…",
+      "publisher": "気象庁",
+      "url": "https://www.jma.go.jp/jma/kishou/know/tenki_chuui/tenki_chuui_p9.html",
+      "licence": "PDL1.0",
+      "licence_url": "https://www.jma.go.jp/jma/kishou/info/coment.html",
+      "attribution": "出典：気象庁ホームページ（https://www.jma.go.jp/jma/kishou/know/tenki_chuui/tenki_chuui_p9.html）"
+    },
+    {
+      "id": "wbgt-heatillness",
+      "title": "熱中症の予防方法と対処方法",
+      "publisher": "環境省",
+      "url": "https://www.wbgt.env.go.jp/heatillness.php",
+      "licence": "PDL1.0",
+      "licence_url": "https://www.wbgt.env.go.jp/tos.php",
+      "attribution": "出典：環境省熱中症予防情報サイト（https://www.wbgt.env.go.jp/heatillness.php）",
+      "end_marker": "全国の暑さ指数(WBGT)",
+      "skip_headings": [
+        "熱中症対策関連情報"
+      ]
+    },
+    {
+      "id": "mhlw-sfts-qa",
+      "title": "重症熱性血小板減少症候群（SFTS）に関するQ&A",
+      "publisher": "厚生労働省",
+      "url": "https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/kenkou/kekkaku-kansenshou19/sfts_qa.html",
+      "licence": "PDL1.0",
+      "licence_url": "https://www.mhlw.go.jp/chosakuken/index.html",
+      "attribution": "出典：厚生労働省ホームページ（https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/kenkou/kekkaku-kansenshou19/sfts_qa.html）",
+      "skip_heading_prefixes": [
+        "Q2 ",
+        "Q3 ",
+        "Q5 ",
+        "Q6 ",
+        "Q7 ",
+        "Q8 ",
+        "Q10 ",
+        "Q16 ",
+        "Q18 ",
+        "Q19 ",
+        "Q20 ",
+        "Q21 ",
+        "Q24 ",
+        "Q25 ",
+        "Q26 ",
+        "Q27 ",
+        "Q28 ",
+        "Q29 ",
+        "Q30 ",
+        "Q31 ",
+        "Q32 ",
+        "Q33 ",
+        "Q34 ",
+        "Q35 ",
+        "Q36 ",
+        "Q37 ",
+        "Q36  ",
+        "Q36"
+      ]
+    },
+    {
+      "id": "rinya-dani",
+      "title": "森林内等の作業におけるダニ刺咬予防対策",
+      "publisher": "林野庁",
+      "url": "https://www.rinya.maff.go.jp/j/routai/anzen/daniyoboutaisaku.html",
+      "licence": "PDL1.0",
+      "licence_url": "https://www.maff.go.jp/j/use/link.html",
+      "attribution": "出典：林野庁ホームページ（https://www.rinya.maff.go.jp/j/routai/anzen/daniyoboutaisaku.html）",
+      "end_marker": "トップページへ"
+    },
+    {
+      "id": "rinya-hachi",
+      "title": "蜂刺され災害を防ごう",
+      "publisher": "林野庁",
+      "url": "https://www.rinya.maff.go.jp/j/routai/anzen/yonn.html",
+      "licence": "PDL1.0",
+      "licence_url": "https://www.maff.go.jp/j/use/link.html",
+      "attribution": "出典：林野庁ホームページ（https://www.rinya.maff.go.jp/j/routai/anzen/yonn.html）",
+      "end_marker": "トップページへ"
+    },
+    {
+      "id": "jma-funka-sokuho",
+      "title": "噴火速報の説明（Q&A含む）",
+      "publisher": "気象庁",
+      "url": "https://www.jma.go.jp/jma/kishou/know/kazan/funkasokuho/funkasokuho_toha.html",
+      "licence": "PDL1.0",
+      "licence_url": "https://www.jma.go.jp/jma/kishou/info/coment.html",
+      "attribution": "出典：気象庁ホームページ（https://www.jma.go.jp/jma/kishou/know/kazan/funkasokuho/funkasokuho_toha.html）"
+    },
+    {
+      "id": "jma-kazan-level",
+      "title": "噴火警戒レベルの説明",
+      "publisher": "気象庁",
+      "url": "https://www.jma.go.jp/jma/kishou/know/kazan/level_toha/level_toha.html",
+      "licence": "PDL1.0",
+      "licence_url": "https://www.jma.go.jp/jma/kishou/info/coment.html",
+      "attribution": "出典：気象庁ホームページ（https://www.jma.go.jp/jma/kishou/know/kazan/level_toha/level_toha.html）"
+    }
+  ],
+  "alerts": [
+    {
+      "id": "thunder-already-danger",
+      "all": [
+        [
+          "雷"
+        ]
+      ],
+      "source": "jma-kaminari-higai",
+      "text": "遠くで雷の音がしたら、すでに危険な状況です。",
+      "all_en": [
+        [
+          "thunder",
+          "lightning"
+        ]
+      ],
+      "text_en": "If you hear thunder in the distance, you are already in danger.",
+      "text_en_note": "Translation by Lychnion, not an official text."
+    },
+    {
+      "id": "storm-shelter-now",
+      "all": [
+        [
+          "積乱雲",
+          "雷雲",
+          "黒い雲",
+          "入道雲",
+          "夕立",
+          "雷"
+        ]
+      ],
+      "source": "jma-sekiranun-hinan",
+      "text": "積乱雲が近づくサインに気づいたら、速やかに安全な場所に避難しましょう。",
+      "all_en": [
+        [
+          "thunderstorm",
+          "storm cloud",
+          "dark cloud",
+          "black cloud",
+          "cumulonimbus",
+          "thunder",
+          "lightning"
+        ]
+      ],
+      "text_en": "When you notice signs that a thunderstorm is coming, move to a safe place at once.",
+      "text_en_note": "Translation by Lychnion, not an official text."
+    }
+  ],
+  "gaps": [
+    "Hypothermia (低体温症) and マムシ: no national-government page with reuse terms found (2026-11-17).",
+    "夏山登山の警告文 (山岳遭難対策中央協議会, on mext.go.jp): good content, licence to be confirmed (council has private members).",
+    "気象庁「雷から身を守るには」: main text quoted from 日本大気電気学会, not used.",
+    "Getting lost: no own safety line; jp.bousai.core's lost-go-back (政府広報) already says the same.",
+    "2026-11-18 clean-up: statistics table fragment, image captions, web-only links, the ministry phone number and an image licence note dropped."
+  ],
+  "synonyms": {
+    "迷": [
+      "道迷い",
+      "引き返"
+    ],
+    "道が分から": [
+      "道迷い"
+    ],
+    "雷": [
+      "落雷",
+      "積乱雲"
+    ],
+    "かみなり": [
+      "雷",
+      "落雷"
+    ],
+    "蜂": [
+      "ハチ",
+      "スズメバチ"
+    ],
+    "ハチ": [
+      "蜂",
+      "スズメバチ"
+    ],
+    "刺され": [
+      "刺咬",
+      "刺傷"
+    ],
+    "ダニ": [
+      "マダニ",
+      "刺咬"
+    ],
+    "暑": [
+      "熱中症"
+    ],
+    "噴火": [
+      "噴火速報",
+      "噴火警戒レベル"
+    ],
+    "火山": [
+      "噴火",
+      "噴火警戒レベル"
+    ],
+    "登山届": [
+      "登山計画書"
+    ],
+    "遭難": [
+      "山岳遭難",
+      "救助"
+    ]
+  },
+  "min_japanese_ratio": 0.5,
+  "skip_headings_all": [
+    "",
+    "関連リンク",
+    "関連リンク等",
+    "4．参考資料",
+    "3．啓発ツールについて",
+    "キチマダニ",
+    "噴火速報の発表を知るには"
+  ],
+  "drop_lines_containing": [
+    "ダイヤルイン",
+    "公式SNS",
+    "受付電話",
+    "Adobe Reader",
+    "注：％は",
+    "合計の数字と内訳",
+    "こちらのページ",
+    "Yahoo!ニュース制作図解",
+    "林政部経営課"
+  ],
+  "drop_lines": [
+    "急な大雨や雷・竜巻から身を守るために",
+    "積乱雲の基礎知識",
+    "積乱雲って どんな雲？",
+    "積乱雲に伴う現象と災害",
+    "「急な大雨」による災害",
+    "「雷」による災害",
+    "「竜巻」による災害",
+    "災害から身を守るためには",
+    "気象情報をこまめに確認する",
+    "気象情報を入手するには",
+    "積乱雲が近づくサインを見逃さない",
+    "積乱雲が近づいてきたら･･･",
+    "参考リンク集",
+    "雷について",
+    "落雷のようす",
+    "成長しつつある積乱雲",
+    "発達した積乱雲",
+    "積乱雲の底",
+    "関連リンク集",
+    "お問合せ先",
+    "構成比",
+    "発生件 数（ 件）",
+    "- 3 -",
+    "表１ 概要",
+    "遭難者数 (人）",
+    "農林水産省"
+  ],
+  "notice": {
+    "ja": [
+      "登山計画や、天気・火山・登山道の状況の判断の代わりにはなりません。出発前に最新の公式情報を確認してください。",
+      "雪崩の危険度の判断には使えません。"
+    ],
+    "en": [
+      "Not a substitute for planning your hike or judging weather, volcanoes and trail conditions. Check current official information before you go.",
+      "Not suitable for judging avalanche risk."
+    ]
+  },
+  "name": {
+    "ja": "登山",
+    "en": "Hiking"
+  },
+  "icon": "hiking",
+  "suggestions": {
+    "ja": [
+      {
+        "icon": "thunderstorm",
+        "text": "山で雷が鳴ってきたら？"
+      },
+      {
+        "icon": "bug",
+        "text": "マダニに刺されたら？"
+      },
+      {
+        "icon": "volcano",
+        "text": "噴火速報が出たら？"
+      }
+    ],
+    "en": [
+      {
+        "icon": "thunderstorm",
+        "text": "Thunder in the mountains: what should I do?"
+      },
+      {
+        "icon": "bug",
+        "text": "What should I do after a tick bite?"
+      },
+      {
+        "icon": "volcano",
+        "text": "What should I do after an eruption alert?"
+      }
+    ]
+  },
+  "drop_lines_matching": [
+    "(令和|平成)[\\d０-９元]+年(\\s*(令和|平成)[\\d０-９元]+年)*\\s*",
+    "担当者：.*",
+    "代表：03-.*"
+  ]
+}

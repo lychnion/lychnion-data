@@ -1,0 +1,597 @@
+{
+ "headings": {
+  "1. 除雪中の事故と「命を守る除雪中の事故防止10箇条」": "1. Accidents while clearing snow and the \"10 rules for preventing accidents while clearing snow, to protect your life\"",
+  "「いつもの道」でも油断は禁物": "Do not let your guard down, even on your \"usual route\"",
+  "「山の事故」の現状": "The current situation of \"mountain accidents\"",
+  "「長周期地震動」とは何か": "What is \"long-period ground motion\" (長周期地震動)?",
+  "こんなときは路面の凍結に注意！": "Watch out for icy roads at these times!",
+  "こんなところでは路面の凍結に注意！": "Watch out for icy roads in these places!",
+  "ご家族同士の安否確認方法、決まっていますか？": "Have you and your family decided how to confirm each other's safety?",
+  "まとめ": "Summary",
+  "もしものために「津波標識」の確認を！": "Check the \"tsunami signs\" (津波標識) in case of emergency!",
+  "クマと人との間に遮蔽物を挟む": "Put a barrier between the bear and you",
+  "クマに出会ってしまったら―身を守る行動": "If you meet a bear: actions to protect yourself",
+  "クマに出会わないために。知っておきたい対策": "Avoiding bears: measures you should know",
+  "クマに出会わないための対策": "Measures to avoid meeting bears",
+  "クマに襲われそうになった場合の最終手段「防御姿勢」": "The last resort if a bear is about to attack you: the \"defensive position\"",
+  "クマの目撃・遭遇の際は自治体や警察へ連絡": "If you see or meet a bear, contact the municipality or the police",
+  "クマ撃退スプレーを適切に使う": "Use bear repellent spray properly",
+  "万が一、雪崩発生の場に遭遇したら？": "What if you are caught where an avalanche happens?",
+  "万一、遭難したときは？": "What if you get lost or stranded in the mountains?",
+  "人が大勢いる施設（大規模店舗などの集客施設）にいるとき": "When you are in a facility with many people (large stores and other crowded facilities)",
+  "備蓄しておきたいもの": "Things to stock up on",
+  "北海道・三陸沖後発地震注意情報とは？": "What is the Hokkaido/Sanriku Subsequent Earthquake Advisory (北海道・三陸沖後発地震注意情報)?",
+  "千島海溝地震、日本海溝地震の被害想定": "Damage estimates for Kuril Trench and Japan Trench earthquakes",
+  "南海トラフ地震とは？": "What is the Nankai Trough earthquake?",
+  "南海トラフ地震の被害想定": "Damage estimates for the Nankai Trough earthquake",
+  "南海トラフ地震への備え": "Preparing for the Nankai Trough earthquake",
+  "南海トラフ地震臨時情報と取るべき行動": "Nankai Trough Earthquake Extra Information (南海トラフ地震臨時情報) and the action to take",
+  "南海トラフ巨大地震の津波高：津波ケース①": "Tsunami heights for the huge Nankai Trough earthquake: tsunami case ①",
+  "噴火警戒レベル5段階と取るべき行動": "The 5 volcanic alert levels (噴火警戒レベル) and the action to take",
+  "噴火警戒レベル別の行動と火山灰から身を守る方法": "Actions for each volcanic alert level (噴火警戒レベル) and how to protect yourself from volcanic ash",
+  "噴火速報とは": "What is an eruption bulletin (噴火速報)?",
+  "地図、コンパス": "Map and compass",
+  "地震": "Earthquakes",
+  "地震で起こる被害と二次災害": "Damage caused by earthquakes and secondary disasters",
+  "地震で起こる身近な影響": "Everyday effects of earthquakes",
+  "地震発生時の身の守り方（場所別の行動）": "How to protect yourself when an earthquake happens (actions by location)",
+  "大都市で地震に遭遇した時": "When you are in a big city during an earthquake",
+  "大雪のおそれに応じて段階的に発表される気象情報": "Weather information issued step by step according to the risk of heavy snow",
+  "安全な場所に避難する": "Take refuge in a safe place",
+  "家具の固定・転倒防止": "Fixing furniture and preventing it from falling over",
+  "家具の地震対策のポイント": "Key points for protecting against furniture in earthquakes",
+  "家庭で屋内にいるとき": "When you are indoors at home",
+  "対策1：クマを寄せ付けない": "Measure 1: Do not attract bears",
+  "対策2：人の存在を知らせる": "Measure 2: Let bears know people are there",
+  "対策3：クマの出没情報を調べる": "Measure 3: Check information on bear sightings",
+  "屋外にいるとき": "When you are outdoors",
+  "山の事故を防ごう！登山を楽しむために知っておきたい安全対策": "Prevent mountain accidents! Safety measures to know for enjoying mountain climbing",
+  "山やがけ付近にいるとき": "When you are near mountains or cliffs",
+  "巨大地震発生時の津波警報の発表方法": "How tsunami warnings are issued when a huge earthquake happens",
+  "携帯電話や無線機など通信手段": "Means of communication such as mobile phones and radios",
+  "数値で発表する場合の、津波の高さ": "Tsunami heights when announced as numbers",
+  "服装、装備": "Clothing and equipment",
+  "東日本大震災": "Great East Japan Earthquake",
+  "歩行者の雪道事故はどのような時に発生するのか": "When do pedestrian accidents on snowy roads happen?",
+  "気象庁による火山の常時観測と監視体制": "Continuous observation and monitoring of volcanoes by the Japan Meteorological Agency",
+  "津波": "Tsunamis",
+  "津波で起こる被害と避難の重要性": "Damage caused by tsunamis and why evacuation matters",
+  "津波の危険性と避難の重要性": "The dangers of tsunamis and why evacuation matters",
+  "津波の速さ": "The speed of tsunamis",
+  "津波フラッグは避難の合図": "The tsunami flag (津波フラッグ) is a signal to evacuate",
+  "津波発生時の避難行動（高台・津波避難ビルへ）": "How to evacuate when a tsunami happens (to high ground or a tsunami evacuation building)",
+  "津波警報・注意報の分類と、想定される被害と取るべき行動": "Types of tsunami warnings (津波警報) and advisories (津波注意報), expected damage and the action to take",
+  "火山": "Volcanoes",
+  "火山噴火で起こる被害（噴石・火砕流・火山灰）": "Damage caused by volcanic eruptions (volcanic blocks, pyroclastic flows, volcanic ash)",
+  "災害への備え 事前にできること": "Preparing for disasters: what you can do in advance",
+  "災害時の安否確認方法": "How to confirm safety in a disaster",
+  "立退き避難が必要な場合の行動": "What to do if you need to leave and evacuate (立退き避難)",
+  "緊急地震速報の「警報」と「予報」について": "About the \"warning\" (警報) and \"forecast\" (予報) of the Earthquake Early Warning",
+  "緊急地震速報の仕組みと「警報」「予報」の違い": "How the Earthquake Early Warning (緊急地震速報) works and the difference between \"warning\" and \"forecast\"",
+  "緊急安全確保が必要な場合の行動": "What to do if emergency safety measures (緊急安全確保) are needed",
+  "自動車運転中": "While driving a car",
+  "視界の悪い時に注意！": "Take care when visibility is poor!",
+  "車による雪道事故はどのような時に発生するのか": "When do car accidents on snowy roads happen?",
+  "遠くの地震でも津波は到達する（チリ地震津波の例）": "Tsunamis can arrive even from distant earthquakes (the example of the Chile earthquake tsunami)",
+  "避難のタイミングと避難場所": "When to evacuate and where to go",
+  "避難場所と避難所の違い・避難先の選び方": "The difference between evacuation sites (避難場所) and evacuation shelters (避難所), and how to choose where to go",
+  "避難場所や避難経路、確認していますか？": "Have you checked your evacuation sites and evacuation routes?",
+  "避難情報の入手方法（発令から伝達までの流れ）": "How to get evacuation information (from issue to delivery)",
+  "関東大震災": "Great Kanto Earthquake",
+  "阪神・淡路大震災": "Great Hanshin-Awaji Earthquake",
+  "降雪による被害（雪崩・除雪中の事故・路面凍結など）": "Damage caused by snowfall (avalanches, accidents while clearing snow, icy roads, etc.)",
+  "除雪中の事故はこんなケース、こんな原因で起きています！": "Accidents while clearing snow happen in these cases and for these reasons!",
+  "除雪事故に遭わないために ～命を守る除雪中の事故防止10箇条～": "To avoid accidents while clearing snow: the 10 rules for preventing accidents while clearing snow, to protect your life",
+  "雪のレジャーでの事故にはどのようなものがあるのか": "What kinds of accidents happen during snow leisure activities?",
+  "雪のレジャーで事故に遭わないためには": "How to avoid accidents during snow leisure activities",
+  "雪害": "Snow disasters",
+  "雪山で万が一遭難した場合": "If you get lost or stranded on a snowy mountain",
+  "雪崩ではどのような災害が起こるのか": "What kinds of disasters do avalanches cause?",
+  "雪崩の前兆現象と発生しやすい場所": "Warning signs of avalanches and places where they are likely",
+  "雪道での車の事故に遭わないためには ～雪道での運転のポイント～": "How to avoid car accidents on snowy roads: key points for driving on snowy roads",
+  "雪道を安全に歩くポイント": "Key points for walking safely on snowy roads",
+  "静かにゆっくり移動する": "Move away quietly and slowly",
+  "非常用持ち出しバッグ（防災リュック）の準備": "Preparing an emergency grab bag (disaster rucksack)",
+  "食料・飲料の備蓄（3日分〜1週間分）": "Stocking food and drink (3 days' to 1 week's worth)",
+  "（1）事前の情報収集を万全に": "(1) Collect information thoroughly in advance",
+  "（2）無理のない登山計画を": "(2) Make a climbing plan that does not push you",
+  "（3）登山計画書の作成、提出": "(3) Make and submit a climbing plan (登山計画書)",
+  "（5）冷静な状況判断と慎重な行動を": "(5) Judge the situation calmly and act carefully",
+  "（6）下山のときこそ細心の注意を！": "(6) Take the greatest care when coming down!",
+  "１時間ごとの「積雪の深さ」と「降雪量」の予報": "Hourly forecasts of \"snow depth\" and \"snowfall\""
+ },
+ "passages": {
+  "ff5de940d126d2af": {
+   "text": "Preparing for disasters: what you can do in advance | Disaster Prevention Guide | Prime Minister's Office of Japan",
+   "reviewed": false
+  },
+  "aed02d5a58c278a5": {
+   "text": "This page sets out concrete measures that households can take in normal times to prepare for earthquakes and other disasters, such as fixing furniture in place, storing at least 3 days' worth of water and food, and preparing an emergency grab bag.\nAlso talk in advance with your family about how you will confirm each other's safety, for example with the disaster message dial (災害用伝言ダイヤル, 171).\nLast updated: October, Reiwa 8 (2026)",
+   "reviewed": false
+  },
+  "c8f3b06b6df95633": {
+   "text": "In the Great Hanshin-Awaji Earthquake, the Niigata Chuetsu Earthquake and other disasters, many people were killed or seriously injured when they were trapped under furniture that fell on them.\nWhen a large earthquake happens, assume that \"furniture will always fall over\", and you need to take measures in advance to stop it from falling.",
+   "reviewed": false
+  },
+  "f4ae11a88db4b53a": {
+   "text": "01\nFix furniture to the wall so that it does not fall over.\n02\nAs far as possible, do not put furniture in bedrooms or children's rooms. If you do put furniture there, choose low furniture where possible, and think about which way it faces and where it stands, so that it does not block the doorway if it falls.\n03\nKeep a flashlight, slippers and a whistle within reach.\nHere is more detailed information on disaster prevention and information that helps with everyday preparation.\nPreventing furniture from falling in an earthquake - you protect your family's safety (Fire and Disaster Management Agency)\nDisaster prevention measures each person can take to protect their life in a disaster (Government Public Relations Online)\nStoring food and drink",
+   "reviewed": false
+  },
+  "9e35a24cf766e727": {
+   "text": "In case lifelines such as electricity, gas and water stop, store drinking water and food that keeps well as part of your normal routine.\nRather than preparing special items just for disasters, as far as possible keep a stock of the foods and other items you use in daily life.\nSource: Government Public Relations Online, \"Key points of household stockpiling for disasters\"",
+   "reviewed": false
+  },
+  "7cf1ed90ac0cfe10": {
+   "text": "01\nDrinking water for 3 days (a guide is 3 litres per person per day)\n02\nEmergency food: as food for 3 days, rice (such as alpha rice / instant dried rice), canned food, dried fish, hardtack (kanpan) and similar\n03\nToilet paper, tissues, portable toilets / simple toilets, matches, candles, a portable gas stove, etc.\n* For large-scale disasters, a stock for \"1 week\" is considered desirable. * Apart from drinking water, you also need water for daily use, such as flushing the toilet. Prepare in daily life, for example by keeping plastic water tanks filled with tap water, or always keeping the bathtub filled.\nHere is more detailed information on disaster prevention and information that helps with everyday preparation.\nFood stockpiling you can start today: how to start a rolling stock (Government Public Relations Online)\nHousehold stockpiling portal: enjoyable food stocks at home (Ministry of Agriculture, Forestry and Fisheries)\nEmergency grab bag",
+   "reviewed": false
+  },
+  "9fbf8af6ec13b84f": {
+   "text": "If your home is hit by a disaster, you will evacuate to a safe place and live as an evacuee.\nPack the things you should take out in an emergency into a rucksack in advance, so that you can take it out immediately at any time.\nDownload and use the checklist here (PDF / 1,052KB)",
+   "reviewed": false
+  },
+  "146dcc42a6b0fab6": {
+   "text": "So that you can confirm each other's safety even if a disaster happens while you are in different places, talk in advance, in normal times, about how you will confirm each other's safety and where you will meet.\nIn a disaster, mobile phone lines may become hard to get through. Know more than one way to confirm safety.",
+   "reviewed": false
+  },
+  "b184bd5e1f3e1f81": {
+   "text": "Disaster message dial (災害用伝言ダイヤル)\nCall \"171\" with no area code to record a message. Family members and others who know your phone number can play back the message.\n* It can be used from landline phones, public phones and some IP phones. * It can also be used from mobile phones.\nDisaster message board (災害用伝言板)\nYou register a text message using an internet service, and family members and others who know your phone number can read it.\n* It can be used from mobile phones. * In a disaster, a link to the \"disaster message board\" is shown on the top page of the mobile carriers' official websites. Access it from the official website of the carrier you have a contract with.\nSo that you can use these services when needed, check their features and how to use them during the trial periods below.\n・The 1st and 15th of every month\n・The first three days of the New Year (January 1 to 3)\n・Disaster Prevention and Volunteer Week (January 15 to 21)\n・Disaster Prevention Week (August 30 to September 5)\nDetails on how to use them are here (Ministry of Internal Affairs and Communications, disaster message services)\nEvacuation sites and evacuation routes",
+   "reviewed": false
+  },
+  "761b65b81381c17a": {
+   "text": "So that you can evacuate without panic when a disaster happens, get a disaster prevention map or hazard map from your local municipality's website, the Ministry of Land, Infrastructure, Transport and Tourism (MLIT) Hazard Map Portal Site or similar, and check your evacuation sites and evacuation routes in advance.\nSource: MLIT channel, \"Different kinds of hazard maps\"\nSource: MLIT channel, \"Know your evacuation site\"\nHere is more detailed information on disaster prevention and information that helps with everyday preparation.\nDisaster risk information for your area is here (Hazard Map Portal Site (MLIT))\nEvacuation sites and shelters near you are here (Geospatial Information Authority of Japan, data on designated emergency evacuation sites (指定緊急避難場所) and designated evacuation shelters (指定避難所))\n* The safe evacuation site differs depending on the type of disaster, such as heavy rain, tsunami or volcanic eruption. Picture each type of disaster and think together as a family about how to act so that you can evacuate safely.",
+   "reviewed": false
+  },
+  "07c9d197a80fccb6": {
+   "text": "This page explains the damage that earthquakes cause and how to act to protect yourself when one happens.\nYou can also check how the Earthquake Early Warning (緊急地震速報) works, and the damage estimates and probabilities for the Nankai Trough earthquake and for huge earthquakes off the Pacific coast of Hokkaido and off Sanriku.\nLast updated: October, Reiwa 8 (2026)",
+   "reviewed": false
+  },
+  "98297dd64a449b57": {
+   "text": "Earthquake damage includes tsunamis, collapsing buildings, fires, landslides and liquefaction.\nPast earthquake disasters caused damage like the examples below. For earthquakes expected in the future, such as an earthquake directly under the Tokyo metropolitan area or a huge Nankai Trough earthquake, it is expected that, in addition to tsunami damage, there will be damage typical of large cities (enormous human and material damage from collapsing buildings, fires and so on).",
+   "reviewed": false
+  },
+  "76880d3865b09d1c": {
+   "text": "Fire whirls, tornado-like vortexes of air that pull in flames and cause great damage, occurred. Their intense flames and wind made fire spread quickly over a wide area.",
+   "reviewed": false
+  },
+  "6dba52d1916a1d46": {
+   "text": "Large fires broke out in central Kobe. Houses also collapsed and other damage occurred, roads became impassable, and traffic was disrupted.",
+   "reviewed": false
+  },
+  "2d6c7e7fa50be17b": {
+   "text": "Strong shaking occurred not only in areas that recorded seismic intensity 7, but also, because of long-period ground motion, on the upper floors of high-rise buildings far from the epicentre, such as in Osaka City. In addition, a huge tsunami struck the Pacific coast from the Tohoku region to the Kanto region, and liquefaction caused heavy damage in areas along Tokyo Bay.",
+   "reviewed": false
+  },
+  "a3bdc7e431e0c255": {
+   "text": "Old buildings collapse and objects fall!\nOld buildings and houses may collapse and bury people, and outer walls and window glass may break and fall and injure people.\nPhones and other lines become hard to get through!\nBecause of a flood of calls and damage to communication facilities, phones and the internet may stop working or become hard to get through.\nIn normal times, agree with the people around you on how you will confirm each other's safety.\nHave you and your family decided how to confirm each other's safety?\nElectricity, gas and water stop working!\nPower cuts, stoppage of city gas and water supply cuts happen, and it may take time before they are restored.\nIn normal times, check where you would evacuate to in an emergency.\nWhere should I evacuate to?\nRoads become impassable!",
+   "reviewed": false
+  },
+  "68eb99f98dd7f747": {
+   "text": "Buildings collapse and pedestrians and cars crowd together, so heavy traffic jams are expected to make evacuation difficult. In some areas, roads will also be cut off by landslides and similar. Know the disaster risks in your area, and in normal times consider more than one evacuation route.\nHave you checked your evacuation sites and evacuation routes?\nTrains stop running!\nTracks may be cut for various reasons, and even if the tracks are undamaged, safety checks take time, so trains may not run for a considerable time. In normal times, think about and prepare how you would evacuate while commuting to work or school, or while you are out.\nHave you checked your evacuation sites and evacuation routes?\nWhat to do when an earthquake happens",
+   "reviewed": false
+  },
+  "a834e6736cc71ff2": {
+   "text": "If you feel an earthquake shaking, or see or hear an Earthquake Early Warning (緊急地震速報), do not panic, and first make yourself safe.\nThen calmly try to get accurate information using various means such as TV, radio and the internet.\nEarthquake Early Warning: what do you do then? \"Being ready in those few seconds\"\nSource: Government Public Relations Online, \"Earthquake Early Warning: what do you do then? 'Being ready in those few seconds'\"",
+   "reviewed": false
+  },
+  "d0d72a28ca67cc4b": {
+   "text": "To protect yourself from moving furniture and falling objects, protect your head, move away from large furniture, and take cover under a sturdy table or similar\nDo not rush outside in a panic\nIf you are using fire for cooking or heating: if you can put it out where you are, put it out; if you are away from the fire, do not force yourself to go and put it out\nOpen a door to secure an escape route",
+   "reviewed": false
+  },
+  "45149eca0a6d7b9e": {
+   "text": "Do not panic, and follow the instructions of the facility's staff or employees\nIf there are no instructions from staff, protect your head where you are and take a safe position to brace for the shaking\nMove away from under hanging lights and similar\nDo not rush in a panic to the exits or stairs",
+   "reviewed": false
+  },
+  "abcc859b938db743": {
+   "text": "Watch out for collapsing concrete-block walls, falling vending machines and similar, and move away from them\nWatch out for falling building walls, signs, broken window glass and similar, and move away from buildings",
+   "reviewed": false
+  },
+  "3c6a73163695f178": {
+   "text": "Watch out for falling rocks and collapsing slopes, and move away from the spot as far as possible",
+   "reviewed": false
+  },
+  "6f813e6ab9a00467": {
+   "text": "Do not panic and turn the wheel sharply or brake suddenly; slow down gradually\nTurn on the hazard lights to alert the cars around you, and stop on the left side of the road",
+   "reviewed": false
+  },
+  "d4d11ca35295e1fd": {
+   "text": "First make yourself safe; after that, the basic rule is not to start moving around without good reason! Think about staying in a safe place.\nOn the roads, many dangers are expected, such as objects falling from above in aftershocks and fires along the way, so do not move from a safe place without good reason.\nIn very crowded places such as around stations, crowd crushes where people fall over like dominoes are likely, so stay away from the areas around stations.\nFor about 3 days after the earthquake, confusion will continue because fires break out and rescue and emergency work take priority, so first think about staying in a safe place to protect yourself.\nEarthquake Early Warning",
+   "reviewed": false
+  },
+  "e7ad0e1ff15c96df": {
+   "text": "The Earthquake Early Warning (緊急地震速報) is information that, right after an earthquake happens, predicts the seismic intensity and arrival time of shaking in each area and announces it as quickly as possible.\nThere are only a few seconds to a few tens of seconds between the Earthquake Early Warning and the arrival of strong shaking, but it is delivered by TV, smartphones and other means before the strong shaking arrives.\nHowever, in places close to the epicentre, the Earthquake Early Warning may, by its nature, not arrive in time before the strong shaking.\nAlso, because it is a quick report based on data from a very short time, the predicted seismic intensity may contain errors.\nUnderstand these characteristics and limits, use the Earthquake Early Warning appropriately, and prepare for earthquakes in daily life.",
+   "reviewed": false
+  },
+  "1720deebd03cf9b3": {
+   "text": "The Earthquake Early Warning (緊急地震速報) has two broad types: the \"warning\" (警報) and the \"forecast\" (予報).\nWarning (警報)\nIssued when shaking of seismic intensity 5 lower or more, or long-period ground motion class 3 or more, is expected.\nIt is delivered by TV, radio, mobile phones, smartphones, municipal disaster radio and other means.\nForecast (予報)\nIssued when shaking of seismic intensity 3 or more, or long-period ground motion class 1 or more, or similar, is expected.\nYou can receive it through individual contracts with private companies, smartphone apps and other means.",
+   "reviewed": false
+  },
+  "b8eb9c80929ff372": {
+   "text": "From February 1, Reiwa 5 (2023), long-period ground motion classes were added to the criteria for issuing the Earthquake Early Warning. Long-period ground motion is the \"large, slow shaking with a long period\" that occurs in large earthquakes. Its feature is that it shakes high-rise buildings strongly for a long time, even far from the epicentre.\nThere is a danger that furniture and fixtures in rooms fall over or move, ceilings fall, and lifts break down, so in daily life check that furniture, office equipment and similar are fixed in place, and when it happens, do not panic and make yourself safe.",
+   "reviewed": false
+  },
+  "c5127df3fc0a8b58": {
+   "text": "Large earthquakes are known to have happened in the past along the Kuril Trench, which lies off the Pacific side of Hokkaido, and along the Japan Trench, which lies off the Pacific side of the Tohoku and Kanto regions (Kuril Trench earthquake, Japan Trench earthquake).\nAccording to the national government's damage estimates, if a maximum-class Kuril Trench or Japan Trench earthquake happens, strong shaking and high tsunamis are expected over a wide area, mainly along the Pacific coast from Hokkaido to Iwate Prefecture, and casualties of up to about 100,000 people (Kuril Trench earthquake) and about 199,000 people (Japan Trench earthquake) are estimated.",
+   "reviewed": false
+  },
+  "00ce191568457b7f": {
+   "text": "In areas along the Kuril Trench and the Japan Trench, after an earthquake of moment magnitude (Mw) 7 or more, an even larger earthquake of Mw 8 class or more may happen. To reduce earthquake damage, when an earthquake of Mw 7 or more happens in the areas along the Kuril Trench or the Japan Trench, the Japan Meteorological Agency issues a \"Hokkaido/Sanriku Subsequent Earthquake Advisory\" (北海道・三陸沖後発地震注意情報). When this advisory is issued, the chance of a large earthquake is higher than in normal times, so take disaster prevention measures to prepare for strong shaking and high tsunamis.\nExplanation of the Hokkaido/Sanriku Subsequent Earthquake Advisory (Cabinet Office, Disaster Management)\nSource: Cabinet Office, Disaster Management, \"Explanation of the Hokkaido/Sanriku Subsequent Earthquake Advisory (Cabinet Office, Disaster Management)\"\nHokkaido/Sanriku Subsequent Earthquake Advisory (PDF)\nHere is more detailed information on the Kuril Trench and Japan Trench earthquakes.\nLeaflet \"Huge earthquakes along the Japan Trench and Kuril Trench: preparing in advance\" (PDF, Cabinet Office)\nWhat is the Hokkaido/Sanriku Subsequent Earthquake Advisory? (Cabinet Office)",
+   "reviewed": false
+  },
+  "46fca83b925cac97": {
+   "text": "Disaster prevention measures for trench-type earthquakes around the Japan Trench and Kuril Trench (Cabinet Office)\nNankai Trough earthquake",
+   "reviewed": false
+  },
+  "59235d96030bcfc8": {
+   "text": "The Nankai Trough earthquake is a large earthquake that has occurred repeatedly, roughly every 100 to 150 years, with its source area on the plate boundary from Suruga Bay to off the Hyuga-nada Sea. More than about 80 years have now passed since the last Nankai Trough earthquakes (the Showa Tonankai Earthquake (1944) and the Showa Nankai Earthquake (1946)), and the next Nankai Trough earthquake is becoming more imminent.\nAbout the Nankai Trough earthquake (Japan Meteorological Agency)",
+   "reviewed": false
+  },
+  "dcd69881d25ee095": {
+   "text": "According to the damage estimate*1 for the case where a scientifically conceivable maximum-class Nankai Trough earthquake happens, seismic intensity 7 is possible in parts of the area from Shizuoka Prefecture to Miyazaki Prefecture, and strong shaking of seismic intensity 6 upper to 6 lower is expected over wide surrounding areas next to them.\nAlso, huge tsunamis of more than 10m are expected to strike wide areas of the Pacific coast from the Kanto region to the Kyushu region.\n*1: Note that this damage estimate is one case of the Nankai Trough earthquake, whose way of occurring can vary, and it does not mean that shaking and tsunamis will actually happen exactly as estimated. Also note that a scientifically conceivable maximum-class Nankai Trough earthquake happens once in a thousand years or less often, and this estimate is not a prediction of the next Nankai Trough earthquake.\nSource: Cabinet Office, Disaster Management, \"The huge Nankai Trough earthquake: what will happen then?\"",
+   "reviewed": false
+  },
+  "629b49c8da1602f6": {
+   "text": "Source: \"Summary of the report of the Working Group on Countermeasures for the Huge Nankai Trough Earthquake\"",
+   "reviewed": false
+  },
+  "4e2acf827ffc448e": {
+   "text": "When, for example, the chance of a Nankai Trough earthquake is assessed to be relatively higher than in normal times, the Japan Meteorological Agency issues \"Nankai Trough Earthquake Extra Information\" (南海トラフ地震臨時情報). It is issued with one of 4 keywords: \"Under investigation\" (調査中), \"Megaquake Warning\" (巨大地震警戒), \"Megaquake Advisory\" (巨大地震注意) or \"Investigation ended\" (調査終了).\n[Nankai Trough earthquakes that happen with a time lag (Nankai Trough Earthquake Extra Information)]\nSource: Cabinet Office, Disaster Management, \"[Nankai Trough earthquakes that happen with a time lag (Nankai Trough Earthquake Extra Information)]\"",
+   "reviewed": false
+  },
+  "24630465b984dbe6": {
+   "text": "When Nankai Trough Earthquake Extra Information (Under investigation / 調査中) is issued, from that moment, pay attention to the latest information and act to keep yourself safe according to your own situation.\nIf Nankai Trough Earthquake Extra Information (Megaquake Warning / 巨大地震警戒) is issued, in addition to rechecking your everyday earthquake preparations, you need to take special preparations such as staying ready to escape immediately. Also, residents who may not make it in time if they evacuate after the earthquake happens should evacuate in advance for 1 week.\nIf Nankai Trough Earthquake Extra Information (Megaquake Advisory / 巨大地震注意) is issued, in addition to rechecking your everyday earthquake preparations, take special preparations such as staying ready to escape immediately.\nIf Nankai Trough Earthquake Extra Information (Investigation ended / 調査終了) is issued, return to normal life, while keeping in mind that the chance of a large earthquake has not gone away.",
+   "reviewed": false
+  },
+  "8af0f5b6e0869a62": {
+   "text": "A Nankai Trough earthquake may happen suddenly without any \"Nankai Trough Earthquake Extra Information\" (南海トラフ地震臨時情報) being issued, and there may also be cases where no Nankai Trough earthquake happens while the Extra Information is in effect. A Nankai Trough earthquake is highly imminent and could happen at any time, so everyday earthquake preparation is important.\nHere is more detailed information on the Nankai Trough.\nLeaflet \"Nankai Trough earthquake: preparing for that moment\" (PDF, Cabinet Office)\ne-learning materials on Nankai Trough Earthquake Extra Information (Cabinet Office)\nNankai Trough earthquake disaster prevention measures (Cabinet Office website)\nBack to top",
+   "reviewed": false
+  },
+  "3c283813d02e0d95": {
+   "text": "If you feel strong shaking, or see or hear a tsunami warning (津波警報), the basic rule for saving your life is to evacuate immediately to high ground or a tsunami evacuation building.\nThis page explains the features of tsunamis, such as their speed and height, and the action to take for each of the major tsunami warning (大津波警報), tsunami warning (津波警報) and tsunami advisory (津波注意報).\nLast updated: October, Reiwa 8 (2026)",
+   "reviewed": false
+  },
+  "410b2712f9c03616": {
+   "text": "A tsunami is a phenomenon in which waves of seawater, caused by the sea floor rising or sinking in an earthquake or other event, spread out and travel in all directions. Not everything about a tsunami can be predicted accurately, and in the Great East Japan Earthquake there were many cases where the tsunami that came in was far higher than first predicted. It is important to flee as early as possible and as high as possible.",
+   "reviewed": false
+  },
+  "9854a98b2007c116": {
+   "text": "Tsunami damage can be very far from the image the word \"wave\" gives.\nThere have been cases where whole towns were swallowed by a tsunami, houses were washed away, and buses, trains and large ships were thrown up onto land from the sea, and cases where a tsunami ran up the terrain and reached higher than the announced tsunami height.\nThe force of a tsunami is very strong; even a tsunami only about 20 to 30cm high can sweep you into a fast current.\nA tsunami may strike not just once but repeatedly. Later waves may be higher.\nAs it approaches the coast and the water gets shallower, it suddenly becomes higher. Also, a tsunami travels very fast, so if you wait until you see it before fleeing, you will not make it in time.\nWhat to do when a tsunami happens",
+   "reviewed": false
+  },
+  "a3a13d90df963e8a": {
+   "text": "If you feel strong shaking, or weak but long shaking, or if you see or hear a \"tsunami warning\" (津波警報) or similar even when you have not felt an earthquake, leave the coast as quickly as possible and evacuate to the highest place you can.\nPeople near the coast, for example swimming in the sea, need to evacuate even for a \"tsunami advisory\" (津波注意報). Get out of the water, leave the coast, and start evacuating immediately.\nWhen you evacuate, go to nearby high ground, a tsunami evacuation tower, a tsunami evacuation building or similar.\nNever enter the affected area until the tsunami warning or advisory has been lifted and safety has been confirmed.\nTo protect yourself from tsunami disasters, you need, in daily life, to collect information about tsunamis and to check safe evacuation sites around your home on a tsunami hazard map or similar.\nBe aware that tsunamis can come faster than you imagine, or from places you would not imagine.\nSource: Government Public Relations Online, \"Tsunamis are fast and frightening: evacuate early and high!\"",
+   "reviewed": false
+  },
+  "3e9c0f7114b55ec0": {
+   "text": "In areas at risk from tsunamis, \"tsunami signs\" (津波標識) are put up to show tsunami evacuation sites, tsunami evacuation buildings and similar.\nWhen you visit places near the sea, check the signs and know the route to the nearest evacuation site or high ground. In daily life, check dangerous places and evacuation sites on a hazard map.\nThis is a website where you can easily look up on a map the disaster risks around you, such as floods and landslides, from an address or your current location.\nHazard Map Portal Site (Ministry of Land, Infrastructure, Transport and Tourism)",
+   "reviewed": false
+  },
+  "31d423d1f16183b0": {
+   "text": "Tsunami warnings and similar are passed on by various means, such as TV, radio, mobile phones, sirens and bells. Since summer Reiwa 2 (2020), they have also been shown visually with a \"tsunami flag\" (津波フラッグ) at swimming beaches and similar places.\nIf you see a tsunami flag at a swimming beach or near the coast, start evacuating promptly.\nSource: Tsunami flag (Japan Meteorological Agency)\nThis explains the role of the red-and-white checked \"tsunami flag\" and the action to take when you see it: evacuating to higher ground.\nTsunami flag (Japan Meteorological Agency)\nEarthquake! Tsunami! Evacuate immediately! (Japan Meteorological Agency)",
+   "reviewed": false
+  },
+  "a6cd17ba4388d32f": {
+   "text": "In deep water, a tsunami travels as fast as a jet plane\nSource: How tsunamis are generated and travel (Japan Meteorological Agency)",
+   "reviewed": false
+  },
+  "c607304c21165b77": {
+   "text": "An example of a tsunami caused by the Chile earthquake striking Japan\nSource: Preparing for tsunami disasters (Fire and Disaster Management Agency)\nFor details, see the materials and videos here.\n\"Earthquake Early Warning\" and \"tsunami warnings\" and others: protect yourself when the moment comes! (Government Public Relations Online)\nPreparing for tsunami disasters (Fire and Disaster Management Agency)\nHow tsunamis are generated and travel (Japan Meteorological Agency)\nEarthquake and tsunami videos and pamphlets (Japan Meteorological Agency)",
+   "reviewed": false
+  },
+  "1417de9fedd833fb": {
+   "text": "In the first tsunami warning report, the tsunami height is estimated from the size and source of the earthquake.\nHowever, for a huge earthquake of more than magnitude 8, the size of the earthquake cannot be determined accurately straight away. So the possibility of a huge earthquake is assessed from factors such as the size of the long-period components of the seismic waves and how widely the seismic intensity is spread. If it is judged to be a huge earthquake, the first tsunami warning (first report) announces the expected tsunami height with the words \"Huge\" (巨大) or \"High\" (高い), to show that it is an emergency.\nWhen a major tsunami warning (大津波警報) is issued with the word \"Huge\" (巨大), it is an emergency on the scale of the Great East Japan Earthquake, so evacuate immediately to the highest place you can!\nEven for a huge earthquake, the size of the earthquake can be determined accurately about 15 minutes after it happens.",
+   "reviewed": false
+  },
+  "50d6718b0da4214e": {
+   "text": "At that point, the expected tsunami height is switched from the words \"Huge\" (巨大) or \"High\" (高い) to announcement as a number in 5 levels. For other earthquakes, if the size of the earthquake can be determined accurately right after it happens, the height is announced as a number in 5 levels from the start.",
+   "reviewed": false
+  },
+  "98118676328051d2": {
+   "text": "Source: Key points of the improvements to tsunami warnings (Japan Meteorological Agency)\nFor details, see here.\nTsunami warnings and advisories currently in effect (Japan Meteorological Agency)\nEarthquake and tsunami measures (Cabinet Office, Disaster Management)\nBack to top",
+   "reviewed": false
+  },
+  "a4084f29c46e158d": {
+   "text": "When to evacuate and where to go | Disaster Prevention Guide | Prime Minister's Office of Japan",
+   "reviewed": false
+  },
+  "226d6c2beabdbfbe": {
+   "text": "This page explains how to get the evacuation information issued by your city, town or village, and how to choose an evacuation site according to the type of disaster. Check how dangerous your home is on a hazard map, and also check the conditions under which you need to leave and evacuate (立退き避難), and the points to note if you stay at home to keep safe indoors (屋内安全確保).\nLast updated: October, Reiwa 8 (2026)",
+   "reviewed": false
+  },
+  "d792784f10fad327": {
+   "text": "When a city, town or village issues evacuation information, it is passed on by TV, radio, the internet and other means, as well as by municipal disaster radio, public address vehicles and similar.\nFor example, when \"Alert Level 4, evacuation instruction (避難指示)\" is issued, the municipality calls for evacuation with a message like the one below.\nCollect evacuation information\nSource: MLIT channel (Ministry of Land, Infrastructure, Transport and Tourism), \"Collect evacuation information\"\nExample of an evacuation announcement\nEmergency broadcast, emergency broadcast, Alert Level 4, start evacuating. Emergency broadcast, emergency broadcast, Alert Level 4, start evacuating.\nThis is ○○ City.\nWe have issued Alert Level 4, an evacuation instruction, for flooding in the ○○ district.\nThe ○○ River is rising, and the risk of it flooding is increasing.\nEveryone in dangerous places in the ○○ district, start evacuating promptly.\nWhen \"Alert Level 3, evacuation of older people and others needing time (高齢者等避難)\" or \"Alert Level 4, evacuation instruction (避難指示)\" is issued, call out to the people around you and evacuate safely and surely.",
+   "reviewed": false
+  },
+  "9ca8a19a34768baa": {
+   "text": "Note that alert levels are not always issued in order from 1 to 5. The situation can also change suddenly. Even if no evacuation information has been issued by your municipality, take appropriate evacuation action, using weather information for disaster prevention as a guide.\nWhat are alert levels?\nChecking evacuation sites",
+   "reviewed": false
+  },
+  "41742d58e06cefe0": {
+   "text": "There are 2 kinds of places to evacuate to: \"evacuation sites\" (避難場所) and \"evacuation shelters\" (避難所).\nEvacuation sites are places for escaping urgently from the danger of a disaster, and the municipality designates them for each type of disaster. Evacuation shelters are facilities where you stay for a certain period if you cannot return home.\n\"Evacuation\" (避難) means \"avoiding\" (避) \"danger\" (難); moving to a designated emergency evacuation site (指定緊急避難場所) such as a school or community centre is not the only kind of evacuation. Evacuation actions include \"leaving to evacuate\" (立退き避難) and \"keeping safe indoors\" (屋内安全確保), and you need to act according to the type of disaster.\nIf you need to leave and evacuate because of the type of disaster that is happening, options include evacuating to an evacuation site designated by the municipality for that disaster, or evacuating to the home of a relative or acquaintance in a safe place.",
+   "reviewed": false
+  },
+  "1995a00c771f52a6": {
+   "text": "Evacuate to an evacuation site designated by the authorities, or to the home of a relative or acquaintance in a safe place. If you plan to evacuate to a relative's or acquaintance's home, it is important to discuss this with them in normal times. However, if leaving to evacuate is dangerous, take \"emergency safety measures\" (緊急安全確保) to save your life.",
+   "reviewed": false
+  },
+  "e7bd2e4ceea5ad4b": {
+   "text": "If leaving to evacuate is dangerous, move to a place that is even a little safer, such as an upper floor of your home or a room away from a cliff, and take \"emergency safety measures\" (緊急安全確保).\nAlso, for floods and storm surges, check the following 3 conditions on a hazard map or similar. If you can judge that your home is safe, also consider staying at home (keeping safe indoors, 屋内安全確保).\nYour home is not in an area where houses may fall down or collapse in a flood (area where house collapse from flooding is expected, 家屋倒壊等氾濫想定区域)\nYou have a room higher than the expected flood depth\nYou can put up with staying until the water goes down, and you have enough supplies such as water and food\nHere is more detailed information on evacuating in a disaster.\nHave you checked your evacuation sites and evacuation routes?\nBack to top",
+   "reviewed": false
+  },
+  "512033476006fbe3": {
+   "text": "Preventing snow disaster accidents and staying safe on snowy roads | Disaster Prevention Guide | Prime Minister's Office of Japan",
+   "reviewed": false
+  },
+  "cc9ccf9ca1242857": {
+   "text": "This page explains the \"10 rules for preventing accidents while clearing snow, to protect your life\", which aim to prevent deaths while clearing snow from roofs, such as falls from roofs, as well as tips for driving on snowy roads and how to walk so that you do not fall.\nYou can also check accidents during snow leisure activities, and the warning signs of avalanches and what to do if you encounter one.\nLast updated: October, Reiwa 8 (2026)",
+   "reviewed": false
+  },
+  "8cc4bb69515d72b3": {
+   "text": "Typical snow disasters include disasters specific to heavy-snow areas, such as avalanches and falls while clearing snow, and also disasters that happen outside heavy-snow areas, such as traffic accidents caused by icy roads and falls while walking. Also, not only local residents but also many people who visit heavy-snow areas for winter mountain climbing, skiing, sightseeing and similar are harmed.\nTo avoid snow disasters, it is important to build accurate knowledge about snow.\nSource: Snow information for heavy-snow areas nationwide (portal site) (Ministry of Land, Infrastructure, Transport and Tourism)\nAccidents while clearing snow\n01",
+   "reviewed": false
+  },
+  "89cb3b58d2779d46": {
+   "text": "Many of the deaths in snow-related accidents are from accidents while clearing snow. (In fiscal year Reiwa 7 (2025), about 80% of the human casualties caused by snow were accidents while clearing snow, such as clearing snow off roofs. This excludes traffic accidents and falls.)\nAccidents while clearing snow happen during work such as clearing snow off the roofs of homes and other buildings and shovelling snow, and a feature is that a high proportion of those involved are older people.\nIf snow is not cleared from an empty house and it has become dangerous, the head of the municipality can decide to have the snow cleared from the roof, as set out in law.\nIf you need help, contact your municipality.",
+   "reviewed": false
+  },
+  "170c9635db984cc5": {
+   "text": "In accidents while clearing snow off roofs, falls from the roof are common, and many happen to older people or while working alone.\nWork with more than one person, so that someone can respond if something happens.\nFalls from roofs\nAccidents where people fall while clearing snow on a roof, or lose their balance and fall when snow slides down\nSnow falling from roofs\nAccidents where people are buried by snow falling from the roof, or hit directly by it, while clearing snow under the eaves\nFalls into waterways and similar\nAccidents where people fall into a snow-melting tank while throwing snow into it (it can take time before they are found, and some cases are fatal)\nSnow blower accidents\nAccidents where people get caught in the machine while trying to clear snow blockages without stopping the engine (about 70% are people in their 40s to 50s)\nHeart attack or similar while clearing snow\nAccidents where people collapse during work, for example with cardiac arrest, from heavy labour outdoors in the cold",
+   "reviewed": false
+  },
+  "1afa6bdbc8e9e58a": {
+   "text": "Understanding the dangers of accidents while clearing snow and taking safe measures prevents accidents.\nAlso, accidents are caused by being too used to snow clearing, overconfidence and carelessness. Check the key points for preventing accidents before you start clearing snow.\nWork with 2 or more people, and also tell your family and neighbours!\nLeave snow around the building when clearing the roof!\nTake extra care on sunny days: the snow on the roof is loosening!\nDo not forget to secure the ladder!\nTurn off the engine first! Then clear snow blockages from the snow blower\nDo not let your guard down even on low roofs!\nBe especially careful just after starting work and when you get tired!\nUse a safety rope and a helmet, even if it is a bother!\nMaintain and check your tools, such as safety ropes and snow blowers, often!\nTake your mobile phone with you when you work!\nFor details, see the materials here.\n10 safety rules for clearing snow off roofs (Ministry of Land, Infrastructure, Transport and Tourism)\nCommon accidents while clearing snow and how to prevent them (Cabinet Office / Ministry of Land, Infrastructure, Transport and Tourism pamphlet)\n5 NG actions that lead to \"snow blower accidents\": never disable the safety functions (Consumer Affairs Agency)\nCar accidents on snowy roads\n02",
+   "reviewed": false
+  },
+  "54819035e1c071ce": {
+   "text": "During and after snowfall, you need to watch out for accidents caused by icy road surfaces and poor visibility (poor visibility due to blizzards and similar).",
+   "reviewed": false
+  },
+  "e3da9d4e37b2bb49": {
+   "text": "When 1cm or more of snow has fallen, in the early period after the snowfall (roughly within 24 hours)\nWatch out for ice-covered roads (road surfaces that have become like ice)!\nAt night and in the early morning when it gets cold, and in shady places, watch out for black ice, even if the road does not look frozen!",
+   "reviewed": false
+  },
+  "a940eb252c428d6a": {
+   "text": "Intersections with traffic lights\nCars repeatedly starting and stopping can make the road surface very slippery.\nBridges (bridge decks)\nThe road on a bridge may be frozen even when other road surfaces are not.\nEntrances and exits of tunnels and similar\nThese are often in shade, and the road surface may be frozen in places.",
+   "reviewed": false
+  },
+  "d8d798ac4ef89395": {
+   "text": "When there are particles floating in the air, less light reaches our eyes, and it becomes hard to see the scenery around us. This is called poor visibility (視程障害). Also, ground blizzards and similar can make everything white so that you cannot see anything else (whiteout). On winter roads, visibility can feel much worse than it actually is, so you need to take care.",
+   "reviewed": false
+  },
+  "2ad1dc466997e57c": {
+   "text": "[Key points for driving on icy roads]\nDriving on slopes\nShift down to a suitable gear in advance, and keep the accelerator steady. Sudden braking or shifting down causes the rear to swing out or the car to spin. (On downhill slopes, use engine braking.)\nDriving round curves\nSlow down enough before entering a curve, and in the curve keep a steady, moderate speed.\nBraking\nIf you brake suddenly, the tyres lock, lose grip and you cannot stop. Start braking earlier than usual, and press the brake softly and gradually to stop.\n* Even if your car has four-wheel drive or ABS (anti-lock braking system), do not over-rely on it; slow down enough before curves and intersections.\n[Driving techniques when visibility is poor]\nWhen driving in a blizzard: lights on, speed down, keep your distance!\nTo make your presence known, turn on your lights, keep your speed moderate and keep enough distance from the car in front.\nWatch out for snow spray from large vehicles!",
+   "reviewed": false
+  },
+  "7be141faeb55e213": {
+   "text": "Snow spray thrown up by large vehicles makes visibility poor, so switch on your wipers early and slow down.\nIf snow sticks to your car, stop in a safe place and remove it\nRemove snow stuck to your headlights, tail lights and wipers in a safe place away from the road.\nIf you are tired or driving feels dangerous, take a break\nIf you are tired or feel it is dangerous, do not stop on the road; rest at a roadside station (michi-no-eki), a parking area or similar.\n[Always carry equipment for dealing with accidents]\nDriving on winter roads is like winter mountain climbing: check and service your car in advance, and always carry equipment so that you can fully deal with various accidents, such as a sudden change in the weather.\nTyre chains, jack, tow rope, tools, booster cables, snow helper (traction aid)\nWarm clothing, rain gear, rubber boots, work clothes, gloves, cotton work gloves, towels, a change of clothes, blankets, disposable heat packs\nSpare tyre (winter tyre), sand for grip, snow brush, warning triangle, flares",
+   "reviewed": false
+  },
+  "d2c36de0717c9c8d": {
+   "text": "Shovel, emergency water, food, a flag (cloth in a bright colour), flashlight (batteries), radio\n[Points to note when going from areas without snow to snowy areas]\nBehind the thrill of driving through a world of white, danger is always hidden. Before you get caught in unexpected trouble on unfamiliar snowy roads, learn the basics of driving in snow and prepare well, so that your drive is safe and comfortable.\nSnow road driving techniques Q&A: full equipment before you set out (Ministry of Land, Infrastructure, Transport and Tourism)\nFor details, see the materials here.\nYou can check snow road information for the whole country and other useful information.\nOshiete! Yuki Navi (Ministry of Land, Infrastructure, Transport and Tourism)\nAccidents while walking on snowy roads\n03",
+   "reviewed": false
+  },
+  "13d2cd2c3ddd1c4b": {
+   "text": "- Watch out for falls while walking too! Know the slippery places -\nIn winter, many falls caused by snow and ice happen not only in heavy-snow areas but also in areas with little snow.\nThe number of falls is roughly proportional to the amount of snowfall, and they are concentrated in January to March every year. Check the slippery places where many accidents happen.\nOn the white lines of pedestrian crossings\nEven if they look dry, a thin film of ice may have formed and made them slippery.\nPavements where cars go in and out (car park entrances, petrol stations, etc.)\nThe tyres of cars going in and out polish the ice on the surface, and it may be very slippery.\nBus and taxi stops\nThe snow may be packed down hard and slippery. Also watch out for the step between the pavement and the road.\nSlopes\nYou are more likely to slip and fall going down than going up, which is dangerous. Take special care when going down.\nWhere road heating ends\nSnow and ice may not have melted, leaving a step, and it may be slippery in places.",
+   "reviewed": false
+  },
+  "a00399a95a068dc5": {
+   "text": "- Learn a good way of walking that makes you less likely to fall! -\nWalk with small steps\nThe basic method is \"penguin walking\": take small steps and walk slowly and carefully.\nWalk with the whole sole of your shoe on the ground\nKeep your centre of gravity slightly forward, and walk trying to put the whole sole of your shoe on the ground as far as possible.\nAlso, choose footwear with soles that do not slip easily. (Such as rubber boots with a high friction coefficient)\nOther\nIn case you fall, wearing things such as a hat and gloves is also one safety measure.\nWalking with both hands in your pockets, or after drinking alcohol, dulls your sense of balance and is dangerous. Also, snow and ice may fall from roofs, so keep an eye on roofs as you walk. Take special care on warm days.\nAccidents during snow leisure activities\n04",
+   "reviewed": false
+  },
+  "38f01cab9ff031ef": {
+   "text": "Many accidents during snow leisure activities are caused by people's own carelessness, or by misjudging or underestimating the situation.\nA typical feature is that accidents tend to be caused by not managing your physical condition fully against the harsh climate, or by not having enough equipment to deal with changes in the weather or trouble.\nIn skiing and snowboarding, bruises and broken bones from falls, sliding down slopes, and collisions with people or trees, as well as fatal accidents, happen from time to time.\nPeople who go into closed areas in an adventurous mood without checking the course well often get lost or stranded. Also, even if you think \"if I get lost, I can call for help as long as I have a mobile phone\", in mountain areas you cannot always be sure of getting through.\nIn winter mountain climbing, because of lack of experience or preparation and other reasons, more than 550 people were lost or stranded between December Reiwa 7 (2025) and February Reiwa 8 (2026), a serious situation.",
+   "reviewed": false
+  },
+  "c60e6d91b9f751ae": {
+   "text": "Understand that snow leisure activities are directly linked to danger, and prepare before you enjoy them.\nDo not start with hard exercise suddenly; enjoy yourself while taking care to let your body get used to it. Also, if you are not feeling well, consider not going into the mountains.\nThe weather at the foot and at the top of a mountain can be completely opposite, so always check the weather conditions and forecast in advance, and if the weather changes suddenly, avoid pushing yourself. Follow the instructions and advice of local staff.\nIn skiing, snowboarding and similar, pushing yourself to ski or ride beyond your ability leads to accidents. Enjoy yourself within safe limits. To avoid being hit by others, also pay attention to the people around you.\nEven if you are careful, avalanches may happen suddenly. To avoid accidents, also learn properly about avalanches. Especially after a lot of new snow has fallen, take the greatest care, for example by avoiding places where avalanches are likely. Also carry a beacon (radio transmitter) or similar in case you are buried. (See 5. Avalanche accidents)",
+   "reviewed": false
+  },
+  "00371d407bb32850": {
+   "text": "If you share your climbing plan / climbing notification (登山計画書・登山届) with your family, workplace or similar, it will give clues for a quick search and rescue in an emergency, and you can also check in advance that the plan has no gaps. Share the climbing plan / notification you have made with the people climbing with you, your family, workplace or similar, and also submit it to the climbing notification box at the trailhead, the local municipality, the prefectural police or similar. In some cases you can submit a climbing plan / notification through a mountain map app or the internet.\nEvery year, there are cases where skiers and snowboarders who ignored ski area warning signs and similar and left the course get lost or stranded on snowy mountains outside the area managed by the ski area. Outside the courses, safety is not managed. When you use a ski area, follow the ski area's rules. Also, backcountry skiing on natural snowy mountains needs the same knowledge, skills and equipment as winter mountain climbing. Strictly avoid careless actions.\nThinking of what happens if trouble occurs, act in a group, not alone, and check from time to time that your companions are there.",
+   "reviewed": false
+  },
+  "b907cf1ee689a84c": {
+   "text": "In case of emergency, carry a radio, a mobile phone and a spare battery.\nFor winter mountain climbing, get information from the mountain-related websites below and similar sources, and follow the rules.",
+   "reviewed": false
+  },
+  "460f415bb269c9be": {
+   "text": "If visibility becomes poor, do not move around; wait for the weather to recover.\nIf you get lost or stranded, call 110 or 119 as needed with the radio or mobile phone you are carrying to ask for rescue, and give as much information as you can, such as your situation and the terrain where you are.\nIf rescue looks likely to take time, turn off your mobile phone or similar often to save battery, and keep it close to your body to keep it warm and prevent it from failing in the cold.\nIf you have to stay where you are, attach something to a tree or similar as a marker, make a snow cave at its base or similar, shelter from the cold inside it, keep warm with a heat pack if you have one, and wait for the rescue team. Do not move around without good reason\nMt. Tanigawa (Nishikuro Ridge)\nSource: Gunma Prefectural Police\nFor details, see the materials here.\n\"Reiwa 7 (2025) winter mountain climbing information\" (PDF, National Police Agency)\nAsk the head of a mountain rescue team: the minimum to keep in mind for winter mountain climbing [with subtitles] (Government Public Relations Online)\nMountain accident prevention campaign (Japan Mountaineering and Sport Climbing Association)\nAvalanche accidents\n05",
+   "reviewed": false
+  },
+  "2fc18ee57899f5ae": {
+   "text": "An avalanche is \"a phenomenon in which all or part of the snow or ice on a slope flows down at a speed that can be seen with the naked eye\". It has a \"starting zone\" where the snow cover breaks and starts to move, a \"track\" that the avalanche passes along, and a \"runout zone\" (堆積区) where the fallen snow piles up. Snow piled up by an avalanche is called \"debris\".\nAvalanches are divided into 2 broad types depending on the \"sliding surface\": \"surface avalanches\" (表層雪崩) and \"full-depth avalanches\" (全層雪崩).",
+   "reviewed": false
+  },
+  "b15ae5891488afdb": {
+   "text": "(From the \"Avalanche response safety guidebook\" of the National Conference on Landslide and Slope Failure Countermeasures)\n<If an avalanche happens near you>\nKeep watching the person being carried away.\nRemember the point where your companion was caught in the avalanche (accident point) and the point where they disappeared from view (disappearance point).\nWhen the avalanche stops, post a lookout, and put markers such as poles or branches at the accident point and the disappearance point.\nSearch immediately using avalanche beacons (radio devices) or similar.\nIf you find the person, dig them out immediately and give first aid.\n<If you are caught in an avalanche>\nEscape to the edge of the avalanche flow\nWarn your companions so that they are not caught.\nGet your pack off your body.\nTry to swim in the snow to stay on the surface.\nWhen the snow is about to stop, make a space in front of your mouth with your hands, so that you keep an air space in the snow.\nEven in the snow, you may be able to hear the voices of people walking above you, so if you hear them, shout loudly.\nAvalanche beacon (radio transmitter-receiver)\nSource: Snow Avalanche and Landslide Research Center\nFor details, see the materials and videos here.",
+   "reviewed": false
+  },
+  "d375eb44d4545a5d": {
+   "text": "Avalanches can reach speeds of up to 200km/h! How can you protect yourself from avalanches? (Government Public Relations Online)\nAvalanche disaster prevention (Ministry of Land, Infrastructure, Transport and Tourism)",
+   "reviewed": false
+  },
+  "21b8709168da6212": {
+   "text": "To prevent disasters from heavy snow and reduce social disruption from snow, such as traffic problems, the Japan Meteorological Agency issues warnings, advisories and similar, and calls for caution and alertness step by step. When warning-level heavy snow is expected within the next 5 days, it issues \"Early Warning Information (possibility of warning level)\" (早期注意情報（警報級の可能性）) to call for caution. When there is a risk of a disaster with a large impact on society, it issues a \"heavy snow warning\" (大雪警報) roughly 3 to 6 hours before.\nWeather commentary information may be issued roughly from a few days to about 1 day before heavy snow, ahead of warnings and advisories, to announce the coming event and call for caution. While warnings or advisories are in effect, information is issued to explain how the event is developing, the forecast, points to note for disaster prevention and similar.\nAbout information on heavy snow (Japan Meteorological Agency)\nPreparing for snow disasters",
+   "reviewed": false
+  },
+  "77e340d207ef62c4": {
+   "text": "On the \"Upcoming snow (short-range snowfall forecast)\" website, you can check snow depth and snowfall together, from the situation 24 hours ago to a forecast up to 6 hours ahead. You can use it to decide what to do, such as changing plans to go out or choosing a detour.\nThe information is updated every hour, so please do use it before going out and when you speak to the people around you, to prevent damage from snowfall.\nIn which areas, and how much, snow has fallen from 24 hours ago until now, and how much snow has piled up\nHow much snow is expected to pile up in the next 6 hours\nUpcoming snow (short-range snowfall forecast) (Japan Meteorological Agency)\nSource: Government Public Relations Online [vertical video] Upcoming snow\nInformation on snow, wind and sea ice (Ministry of Land, Infrastructure, Transport and Tourism)\nWinter road information (Ministry of Land, Infrastructure, Transport and Tourism)\nGovernment efforts on snow disaster measures (Cabinet Office)\nBack to top",
+   "reviewed": false
+  },
+  "dff7ff6f9dfa03e6": {
+   "text": "Volcanic eruption damage and actions to protect yourself | Disaster Prevention Guide | Prime Minister's Office of Japan",
+   "reviewed": false
+  },
+  "a67a3c0ed063727e": {
+   "text": "Japan has 111 active volcanoes. This page explains the damage caused by eruptions, such as large volcanic blocks and pyroclastic flows, and what to do at each of the 5 volcanic alert levels (噴火警戒レベル).\nYou can also check the health effects of volcanic ash and how to protect yourself with dust masks and goggles.\nLast updated: October, Reiwa 8 (2026)",
+   "reviewed": false
+  },
+  "38666876be2b9501": {
+   "text": "Japan currently has 111 active volcanoes and is one of the world's leading volcanic countries; eruptions are happening at several volcanoes, such as Sakurajima.\nThe main volcanic phenomena that cause disasters include large volcanic blocks (大きな噴石), pyroclastic flows (火砕流), snowmelt-type volcanic mudflows (融雪型火山泥流), lava flows, small volcanic stones and volcanic ash, and volcanic gas.\nIn particular, large volcanic blocks, pyroclastic flows and snowmelt-type volcanic mudflows happen together with eruptions, leave almost no time to evacuate and are highly dangerous to life, so you need to evacuate in advance, using eruption warnings and evacuation plans.\nMain volcanic disasters (Japan Meteorological Agency)\nExplanation of eruption warnings and forecasts (Japan Meteorological Agency)\nIn the eruption of Mt. Ontake in September Heisei 26 (2014), a steam explosion happened suddenly, and many climbers near the crater were harmed. In the revision of the Act on Special Measures for Active Volcanoes based on the lessons of the Mt. Ontake eruption, the law set out duties for climbers to make efforts, such as collecting volcano information and making sure they have a way to communicate, so that they can evacuate smoothly and quickly if a volcano erupts or similar.",
+   "reviewed": false
+  },
+  "b77c11cb87cb74ae": {
+   "text": "Also, because the information in climbing notifications (登山届) is important for rescue work when volcanic events happen, the law revision in Reiwa 5 (2023) strengthened the rule on the duty to make efforts to submit a climbing notification.\nIf you are thinking of climbing, please see these pages.\nInformation page for volcano climbers (Japan Meteorological Agency)\nVolcano observation data (Japan Meteorological Agency)\nPreparing to climb volcanoes (Cabinet Office, Disaster Management)\nDid you know you can submit a climbing notification online? (Cabinet Office, Disaster Management)\nTo protect your life from volcanic disasters\nTo protect yourself from volcanic disasters,\nknow the points to note when climbing and the role of evacuation promotion facilities, and be prepared for an emergency.\nWhat to do in a volcanic disaster",
+   "reviewed": false
+  },
+  "f9c9ee860c2ba7ee": {
+   "text": "In a volcanic disaster, quick evacuation in advance makes a big difference to whether people are harmed.\nLook at the volcano disaster prevention map and check the dangerous places for each volcanic alert level (噴火警戒レベル)\nCheck evacuation sites and evacuation routes in advance\nPay attention to the eruption warnings, volcanic alert levels and other information issued by the Japan Meteorological Agency\nIf there is a risk of an eruption, you need to evacuate in advance from the \"area requiring caution\" (警戒が必要な範囲). If your local municipality gives instructions, follow them",
+   "reviewed": false
+  },
+  "46f396f20804182c": {
+   "text": "The volcanic alert level (噴火警戒レベル) is an indicator issued in 5 levels that shows, according to the state of volcanic activity, the \"area requiring caution\" (警戒が必要な範囲) and the \"disaster prevention actions to take\" by disaster prevention agencies, residents and others.\nNote 1: The areas covered by evacuation, preparation for evacuation and restrictions on entering the mountain are set for each volcano in local disaster prevention plans and similar, through joint discussion in the volcano disaster prevention council. However, depending on the state of volcanic activity, the actual areas covered may differ from the areas set in advance.\nNote 2: \"Crater\" in the table means the crater where an eruption is expected, or the area where a crater could appear (expected crater area). For volcanoes where the eruption location (area) cannot be identified in advance, such as the Izu-Tobu volcano group, the \"area of seismic activity\" is treated as the expected crater area.\nNote 3: The keyword for volcanic alert level 4 was changed to \"evacuation of older people and others needing time\" (高齢者等避難) on December 16, Reiwa 3 (2021), to match the \"evacuation of older people and others needing time\" issued by municipalities.",
+   "reviewed": false
+  },
+  "c2020f165f493abb": {
+   "text": "An eruption bulletin (噴火速報) is information that announces quickly the fact that an eruption has happened.\nIt is issued to tell people who are climbing or living nearby, simply and as early as possible, that the volcano has erupted, so that they take action to protect themselves.\nAn example of the information issued is shown in the figure.\nExample of an eruption bulletin\nWhen an eruption bulletin is issued\nAn eruption bulletin is issued in cases like the following.\nWhen an eruption happens at a continuously monitored volcano for which no eruption warning has been issued\nWhen, at a continuously monitored volcano for which an eruption warning has been issued, an eruption happens of a size that leads to considering raising the volcanic alert level or widening the area requiring caution (*)\n* It is issued if the size of the eruption cannot be confirmed.\nIn addition, when it is judged that the impact on society is large and the eruption needs to be announced promptly\nMeasures to protect yourself from volcanic ash\nProtect yourself from volcanic ash\nAvoid breathing in volcanic ash, for example by wearing a dust mask.",
+   "reviewed": false
+  },
+  "a2ef2865890f00be": {
+   "text": "Volcanic ash is very fine, so it goes deep into the lungs with the air. This can make you cough more or feel short of breath. You may also get more runny nose and phlegm, and your nose and throat may hurt. People with asthma or bronchitis may suffer from attack-like coughing, a feeling of tightness in the chest or wheezing, so take care. People with serious heart disease should also take care.\nIf volcanic ash gets in your eyes, do not rub them with your hands; rinse them with water. Take out contact lenses and use glasses.\nIf volcanic ash gets in your eyes, they may feel gritty, and may itch, hurt or become red. You may also get sticky discharge or tears. If volcanic ash scratches the surface of your eye, you may get conjunctivitis, with stinging or sensitivity to light, so be careful.\nProtect your skin.",
+   "reviewed": false
+  },
+  "75401fc37e093273": {
+   "text": "Contact with volcanic ash may make your skin inflamed. It may hurt or swell, and germs may get in through scratches, so take care.\nWatch out for traffic accidents.\nWhen volcanic ash falls, visibility gets worse and markings such as pedestrian crossings become hard to see. Also, when volcanic ash piles up on roads, they become slippery and the brakes of bicycles and cars work less well. If a lot piles up, driving becomes impossible.\nTo remove fallen ash safely\nWhen removing ash, always wear a proper dust mask. Also, to prevent eye irritation, do not use contact lenses; wear goggles or glasses.\nVolcanic ash is lava that has been smashed into tiny pieces by the force of the eruption. It is a collection of small grains of stone, so each one is very hard and also sharp and spiky. This is why it can damage the eyes and lungs.\nIf you have no choice but to remove volcanic ash from a roof, first check that the roof can safely hold a person's weight before you start.",
+   "reviewed": false
+  },
+  "1155fd346a83f8aa": {
+   "text": "The surfaces of ladders and roofs are very slippery with volcanic ash, so take care.\nSecure the ladder firmly, wear a safety rope and a helmet, tell your family and neighbours, and always work with 2 or more people.\nVolcanic ash easily blocks gutters and drains, so do not wash it away into them.\nFor details, see the materials and videos here.\nExplanation of the volcano information and materials issued by the Japan Meteorological Agency (Japan Meteorological Agency)\nExplanation of eruption bulletins (Japan Meteorological Agency)\n\"Ashfall forecasts\" that quickly forecast the areas and amount of falling volcanic ash (Government Public Relations Online)\nLife-threatening \"volcanic disasters\": understand volcanic alert levels and check disaster information (Government Public Relations Online)",
+   "reviewed": false
+  },
+  "51865e997fbbb2b8": {
+   "text": "Japan has 111 active volcanoes, and their volcanic activity is monitored at the \"Volcanic Observations and Warnings Centers\" at the Japan Meteorological Agency and at the Sapporo, Sendai and Fukuoka Regional Headquarters.\nOf the 111 active volcanoes, for 51 volcanoes, volcano observation facilities such as seismometers, tiltmeters, infrasound sensors, GNSS observation equipment and monitoring cameras have been set up so that signs of an eruption can be caught and eruption warnings and similar issued accurately. With data also provided by related organisations (universities and other research institutions, local governments, disaster prevention agencies and others), their volcanic activity is continuously observed and monitored 24 hours a day (continuously monitored volcanoes).\nContinuously monitored volcanoes\nVolcanoes whose volcanic activity is monitored 24 hours a day at the Volcanic Observations and Warnings Centers\nSource: Locations of observation points at continuously monitored volcanoes (Japan Meteorological Agency)\nFor details, see here.\nVolcano monitoring (Japan Meteorological Agency)\nEruption warnings and forecasts (Japan Meteorological Agency)\nVolcano measures (Cabinet Office, Disaster Management)\nBack to top",
+   "reviewed": false
+  },
+  "40e22d03829e9701": {
+   "text": "In recent years, there have been more cases of bears appearing in places where we live, such as urban areas, and injuring people. To prevent harm from bears, it is important first of all \"not to meet a bear\". This article introduces measures you can take in daily life, what to do if you do meet a bear, and the efforts by the national government and others to keep bears and people in separate areas.",
+   "reviewed": false
+  },
+  "8cc72a940af3ece7": {
+   "text": "The most important thing in preventing harm from bears is not to meet them. Bears are by nature animals that live avoiding people, but if they meet a person unexpectedly, they may be startled and attack.\nTo avoid meeting bears, it is important to \"not attract bears\", \"let them know people are there\" and \"check information on bear sightings\". These measures apply not only in mountains and forests but also where we live, such as residential areas, farmland, roads and routes to school. Be aware that you may meet a bear even in areas where bears have not appeared before, and put these measures into practice.",
+   "reviewed": false
+  },
+  "49404771cca65ab0": {
+   "text": "Bears may come close to where people live in search of food. Fruit left on trees, leftover crops, food waste, and also compost, paints and other coatings, organic fertiliser and fuel can attract bears. If a bear gets food around people's homes even once, it may remember the place and keep coming back.\nRemove fruit you will not harvest early\nIf you cannot look after fruit trees, consider cutting them down\nDo not leave food waste outside\nIn these and other ways, manage things so that you do not create causes that attract bears.\nBears prefer to move through places where they can hide easily, with thick grass and trees, such as tall grass and thickets. To keep them away from where people live, cut back vegetation and keep the area open so you can see clearly.\nAlso, to keep them away from fields and orchards, installing an electric fence is effective. Before installing one, check how to install it so that it works against bears, such as the height and spacing of the wires.",
+   "reviewed": false
+  },
+  "28c1c31e246890f7": {
+   "text": "To avoid meeting a bear unexpectedly, it is important to let bears know in advance that people are there. Many bears in Japan are thought to have learned to see humans as something to avoid and to be wary of them, so carry something that makes noise, such as a bear bell or a radio, and keep making noise. Walking and talking with other people is also effective.\nHowever, this may not work against bears that keep coming to where people live, so it is also important to pay attention so that you notice a bear early, from sounds, footprints and similar.",
+   "reviewed": false
+  },
+  "ea0dbc047f3463b8": {
+   "text": "Before going out, always check information on bear sightings along your route and around your destination. If there are sightings, the safest measure is to avoid going out unless it is necessary and urgent. If you really cannot avoid going out, avoid early morning and evening, when you are more likely to meet bears, and avoid going out on foot.",
+   "reviewed": false
+  },
+  "96ec50bf072e57b7": {
+   "text": "Because the range where bears appear has been widening in recent years, bear sightings may be reported even in places you thought were safe until now, such as walking paths and routes to work or school.\nIn fact, there have been reported cases of people who kept walking after neighbours warned them \"a bear has been seen, so walking is dangerous\", and were attacked by a bear. Do not let your guard down thinking \"it's my usual route, so it's fine\"; take action not to meet a bear, such as not going out to places with sightings or changing your route.",
+   "reviewed": false
+  },
+  "45187246655d7e1d": {
+   "text": "No matter how careful you are, the chance of meeting a bear is not zero. If you do meet a bear, deal with it as follows.",
+   "reviewed": false
+  },
+  "e518c9d8b4b8d4f7": {
+   "text": "If you meet a bear, the basic rule is to move away quietly and slowly while watching the bear. Also, the following actions excite the bear, and an excited bear may chase you, so never do them.\nShouting or throwing things\nTurning your back and starting to run\nDropping your rucksack or bag and running away (if it contains food, this may end up feeding the bear (餌付け))",
+   "reviewed": false
+  },
+  "cd49e3b1103a3185": {
+   "text": "If there is a barrier nearby, such as a utility pole, a tree or a car, move to a position where it is between you and the bear. Even if the bear charges at you, the barrier lowers the risk of direct contact.",
+   "reviewed": false
+  },
+  "61818eba23b31f99": {
+   "text": "If there is a car, a house, a shop, a public facility or similar nearby, take refuge in a place where you can protect yourself from the bear, such as inside a car or a building. Also, do not try to deal with it on your own; ask people nearby for help.",
+   "reviewed": false
+  },
+  "b4a4bb3c4fce0bc7": {
+   "text": "Bear repellent spray is useful when a bear is right in front of you and closing in; it is not for keeping bears away. When using it, you need to spray it at the bear's eyes and nose, but when a bear is really in front of you, it is not easy to use it calmly and accurately. If you carry spray, it is important to check how to use it in advance, and to prepare and practise so that you can use it when needed. Also, do not feel safe just because you have it; first of all, take care to act so that you do not meet a bear.",
+   "reviewed": false
+  },
+  "557fdf12c0c11ed8": {
+   "text": "If you see or meet a bear, first take refuge in a safe place. Then sort out, as far as you know, where and when the bear appeared and which direction it went, and contact the municipality of the area where it appeared or the police station with jurisdiction.",
+   "reviewed": false
+  },
+  "fde400c9f7c93fff": {
+   "text": "Protect your head: protect your head with a hood, a hat or similar.\nProtect your vital areas: lie face down and protect your face, chest and abdomen.\nProtect your neck: interlock your fingers and protect the back of your head and the back of your neck.\nWith these defensive positions, your hands, arms and back will be attacked, but you may be able to protect your vital areas and prevent fatal injuries. The defensive position is strictly a last resort, so first carry out the basic ways of dealing with a bear.",
+   "reviewed": false
+  },
+  "dd39a537971da320": {
+   "text": "In recent years, bears have been appearing more often where people live, such as urban areas. Not only people who go into the mountains to pick mushrooms or wild vegetables or for leisure, but also people living in towns, should take thorough measures against bears. These efforts are important for protecting yourself and aiming to live alongside bears.\n(Interview cooperation: Ministry of the Environment. Responsibility for text: Government Public Relations Office, Cabinet Office)",
+   "reviewed": false
+  },
+  "29dfe5d61333ef46": {
+   "text": "With the outdoor boom of recent years, many people have started climbing mountains or have more chances to enjoy mountain leisure. Mountain leisure, close to nature, refreshes body and mind, but on the other hand, many accidents happen in the mountains all year round, whatever the season. So that you can enjoy mountain leisure safely, we have put together 6 points for preventing \"mountain accidents\"; please do use them for reference.",
+   "reviewed": false
+  },
+  "38d7bc5e41fe01b0": {
+   "text": "According to data on \"mountain accidents\" published by the National Police Agency, in Reiwa 6 (2024) there were 2,946 mountain accidents involving 3,357 people. Of these, 300 people died or went missing. Over the past 10 years, mountain accidents increased for 3 years in a row from Reiwa 2 (2020), but in Reiwa 6 (2024) they decreased compared with the previous year.\nLooking at people in mountain accidents by age group, people aged 60 or over make up about 50% of all those involved. Among those who died or went missing, people aged 60 or over jump to 64%. It cannot be denied that physical strength declines with age. It is important not to push yourself, for example by making a climbing plan that suits your physical strength.\nBy type of accident, first is \"getting lost\" at 30.4% of the total, followed by \"falling over\" (20.0%) and \"slipping and falling down a slope\" (17.2%).",
+   "reviewed": false
+  },
+  "5a43da0745021e8b": {
+   "text": "About half of the people in mountain accidents are rescued safely, but there are also many cases where people go missing or die. In particular, in accidents while climbing alone, the proportion of people who go missing or die is higher than when climbing with others.",
+   "reviewed": false
+  },
+  "bac8b15682bf80e3": {
+   "text": "To enjoy climbing and other mountain leisure safely, collecting information in advance is important. Know the terrain and trails of the mountain you will climb and information on past accidents, and use this when choosing equipment, clothing and route and when making your schedule.\nAlso, if the weather turns bad during a climb, the chance of an accident increases. When planning a climb, check the weather forecast, and if bad weather is expected, we recommend cancelling or postponing. Mountain weather changes easily, so as well as checking the forecast on the day, of course, also check weather information often during the climb, for example with a portable radio.",
+   "reviewed": false
+  },
+  "f4c4009b132ea6ff": {
+   "text": "Safe climbing starts with planning which mountain to climb. Choose a mountain and route that match the climbers' physical strength and condition, and their climbing experience and skill.\nAlong with choosing the route, it is important to research well in advance where the dangerous spots are, such as places where you could slip and fall down a slope, and where accommodation and shelter facilities such as mountain huts are and whether they are open, and to fully understand all this, including escape routes.\nOnce you have decided on your route, work out how many hours it will take you, with your physical strength, to get back down. It is important to make a schedule that does not push you, with time to spare, taking breaks as needed so you do not get too tired. Mountain paths get dark suddenly as sunset approaches, so make a schedule that lets you get down while it is still light.",
+   "reviewed": false
+  },
+  "2efe00dd77f640ed": {
+   "text": "Once you have made a climbing plan, put the climbers' names and contact details, the dates, the route and similar into a \"climbing plan\" (登山計画書), and submit it to a \"climbing notification box\" (登山届ポスト) set up at the trailhead or similar, the local municipality, the prefectural police with jurisdiction over the mountain or similar. Also share the climbing plan with your family, workplace or similar, so that it gives clues for a quick search and rescue in an emergency.\nSubmitting a climbing plan gives clues for the search if you get into trouble, which leads to quick rescue. There have already been many cases where submitting a climbing plan saved someone's life. Also, making a climbing plan gives you a chance to review your plan, which also helps prevent mountain accidents.\nMountain accidents also happen on low mountains, so whatever the height of the mountain you climb, make sure you always make and submit a climbing plan. Also, remember to report to the place you submitted it to once you have come down.",
+   "reviewed": false
+  },
+  "aaf5fb0179782600": {
+   "text": "Major causes of mountain accidents include sudden changes in the weather and going ahead with a plan that is too physically demanding with inadequate equipment. Even if you checked the weather in advance, the weather may turn bad on the day or during the climb, and even if you were healthy until the day before, you may feel unwell because of tiredness, illness or similar.\nIn such cases, it is very dangerous to force yourself to keep climbing just because you planned to. Judge the situation calmly, and try to cancel early or turn back.",
+   "reviewed": false
+  },
+  "fd1ee7c28b91b895": {
+   "text": "The part of a climb that needs the most care is the descent. Many mountain accidents happen while coming down. When coming down, your legs and lower back get tired, so the risk of falling over or slipping and falling down a slope increases. Take care to go slowly and carefully, watching your footing.\nYou must also watch out for getting lost. If you keep looking only at the ground as you go, there is a risk you will miss signs on the trail and take the wrong path. If you get lost, do not keep going down; go back to the path you came on. There have been accidents where people kept going down while lost, thought they had reached an open place, and fell off a cliff. If you cannot get back to the proper trail, wait and save your strength in a place where the rescue team can easily find you, such as an open place without trees or a ridge.",
+   "reviewed": false
+  },
+  "7935ae7d252bbabc": {
+   "text": "Mountain weather changes easily, and if you are exposed to rain and wind, your body may get cold and you may get hypothermia. Choose clothing that is easy to put on and take off to suit the temperature, weather and so on. Rain gear (rainwear) and warm clothing are also essential.\nFor shoes, prepare something easy to walk in, such as climbing boots or trekking shoes suited to the climate of the mountain you plan to climb. If you are unsure of your physical strength, trekking poles and similar are also recommended.\nAlso, do not forget equipment such as a hat against sun and rain, gloves to prevent injuries, a first-aid kit, water and emergency food, and a headlamp.",
+   "reviewed": false
+  },
+  "2777567df6b2117f": {
+   "text": "To prevent mountain accidents caused by getting lost and similar, it is important to bring a map and compass and also to use a mountain map app for smartphones as well.",
+   "reviewed": false
+  },
+  "c42020e05319c71c": {
+   "text": "So that you can call for help if you get into trouble, always carry a means of communication, such as a mobile phone or a radio, including a spare battery. If your mobile phone or similar has a GPS function, you can tell rescue organisations your exact current location, which makes quick rescue more likely. However, you need to be aware that on many mountains the area where calls can be made is limited, and to watch how much battery is left.",
+   "reviewed": false
+  },
+  "77d6b08e54796181": {
+   "text": "If you need rescue, call 110 or 119. When every second counts, a search and rescue by helicopter may be needed. If there is a submitted climbing plan or GPS location information for the place where you are in trouble, the search area can be narrowed down more quickly.\nHowever, even if rescue is requested, a helicopter rescue may not be possible, depending on the terrain and weather conditions where you are in trouble.",
+   "reviewed": false
+  },
+  "782ffe1c3955d78b": {
+   "text": "Many mountain accidents happen in the mountains, mainly to people aged 60 or over, so learn the key safety points in advance. Also, accidents happen all year round, whatever the season, so it is good to keep in mind the points to watch for in each season.\n(Interview cooperation: National Police Agency. Responsibility for text: Government Public Relations Office, Cabinet Office)",
+   "reviewed": false
+  },
+  "0268b75116d0dbf7": {
+   "text": "This page explains the Japan Meteorological Agency's tsunami information in detail, including the types of tsunami warnings (津波警報) and tsunami advisories (津波注意報), the criteria for issuing them and the expected heights.\nAbout tsunami warnings/advisories, tsunami information and tsunami forecasts (Japan Meteorological Agency)",
+   "reviewed": false
+  },
+  "16678b4dda375e37": {
+   "text": "- Avalanches are likely on steep slopes, places with sparse vegetation and similar. Also watch out for weather conditions and warning signs! -\nAvalanches are very fast, and it is difficult to escape after you notice one has started. To protect yourself, it is important to know in advance the cases in which avalanches are likely. In daily life, check dangerous places and weather information, and if you find warning signs of an avalanche, report it immediately to the nearest municipal office or police station.\n<Places where avalanches are likely>\nSteep slopes\nIn general, avalanches become likely on slopes of 30 degrees or more, about the same as an advanced ski course, and 35 to 45 degrees is said to be the most dangerous.\nAvalanches are less likely on slopes densely covered with tall trees, while the risk of avalanches is higher on slopes with shrubs or sparse vegetation. Slopes covered with bamboo grass or grass are more likely to have avalanches than bare ground.\n<Conditions in which avalanches are likely>\nWhen temperatures are low, there is already a lot of snow, and a large amount of snow falls in a short time\nSteep slopes, especially with cornices (雪庇) or snowdrifts (places where wind has blown snow together and piled it up)",
+   "reviewed": false
+  },
+  "8d237ce74a6d136e": {
+   "text": "When temperatures of 0 degrees or below continue, with blizzards or strong winds\nSlopes where avalanches have happened in the past, etc.\nWhen temperatures rise in early spring, after rain, or due to the foehn effect and similar\nPlaces where cracks have formed in the snow cover on the slope, etc.\n<Main warning signs>\nCornice (雪庇)\nSnow overhanging from a mountain ridge\nMakidare (巻きだれ)\nSnow overhanging from an avalanche prevention fence\nSlope becoming flat\nSo much snow has piled up and flattened the slope that you cannot tell the original shape of the ground\nSnowballs\nLumps of snow like balls rolling down the slope\nCracks\nSplits in the snow that look like scratches on the slope\nSnow wrinkles (雪しわ)\nWrinkle-like patterns in the snow, like fingertips that have gone soft in water (Source: Niigata Prefecture)\n<What to keep in mind in daily life>\nKnow the dangerous places in your area from the hazard map made and distributed by your municipality. You can check dangerous places on the website of your prefecture or municipality.\nCheck whether weather information such as an \"avalanche advisory\" (なだれ注意報) issued by the Japan Meteorological Agency is in effect.\nWarnings and advisories currently in effect (Japan Meteorological Agency)\nUpcoming snow (short-range snowfall forecast) (Japan Meteorological Agency)",
+   "reviewed": false
+  },
+  "d32e20e9948436c8": {
+   "text": "Also check information sent out by your local government.",
+   "reviewed": false
+  },
+  "08493b3864b70408": {
+   "text": "Infection prevention\nIf possible, have them wear rubber gloves or plastic bags so that they do not touch blood directly\nRemind them to avoid touching blood as far as possible\nHave the injured or sick person wait in a comfortable position\nDirect pressure to stop bleeding\nPut layers of gauze, a handkerchief, a towel or similar on the bleeding area, and press hard\n* If blood seeps through the gauze or similar, the pressure may be off the bleeding area, or the pressure may be too weak, among other causes\n* Do not instruct the method of tying the bleeding arm or leg with thin string or wire, because it risks damaging blood vessels and nerves",
+   "reviewed": false
+  },
+  "2769501282ec4be5": {
+   "text": "A huge tsunami strikes; wooden houses are completely destroyed or washed away, and people are swept away by the tsunami's current. People on the coast or along rivers, evacuate immediately to a safe place such as high ground or an evacuation building.\nIf the epicentre is close to land, the tsunami warning (津波警報) or tsunami advisory (津波注意報) may not come in time before the tsunami arrives. If you feel strong shaking, or weak but long shaking, start evacuating immediately.\nBecause of the shape of the coast and other factors, a tsunami may be locally higher than expected.\nTsunamis strike repeatedly over a long time. Keep evacuating until the tsunami warning or advisory is lifted.\nIn low-lying areas, the tsunami strikes and flooding damage occurs. People are swept away by the tsunami's current. People on the coast or along rivers, evacuate immediately to a safe place such as high ground or an evacuation building.\nIn the sea, people are swept away by fast currents; aquaculture rafts are washed away and small boats capsize. People in the sea, get out of the water immediately and move away from the coast.",
+   "reviewed": false
+  }
+ }
+}

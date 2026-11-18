@@ -1,0 +1,7 @@
+# Built files: published as release assets, never committed.
+build/
+# Dart
+.dart_tool/
+# Python
+__pycache__/
+.DS_Store

@@ -1,0 +1,211 @@
+{
+  "publisher": "lychnion",
+  "items": [
+    {
+      "id": "model.gemma-4-e2b-q4_0",
+      "kind": "model",
+      "role": "chat",
+      "version": "2026.11.0",
+      "title": {
+        "ja": "回答モデル Gemma 4 E2B",
+        "en": "Answer model Gemma 4 E2B"
+      },
+      "note": {
+        "ja": "スマートフォン・タブレット向け",
+        "en": "For phones and tablets"
+      },
+      "licence": "Apache 2.0 (Google Gemma 4)",
+      "files": [
+        {
+          "name": "gemma-4-E2B-it-Q4_0.gguf",
+          "size": 2841481184,
+          "sha256": "8e30dff3ac4c8434c49a7036fa15564bdbb6044e42bf04550bf1a096ad7e6a52",
+          "url": "https://huggingface.co/ggml-org/gemma-4-E2B-it-GGUF/resolve/main/gemma-4-E2B-it-Q4_0.gguf"
+        }
+      ]
+    },
+    {
+      "id": "model.gemma-4-e4b-q4_0",
+      "kind": "model",
+      "role": "chat",
+      "desktop": true,
+      "version": "2026.11.0",
+      "title": {
+        "ja": "回答モデル Gemma 4 E4B",
+        "en": "Answer model Gemma 4 E4B"
+      },
+      "note": {
+        "ja": "パソコン向け：回答がより良く、速度は半分",
+        "en": "For computers: better answers, half the speed"
+      },
+      "licence": "Apache 2.0 (Google Gemma 4)",
+      "files": [
+        {
+          "name": "gemma-4-E4B-it-Q4_0.gguf",
+          "size": 4590807392,
+          "sha256": "a555b900214b477d8880e7832e0b8925e139b0159640036b09fe472b6f2097f2",
+          "url": "https://huggingface.co/ggml-org/gemma-4-E4B-it-GGUF/resolve/main/gemma-4-E4B-it-Q4_0.gguf"
+        }
+      ]
+    },
+    {
+      "id": "model.embeddinggemma-2-q8_0",
+      "kind": "model",
+      "role": "embed",
+      "version": "2026.11.0",
+      "title": {
+        "ja": "検索モデル EmbeddingGemma 2",
+        "en": "Search model EmbeddingGemma 2"
+      },
+      "note": {
+        "ja": "意味で資料を探す（日本語・英語）",
+        "en": "Finds passages by meaning (Japanese and English)"
+      },
+      "licence": "Apache 2.0 (Google EmbeddingGemma 2)",
+      "files": [
+        {
+          "name": "embeddinggemma-2-Q8_0.gguf",
+          "size": 309855456,
+          "sha256": "2188ac1deca4b77dffefd603c2776a9d76d9d74ec01841392982ebb840b09135",
+          "url": "https://huggingface.co/ggml-org/embeddinggemma-2-GGUF/resolve/main/embeddinggemma-2-Q8_0.gguf"
+        }
+      ]
+    },
+    {
+      "id": "jp.bousai.core",
+      "kind": "package",
+      "version": "2026.11.3",
+      "title": {
+        "ja": "防災（基本）",
+        "en": "Disaster preparedness (basics)"
+      },
+      "note": {
+        "ja": "アプリ内蔵版より新しい版があれば更新",
+        "en": "Updates the copy built into the app"
+      },
+      "licence": "PDL 1.0（出典は各回答に表示）",
+      "files": [
+        {
+          "name": "jp.bousai.core.sqlite",
+          "path": "build/packages/jp.bousai.core.sqlite"
+        }
+      ]
+    },
+    {
+      "id": "jp.map.nishinomiya",
+      "kind": "map",
+      "version": "2026.11.1",
+      "title": {
+        "ja": "地図：西宮周辺",
+        "en": "Map: Nishinomiya area"
+      },
+      "note": {
+        "ja": "神戸東部〜大阪西部、避難場所・徒歩ルート・津波浸水想定つき",
+        "en": "Eastern Kobe to western Osaka, with evacuation sites, walking routes and tsunami inundation areas"
+      },
+      "licence": "© OpenStreetMap contributors (ODbL), Protomaps; 国土地理院 避難場所データ・標高タイル; 国土数値情報（津波浸水想定）CC BY 4.0",
+      "files": [
+        {
+          "name": "jp.map.nishinomiya.pmtiles",
+          "size": 26211536,
+          "sha256": "9735700f8ffebbfba32edca5ea6ff04891718e13a0346eae705565c324e97d25",
+          "url": "https://github.com/lychnion/lychnion-data/releases/download/2026.11.0/jp.map.nishinomiya.pmtiles"
+        },
+        {
+          "name": "jp.map.nishinomiya.sites.sqlite",
+          "size": 401408,
+          "sha256": "bd39728ef33c7f7c1fe0cef91c87fa0549794c0d7fb7d3a71cf2f2f2a7cb6371",
+          "url": "https://github.com/lychnion/lychnion-data/releases/download/2026.11.0/jp.map.nishinomiya.sites.sqlite"
+        },
+        {
+          "name": "jp.map.nishinomiya.routes.bin",
+          "size": 11541028,
+          "sha256": "94a5f22980f5fbba04facec8f6c169a4c8ab70cfc2cc6263a372130de71a725d",
+          "url": "https://github.com/lychnion/lychnion-data/releases/download/2026.11.1/jp.map.nishinomiya.routes.bin"
+        },
+        {
+          "name": "jp.map.nishinomiya.inundation.mbtiles",
+          "size": 1462272,
+          "sha256": "2cb40ab4b55116b0b20cae4bc222295cd55d98704a6ff2d9069ccb376a25d5e8",
+          "url": "https://github.com/lychnion/lychnion-data/releases/download/2026.11.1/jp.map.nishinomiya.inundation.mbtiles"
+        }
+      ]
+    },
+    {
+      "id": "jp.outdoor.hiking",
+      "kind": "package",
+      "version": "2026.11.2",
+      "title": {
+        "ja": "登山（基本）",
+        "en": "Hiking (basics)"
+      },
+      "note": {
+        "ja": "アプリ内蔵版より新しい版があれば更新",
+        "en": "Updates the copy built into the app"
+      },
+      "licence": "PDL 1.0（出典は各回答に表示）",
+      "files": [
+        {
+          "name": "jp.outdoor.hiking.sqlite",
+          "path": "build/packages/jp.outdoor.hiking.sqlite"
+        }
+      ]
+    },
+    {
+      "id": "intl.firstaid.basics",
+      "kind": "package",
+      "version": "2026.11.1",
+      "title": {
+        "ja": "応急手当（海外の資料）",
+        "en": "First aid (foreign sources)"
+      },
+      "note": {
+        "ja": "アプリ内蔵版より新しい版があれば更新",
+        "en": "Updates the copy built into the app"
+      },
+      "licence": "Public domain (U.S. government works); Japanese translation by Lychnion",
+      "files": [
+        {
+          "name": "intl.firstaid.basics.sqlite",
+          "path": "build/packages/intl.firstaid.basics.sqlite"
+        }
+      ]
+    },
+    {
+      "id": "jp.map.kushimoto",
+      "kind": "map",
+      "version": "2026.11.0",
+      "title": {
+        "ja": "地図：串本町（和歌山県）",
+        "en": "Map: Kushimoto (Wakayama)"
+      },
+      "note": {
+        "ja": "串本町と周辺、避難場所・徒歩ルート・津波浸水想定つき",
+        "en": "Kushimoto and around, with evacuation sites, walking routes and tsunami inundation areas"
+      },
+      "licence": "© OpenStreetMap contributors (ODbL), Protomaps; 国土地理院 避難場所データ・標高タイル; 国土数値情報（津波浸水想定）CC BY 4.0",
+      "files": [
+        {
+          "name": "jp.map.kushimoto.pmtiles",
+          "path": "build/maps/jp.map.kushimoto.pmtiles",
+          "url": "https://github.com/lychnion/lychnion-data/releases/download/2026.11.2/jp.map.kushimoto.pmtiles"
+        },
+        {
+          "name": "jp.map.kushimoto.sites.sqlite",
+          "path": "build/maps/jp.map.kushimoto.sites.sqlite",
+          "url": "https://github.com/lychnion/lychnion-data/releases/download/2026.11.2/jp.map.kushimoto.sites.sqlite"
+        },
+        {
+          "name": "jp.map.kushimoto.routes.bin",
+          "path": "build/maps/jp.map.kushimoto.routes.bin",
+          "url": "https://github.com/lychnion/lychnion-data/releases/download/2026.11.2/jp.map.kushimoto.routes.bin"
+        },
+        {
+          "name": "jp.map.kushimoto.inundation.mbtiles",
+          "path": "build/maps/jp.map.kushimoto.inundation.mbtiles",
+          "url": "https://github.com/lychnion/lychnion-data/releases/download/2026.11.2/jp.map.kushimoto.inundation.mbtiles"
+        }
+      ]
+    }
+  ]
+}
