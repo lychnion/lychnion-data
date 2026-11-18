@@ -72,6 +72,8 @@ UNITS = {
            (r"iu\b|international units?\b|units?\b", "IU"), (r"cc\b", "ml"), (r"(?:tablet|pill|capsule)s?\b", "tablet"),
            (r"drops?\b", "drop"), (r"gm\b", "g"), (r"tsp\b|teaspoons?\b", "tsp"),
            (r"tbsp\b|tablespoons?\b", "tbsp"), (r"cups?\b|cupfuls?\b|glass(?:es)?\b|mugs?\b|bowls?\b", "cup"), (r"spoonfuls?\b", "tsp"),
+           (r"(?:chest )?compressions?\b", "compression"), (r"(?:rescue )?breaths?\b", "breath"),
+           (r"(?:sprays?|puffs?|inhalations?|pushes)\b", "spray"),
            (r"min(?:ute)?s?\b", "min"), (r"h(?:ou)?rs?\b|hours?\b|h\b", "h"), (r"sec(?:ond)?s?\b", "s"),
            (r"days?\b", "day"), (r"weeks?\b", "week"), (r"months?\b", "month"), (r"years?\b", "year"),
            (r"cm\b|centimet(?:er|re)s?\b", "cm"), (r"mm\b|millimet(?:er|re)s?\b", "mm"),
@@ -83,7 +85,8 @@ UNITS = {
     # 度 alone is Celsius in Japanese (or an angle, which English writes as degrees)
     "ja": [(r"dayish", "dayish"), (r"℃|°C", "°C"), (r"°F", "°F"), (r"°|度(?!目|に分け|(?:(?:と|および|または|もしくは|か|、|~|〜|-)\d+度)?の?(?:熱傷|火傷|やけど))", "°C"), (r"tsp", "tsp"), (r"tbsp", "tbsp"),
            (r"カップ|cup", "cup"), (r"mcg|µg|μg|ug|マイクログラム", "mcg"),
-           (r"mmHg", "mmHg"), (r"IU|単位", "IU"), (r"cc", "ml"), (r"錠|カプセル", "tablet"), (r"杯", "cup"), (r"滴", "drop"),
+           (r"mmHg", "mmHg"), (r"IU|単位", "IU"), (r"cc", "ml"), (r"錠|カプセル", "tablet"), (r"compression", "compression"), (r"breath", "breath"),
+           (r"噴霧|吸入|プッシュ", "spray"), (r"杯", "cup"), (r"滴", "drop"),
            (r"分(?!の)", "min"), (r"時間", "h"), (r"秒", "s"),
            (r"日", "day"), (r"週間?", "week"), (r"[かカヶケ]月", "month"), (r"年", "year"),
            (r"cm|センチ", "cm"), (r"mm|ミリ(?!リットル|グラム)", "mm"), (r"km|キロメートル", "km"), (r"キロ(?!グラム)", "kilo"),
@@ -94,7 +97,7 @@ UNITS = {
 # Units where a number on one side only with the unit is an error (doses,
 # temperatures): "5 mg" and 「5」 is not the same instruction.
 CRITICAL = {"°C", "°F", "deg", "mcg", "mg", "g", "kg", "ml", "l", "%", "IU", "tablet", "drop", "mmHg",
-            "tsp", "tbsp", "cup"}
+            "tsp", "tbsp", "cup", "compression", "breath", "spray"}
 TEMPERATURE = {"°C", "°F", "deg"}  # deg: English "degrees" without a scale
 # Times that must not get lost next to a number ("Wait 5 minutes" / 「5待つ」).
 SHORT_TIMES = {"min", "h", "s"}
@@ -151,7 +154,7 @@ def _normalize(text, lang):
         t = re.sub(r"\ban? (tablet|pill|capsule|dose|drop|glass|cup|mug|bowl|spoonful)\b", r"1 \1", t, flags=re.I)
         t = re.sub(r"\bone(?= (?:or|to) (?:two|three|four|five|\d))", "1", t, flags=re.I)
         t = re.sub(r"\b(\d+) to (\d+)(?= (?:dilution|ratio|solution|mix))", r"\1:\2", t, flags=re.I)
-        t = re.sub(r"(\btimes|\btwice|\bonce|\d+(?:\.\d+)?\s?(?:[a-z%]{1,10}s?)?(?: of \w+)?) an? (day|week|month|year|hour|minute)\b",
+        t = re.sub(r"(\btimes|\btwice|\bonce|\d+(?:\.\d+)?\s?(?:[a-z%]{1,10}s?)?(?: of \w+)?) an? (day|night|morning|evening|week|month|year|hour|minute)\b",
                    lambda m: f"{m[1]} 1 per-{_per(m[2])} ", t, flags=re.I)
         t = re.sub(r"\b(daily|weekly|monthly|hourly|yearly|annually|nightly)\b"
                    r"(?! (?:life|lives|living|use|routine|activities))",
@@ -177,7 +180,8 @@ def _normalize(text, lang):
         t = re.sub(r"(?<!than )\b(?:one|a single)(?= (?:hour|minute|second|day|week|month|year|person|time|tablet|pill"
                    r"|drop|dose|gram|milligram|liter|litre|cup|meter|metre|kilogram|unit)s?\b)", "1", t, flags=re.I)
         t = re.sub(r"\bthe first one\b", "1", t, flags=re.I)
-        # second-degree burn = 2度の熱傷; first- and second-degree = 1度と2度
+        # second-degree burn = 2度の熱傷; first- and second-degree = 1度と2度; a 3 degree burn
+        t = re.sub(r"\b(\d)[- ]degree (?=burns?\b)", r"\1 grade ", t, flags=re.I)
         t = re.sub(r"\b(first|second|third)-?(?=,? (?:(?:second|third)-?,? )*(?:and|or|to) (?:first|second|third|fourth)[- ]degree\b)",
                    lambda m: f"{['first', 'second', 'third'].index(m[1].lower()) + 1} grade", t, flags=re.I)
         t = re.sub(r"\b(first|second|third|fourth)[- ]degree\b",
@@ -222,12 +226,17 @@ def _normalize(text, lang):
         # 3時30分, 3時半 = 3:30; 零度 = 0度
         t = re.sub(r"(?<![\d.])(\d{1,2})時(?:(\d{1,2})分|(半))", lambda m: f"{m[1]}:{m[2] or 30} ", t)
         t = re.sub(r"零(?=度|℃)|ゼロ", "0", t)
+        # CPR counts: 胸骨圧迫30回 / 30回の胸骨圧迫 = 30 compressions; 人工呼吸2回 = 2 breaths
+        t = re.sub(r"(?:胸骨)?圧迫を?(\d+)回", r"\1compression", t)
+        t = re.sub(r"(\d+)回の?(?:胸骨)?圧迫", r"\1compression", t)
+        t = re.sub(r"(?:人工呼吸|息の吹き込み|吹き込み)を?(\d+)回", r"\1breath", t)
+        t = re.sub(r"(\d+)回の?(?:人工呼吸|息を吹き込|息の吹き込み|吹き込み)", r"\1breath", t)
         # 1対1 = 1:1
         t = re.sub(r"(\d+(?:\.\d+)?)対(\d+(?:\.\d+)?)", r"\1:\2", t)
         # 週3回, 月に1回 = per week 3 times; 1回2錠 = 2 tablets per time
         t = re.sub(r"(?<![\d.毎一-鿿かカヶケ])(週|月|年)に?(?=\d+(?:\.\d+)?\s?(?:[~〜-]\s?\d+(?:\.\d+)?\s?)?(?:回|日))", lambda m: f" 1 per-{_per(m[1])} ", t)
         # (only before a dose: 1日1回5mg keeps its "once")
-        t = re.sub(r"(?<![\d.第一日週月にでと])1回(?:に|あたり|につき)?"
+        t = re.sub(r"(?<![\d.第一日週月にでと])(?<!per-week )(?<!per-month )(?<!per-year )1回(?:に|あたり|につき)?"
                    r"(?=\d+(?:\.\d+)?\s?(?:錠|カプセル|滴|包|粒|mg|g|ml|cc|μg|mcg|ug|IU|単位|杯|tsp|tbsp))|毎回", " ", t,
                    flags=re.I)
         t = re.sub(r"(?<![\d.月])1\s?(日|分間?|時間|週間?|人|[かカヶケ]月|年)\s?(?:あたり|当たり|につき|ごと|に(?!は)|(?=1\s?日\s?\d)|(?=\d+(?:\.\d+)?\s?(?![\d.]|秒|分|時間|日|週|か月|ヶ月|カ月|年)))",
@@ -326,7 +335,7 @@ def numbers(text, lang):
         rest = t[m.end():m.end() + 40].lstrip()
         flags = re.I
         # 15 to 30 minutes, 3〜5分: the unit after the range is for both numbers
-        span = re.match(r"(?:to|or|-|–|~|〜|から)\s*\d+(?:\.\d+)?\s*", rest, flags)
+        span = re.match(r"(?:to|or|-|–|~|〜|から|または|もしくは|か)\s*\d+(?:\.\d+)?\s*", rest, flags)
         if span:
             rest = rest[span.end():]
         unit = ""
