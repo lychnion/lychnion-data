@@ -363,6 +363,27 @@ class Numbers(unittest.TestCase):
         self.assertTrue(ct.check_numbers("once or twice a week", "en", "月1〜2回", "ja"))
         self.assertTrue(ct.check_numbers("Cool the burn with water at 20 °C.", "en", "20℃以下の水でやけどを冷やす。", "ja") == [])
 
+    def test_cpr_and_spray_counts(self):
+        ok = (("Give 30 compressions then 2 breaths.", "30回の胸骨圧迫の後、人工呼吸2回を行う。"),
+              ("30 chest compressions and 2 rescue breaths", "胸骨圧迫30回と人工呼吸2回"),
+              ("Give 2 sprays 3 times a day.", "1日3回2噴霧"), ("2 puffs 4 times a day", "1日4回2吸入"))
+        for en, ja in ok:
+            with self.subTest(ja=ja):
+                self.assertEqual(ct.check_numbers(en, "en", ja, "ja"), [])
+        for en, ja in (("Give 30 compressions then 2 breaths.", "2回圧迫し、30回人工呼吸する。"),
+                       ("30 chest compressions and 2 rescue breaths", "胸骨圧迫2回と人工呼吸30回"),
+                       ("Give 2 sprays 3 times a day.", "1日2回3噴霧"), ("2 puffs 4 times a day", "1日2回4吸入")):
+            with self.subTest(swapped=ja):
+                self.assertTrue(ct.check_numbers(en, "en", ja, "ja"))
+
+    def test_weekly_dose_and_more(self):
+        for en, ja in (("Take 2 tablets once a week.", "週1回2錠。"), ("Take 2 mg once a week", "週1回2mg"),
+                       ("Take 2 tablets once a month.", "月1回2錠。"), ("sleep 8 hours a night", "毎晩8時間眠る"),
+                       ("5 or 10 mg", "5または10 mg"), ("a 3 degree burn", "3度のやけど")):
+            with self.subTest(ja=ja):
+                self.assertEqual(ct.check_numbers(en, "en", ja, "ja"), [])
+        self.assertTrue(ct.check_numbers("8 hours a night", "en", "8時間", "ja"))
+
     def test_phone_number(self):
         self.assertEqual(ct.check_numbers("119番に電話します", "ja", "Call 110.", "en"),
                          [("110", "110 in the translation, not in the original"),
