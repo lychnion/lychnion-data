@@ -278,6 +278,28 @@ class Numbers(unittest.TestCase):
         self.assertTrue(ct.check_numbers("38 °F", "en", "38度以上の熱", "ja"))
         self.assertTrue(ct.check_numbers("-15 °C", "en", "外は15℃", "ja"))
 
+    def test_minus_after_a_counter(self):
+        self.assertTrue(ct.check_numbers("Keep for 3 days at 5 °C.", "en", "3日間-5℃で保管する。", "ja"))
+        self.assertEqual(ct.check_numbers("Keep for 3 days at -5 °C.", "en", "3日間-5℃で保管する。", "ja"), [])
+        self.assertEqual(ct.check_numbers("Store at -18 °C.", "en", "保管温度-18℃", "ja"), [])
+        self.assertEqual(ct.check_numbers("5 to 10 °C, 1 to 2 hours", "en", "5℃-10℃、1時間-2時間", "ja"), [])
+
+    def test_more_correct_japanese_passes(self):
+        for en, ja in (("Replace twice a year.", "年に2回交換する。"), ("once a year", "年1回"),
+                       ("Drink 2 liters of water a day.", "1日に2リットルの水を飲む。"),
+                       ("The daily limit is 4 g.", "1日の上限は4 g。"), ("5 kg", "5キロ"), ("5 km", "5キロ"),
+                       ("a room of 10 m²", "10㎡の部屋"), ("second-degree burn", "2度の火傷"),
+                       ("second-degree burn", "Ⅱ度熱傷"), ("first- and second-degree burns", "1度と2度の熱傷"),
+                       ("38 degrees and 40 degrees", "38度と40度"), ("half an hour", "30分"),
+                       ("an hour or two", "1〜2時間"), ("98.6 °F", "華氏98.6度"), ("3 %", "3パーセント"),
+                       ("3 times a day", "一日3回"), ("every other week", "隔週"), ("every other day", "1日おき"),
+                       ("100 km/h", "100km/時"), ("wait for a day", "1日待つ")):
+            with self.subTest(ja=ja):
+                self.assertEqual(ct.check_numbers(en, "en", ja, "ja"), [])
+        self.assertTrue(ct.check_numbers("5 kg", "en", "5キロメートル", "ja"))
+        self.assertTrue(ct.check_numbers("98.6 °F", "en", "摂氏98.6度", "ja"))
+        self.assertTrue(ct.check_numbers("Drink 2 liters of water a day.", "en", "2リットルの水を飲む。", "ja"))
+
     def test_phone_number(self):
         self.assertEqual(ct.check_numbers("119番に電話します", "ja", "Call 110.", "en"),
                          [("110", "110 in the translation, not in the original"),
