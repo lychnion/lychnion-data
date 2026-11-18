@@ -129,6 +129,9 @@ def _normalize(text, lang):
     t = unicodedata.normalize("NFKC", re.sub(r"(?<!/m)[²³₂₃]", "", text))
     t = re.sub(r"\d{40,}", lambda m: m[0][:40], t)  # no real number is this long; keeps the regexes fast
     t = re.sub(r"(?<=\d),(?=\d{3}(?!\d))", "", t)  # 3,122
+    # Fractions are one value: 1/2 = 0.5, 1 1/2 = 1と1/2 = 1.5 (not mg/kg: digits only)
+    t = re.sub(r"(?<![\d./])(?:(\d+)(?:\s|と))?(\d+)/(\d+)(?![\d/])",
+               lambda m: _canon((int(m[1]) if m[1] else 0) + int(m[2]) / int(m[3])) if int(m[3]) else m[0], t)
     t = re.sub(r"(?<=\d)(\s?m)[23](?!\d)", r"\1", t)  # 3 m2 = 3㎡
     t = re.sub(r"\bCO2\b", "CO", t)
     # Dashes as minus or range: –5 °C, 3–5. (Joining dashes are told apart in numbers().)
@@ -145,6 +148,11 @@ def _normalize(text, lang):
                    r"|tablet|cup|iu|unit)s?\b)",
                    " ", t, flags=re.I)  # a 10-minute walk
         t = re.sub(r"\bonce or twice\b", "1 or 2 times", t, flags=re.I)
+        # bleach and water 1:10 = 1 part bleach, 10 parts water (as in Japanese 漂白剤と水を1：10)
+        t = re.sub(r"\b(bleach|water|salt|sugar),? (?:and|to|with) (bleach|water|salt|sugar)\b(\D{0,16}?)"
+                   r"(\d+(?:\.\d+)?)\s?(?::|to)\s?(\d+(?:\.\d+)?)",
+                   lambda m: f"{m[1]} and {m[2]}{m[3]} {m[4]} parts {m[1].lower()} {m[5]} parts {m[2].lower()}",
+                   t, flags=re.I)
         t = re.sub(r"\btwice\b", "2 times", t, flags=re.I)
         # compress 30 times = 30 compressions; breathe 2 times = 2 breaths
         t = re.sub(r"\b((?:compress|press|push)\w*\b[^.;:\d]{0,30}?)(\d+) times\b", r"\1\2 compressions", t, flags=re.I)
@@ -218,8 +226,8 @@ def _normalize(text, lang):
         t = re.sub(r"一(?=日\s?\d|回\s?\d)|(?<=日)一(?=回)", "1", t)
         t = re.sub(r"(?<![\d.])1日(?=量|の(?:上限|量|摂取量|最大|最高))", " 1 per-day ", t)
         # In a sentence about burns, N度 is a grade (1度、2度、3度の熱傷; 2度以上のやけど)
-        t = re.sub(r"[^。\n]*(?:熱傷|火傷|やけど)[^。\n]*",
-                   lambda m: re.sub(r"(\d+)\s?度", r"\1級", m[0]), t)
+        t = "".join(re.sub(r"(\d+)\s?度", r"\1級", part) if re.search(r"熱傷|火傷|やけど", part) else part
+                    for part in re.split(r"([。\n])", t))
         # 度 as "times": 1日2度, 週3度, 2度塗る
         t = re.sub(r"(?<=[日週月])(\d+)度", r"\1回", t)
         t = re.sub(r"(\d+)度(?=塗|繰り返|行|洗|拭|測|飲|服用|吸|使|かけ)", r"\1回", t)
@@ -250,11 +258,15 @@ def _normalize(text, lang):
             t = re.sub(r"(各[^、。\d]{0,8}?)(\d+)回(?:ずつ)?|(?<![日週月\d])(?<![日週月]に)(\d+)回ずつ",
                        lambda m: f"{m[1] or ''}{m[2] or m[3]}spray", t)
         # Mixing ratios: 漂白剤1に対して水9, 漂白剤1:水9, 水9の割合 = 1 part bleach, 9 parts water
-        if re.search(r"に対し|割合|[:：]|対", t):
-            names = {"塩素系漂白剤": "bleach", "漂白剤": "bleach", "水": "water", "塩": "salt", "砂糖": "sugar"}
-            t = re.sub(r"(塩素系漂白剤|漂白剤|水|塩|砂糖)(?:を|は)?\s?(\d+(?:\.\d+)?)(?![\d.]|\s?[:：]\s?\d|\s?[a-zA-Z%℃度分時日回錠杯]|\s?(?:リットル|ミリ|グラム|cc|倍))",
-                       lambda m: f"{m[1]}{m[2]}part-{names[m[1]]} ", t)
-            t = re.sub(r"(?<![\d.])(\d+(?:\.\d+)?)(?=\s?に対し)", r"\1part ", t)
+        names = {"塩素系漂白剤": "bleach", "漂白剤": "bleach", "水": "water", "塩": "salt", "砂糖": "sugar"}
+        subst = "塩素系漂白剤|漂白剤|水|塩|砂糖"
+        # 水と漂白剤を9対1で, 漂白剤：水＝1：9: the numbers follow the order of the substances
+        t = re.sub(r"(" + subst + r")(?:と|[:：・])(" + subst + r")(?:を|は|[=＝])?\s?(\d+(?:\.\d+)?)\s?(?:対|[:：])\s?(\d+(?:\.\d+)?)",
+                   lambda m: f"{m[1]}・{m[2]} {m[3]}part-{names[m[1]]} {m[4]}part-{names[m[2]]} ", t)
+        # 漂白剤1に水9, 水9と漂白剤1, 漂白剤を1、水を9
+        t = re.sub(r"(塩素系漂白剤|漂白剤|水|塩|砂糖)(?:を|は)?\s?(\d+(?:\.\d+)?)(?![\d.]|\s?[:：]\s?\d|\s?[a-zA-Z%℃度分時日回錠杯]|\s?(?:リットル|ミリ|グラム|cc|倍|さじ|スプーン|カップ|つまみ|個|粒|包))",
+                   lambda m: f"{m[1]}{m[2]}part-{names[m[1]]} ", t)
+        t = re.sub(r"(?<![\d.])(\d+(?:\.\d+)?)(?=\s?に対し)", r"\1part ", t)
         # 1対1 = 1:1
         t = re.sub(r"(\d+(?:\.\d+)?)対(\d+(?:\.\d+)?)", r"\1:\2", t)
         # 週3回, 月に1回 = per week 3 times; 1回2錠 = 2 tablets per time
