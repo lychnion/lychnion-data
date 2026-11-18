@@ -104,7 +104,8 @@ it may disappear) and run `dart pub upgrade lychnion_format`.
 When Lychnion replaces or revokes its key, the statements go into the
 catalog with `catalog … --keys keys.json`; `export` keeps a catalog's
 statements and `verify` applies them, so records of a revoked key then
-fail `verify`. A catalog over 2 MB is refused, as the app refuses it.
+fail `verify`. `catalog` and `export` refuse to write a catalog over
+2 MB, as the app refuses to read one.
 
 **Area.** A package or map area can say which places it is for, as ISO
 3166 codes: `"area": ["JP"]` for Japan, `["JP-30"]` for Wakayama. No area

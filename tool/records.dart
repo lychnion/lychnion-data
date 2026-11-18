@@ -39,7 +39,7 @@
 //
 //   # check a catalog's signatures, and local files against it (its own
 //   # key statements apply; --keys FILE adds more)
-//   dart run tool/records.dart verify build/catalog.json [FOLDER]
+//   dart run tool/records.dart verify build/catalog.json [FOLDER] [--keys FILE]
 //
 //   # check every record in the records folder (also run by CI)
 //   dart run tool/records.dart check-records records
@@ -197,12 +197,32 @@ Future<List<KeyStatement>> _keys(
   List<Object?> more = const [],
 ]) async {
   final given = <Object?>[...more];
+  var fromFiles = 0;
   for (final f in files) {
-    final s = await KeysFile.parse(File(f).readAsStringSync());
+    final String text;
+    try {
+      text = File(f).readAsStringSync();
+    } on FileSystemException catch (e) {
+      _fail('$f: ${e.osError?.message ?? e.message}');
+    }
+    final s = await KeysFile.parse(text);
     if (s.isEmpty) _fail('$f: no valid key statements');
+    fromFiles += s.length;
     given.addAll(s);
   }
   final kept = await relevantStatements(trust, given);
+  // Given on purpose and none counts: the wrong file, or another
+  // publisher's. Better to stop than to publish without the revocation.
+  final fileIds = {
+    for (final g in given.skip(more.length)) (g! as KeyStatement).id,
+  };
+  // By id: one also in the catalog counts once, from there.
+  if (fromFiles > 0 && !kept.any((k) => fileIds.contains(k.id))) {
+    _fail(
+      'None of the key statements in ${files.join(', ')} is made by a '
+      'trusted key (another publisher\'s file, or --public-key wrong?)',
+    );
+  }
   // Only worth saying for files given here: a third party's catalog
   // often carries statements about publishers not given.
   if (files.isNotEmpty && kept.length < given.length) {
@@ -297,7 +317,7 @@ Future<void> _sign(_Args args) async {
   final keyFrom = args.req('--key');
   final items = _readJson(args.req('--items'));
   final dir = Directory(args.req('--records'));
-  final ids = args.rest;
+  final ids = args.positional();
   if (ids.isEmpty) _fail('Name the items to sign.');
   final pair = await keyPairFromSeed(await _readKey(keyFrom));
   final publisher = items['publisher']! as String;
@@ -416,7 +436,11 @@ Future<void> _catalog(_Args args) async {
     }
   }
   final given = _trust(args);
-  final keys = await _keys(args.all('--keys'), given);
+  final keyFiles = args.all('--keys');
+  // A mistyped option (--key, --keys=FILE) must not leave a revocation
+  // out of the catalog unnoticed.
+  if (args.positional() case [final first, ...]) _fail('Unexpected $first');
+  final keys = await _keys(keyFiles, given);
   // Records of a successor key count when a statement names it.
   final trust = given.withStatements(keys);
   final records = <Map<String, Object?>>[];
@@ -601,15 +625,16 @@ Future<void> _verify(_Args args) async {
 /// a trusted key and match its place: id and version as in its path.
 Future<void> _checkRecords(_Args args) async {
   final trust = _trust(args);
-  if (args.rest.isEmpty) _fail('Usage: check-records FOLDER');
+  final rest = args.positional();
+  if (rest.isEmpty) _fail('Usage: check-records FOLDER');
   final files =
-      Directory(args.rest.first)
+      Directory(rest.first)
           .listSync(recursive: true)
           .whereType<File>()
           .where((f) => f.path.endsWith('.json'))
           .toList()
         ..sort((a, b) => a.path.compareTo(b.path));
-  if (files.isEmpty) _fail('No records in ${args.rest.first}');
+  if (files.isEmpty) _fail('No records in ${rest.first}');
   var bad = 0;
   for (final f in files) {
     final segs = f.uri.pathSegments;
