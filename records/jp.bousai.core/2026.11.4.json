@@ -1,0 +1,37 @@
+{
+  "format": 1,
+  "id": "jp.bousai.core",
+  "kind": "package",
+  "version": "2026.11.4",
+  "publisher": "lychnion",
+  "title": {
+    "ja": "防災（基本）",
+    "en": "Disaster preparedness (basics)"
+  },
+  "note": {
+    "ja": "アプリ内蔵版より新しい版があれば更新",
+    "en": "Updates the copy built into the app"
+  },
+  "licence": "PDL 1.0（出典は各回答に表示）",
+  "notice": {
+    "ja": [
+      "避難するかどうかは、自治体の避難情報と気象庁の警報・注意報を優先して判断してください。"
+    ],
+    "en": [
+      "For evacuation, follow your city's evacuation information and the Japan Meteorological Agency's warnings first."
+    ]
+  },
+  "area": [
+    "JP"
+  ],
+  "files": [
+    {
+      "name": "jp.bousai.core.sqlite",
+      "size": 1011712,
+      "sha256": "a5efd3562214728dd7964101cd313dd3a23425a8d1ab6e0a42147333cdc2e55a"
+    }
+  ],
+  "signed": "2026-11-18T17:58:07+09:00",
+  "key": "vRIbo4Gi",
+  "signature": "XtAK9u6eqG5PyM93IuSFXp803C65bDNElpDf5pa5mHj7lYKo11H3q7DuRY9tVMnhP48f1jlYDwui8ZD0iEmXCQ"
+}

@@ -1,0 +1,44 @@
+{
+  "format": 1,
+  "id": "jp.map.kushimoto",
+  "kind": "map",
+  "version": "2026.11.1",
+  "publisher": "lychnion",
+  "title": {
+    "ja": "地図：串本町（和歌山県）",
+    "en": "Map: Kushimoto (Wakayama)"
+  },
+  "note": {
+    "ja": "串本町と周辺、避難場所・徒歩ルート・津波浸水想定つき",
+    "en": "Kushimoto and around, with evacuation sites, walking routes and tsunami inundation areas"
+  },
+  "licence": "© OpenStreetMap contributors (ODbL), Protomaps; 国土地理院 避難場所データ・標高タイル; 国土数値情報（津波浸水想定）CC BY 4.0",
+  "area": [
+    "JP-30"
+  ],
+  "files": [
+    {
+      "name": "jp.map.kushimoto.pmtiles",
+      "size": 1838588,
+      "sha256": "4ae3d25c19a3489c99653beee432d57344093411664315b0a46d1e9d6e3cd651"
+    },
+    {
+      "name": "jp.map.kushimoto.sites.sqlite",
+      "size": 90112,
+      "sha256": "12f41c5bb9a89b5c19c8093dcc1447ca4398c8949631cf499a4c7c4c5d4f9412"
+    },
+    {
+      "name": "jp.map.kushimoto.routes.bin",
+      "size": 713476,
+      "sha256": "82d0f8f448907f94347a1b0424e10f77f11f586dd3c5a5bcb0b2cf1c8ada4ce4"
+    },
+    {
+      "name": "jp.map.kushimoto.inundation.mbtiles",
+      "size": 606208,
+      "sha256": "c73441a12d360cabc42f7aa67fc80ad0e97869bb694d1307fbd60ac2866de456"
+    }
+  ],
+  "signed": "2026-11-18T17:58:07+09:00",
+  "key": "vRIbo4Gi",
+  "signature": "57KR03EqhjKrpQjfEKTmfMQseGAZ9FUaDELc84YeHnzcV0MEEY8qyg8OzfIsAGWCny1MapJOXfNJr-ZBYBYZAA"
+}

@@ -2,7 +2,7 @@
   "id": "jp.bousai.core",
   "title": "防災（基本）",
   "language": "ja",
-  "version": "2026.11.3",
+  "version": "2026.11.4",
   "area": ["JP"],
   "note": "Spike 2 test package. Small on purpose: covers the eight test questions where official open sources exist.",
   "sources": [

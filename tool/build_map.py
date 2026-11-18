@@ -2,6 +2,7 @@
 """Builds the offline map data for one area from a JSON manifest.
 
     python3 -I tool/build_map.py maps/nishinomiya.json
+    python3 -I tool/build_map.py --meta-only maps/nishinomiya.json   # area only
 
 Writes:
   build/maps/<id>.sites.sqlite    evacuation sites in the area (GSI data);
@@ -61,6 +62,38 @@ def inside(bbox, lat, lon):
     return w <= lon <= e and s <= lat <= n
 
 
+def area_of(m, points, where):
+    """The regions the area is for: where its sites are, unless the
+    manifest says ("area": ["JP-30"]). The app shows and ranks maps by it."""
+    spec = importlib.util.spec_from_file_location("regions", ROOT / "tool" / "regions.py")
+    regions_mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(regions_mod)
+    regions = regions_mod.Regions()
+    area = m.get("area")
+    if area is None:
+        area = sorted({c for c in (regions.code_at(lat, lon) for lat, lon in points) if c})
+        if not area:
+            sys.exit("no site lies in a known region; set \"area\" in the manifest")
+    regions.check(area, where)
+    return area
+
+
+def meta_only(manifest_path):
+    """Sets the area of an already built sites file, keeping its sites."""
+    m = json.loads(Path(manifest_path).read_text(encoding="utf-8"))
+    out = ROOT / "build" / "maps" / f"{m['id']}.sites.sqlite"
+    if not out.exists():
+        sys.exit(f"{out.relative_to(ROOT)} not found")
+    db = sqlite3.connect(out)
+    points = db.execute("SELECT lat, lon FROM sites").fetchall()
+    area = area_of(m, points, manifest_path)
+    db.execute("INSERT OR REPLACE INTO meta VALUES('area',?)", (json.dumps(area),))
+    db.commit()
+    db.execute("VACUUM")
+    db.close()
+    print(f"{out.relative_to(ROOT)}: area {', '.join(area)}")
+
+
 def main(manifest_path):
     m = json.loads(Path(manifest_path).read_text(encoding="utf-8"))
     CACHE.mkdir(parents=True, exist_ok=True)
@@ -86,18 +119,7 @@ def main(manifest_path):
     if not rows:
         sys.exit("no sites inside the bounding box")
 
-    # The regions the area is for: where its sites are, unless the manifest
-    # says ("area": ["JP-30"]). The app shows and ranks maps by it.
-    spec = importlib.util.spec_from_file_location("regions", ROOT / "tool" / "regions.py")
-    regions_mod = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(regions_mod)
-    regions = regions_mod.Regions()
-    area = m.get("area")
-    if area is None:
-        area = sorted({c for c in (regions.code_at(r[4], r[5]) for r in rows) if c})
-        if not area:
-            sys.exit("no site lies in a known region; set \"area\" in the manifest")
-    regions.check(area, manifest_path)
+    area = area_of(m, [(r[4], r[5]) for r in rows], manifest_path)
 
     # Areas without "bundle": false also ship inside the app: copy their
     # sites file to the app's assets/maps/.
@@ -148,6 +170,13 @@ def _decodes(raw, enc):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 2:
+    args = sys.argv[1:]
+    if args[:1] == ["--meta-only"]:
+        args = args[1:]
+        if len(args) != 1:
+            sys.exit(__doc__)
+        meta_only(args[0])
+    elif len(args) != 1:
         sys.exit(__doc__)
-    main(sys.argv[1])
+    else:
+        main(args[0])

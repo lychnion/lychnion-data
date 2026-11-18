@@ -74,7 +74,7 @@
     {
       "id": "jp.bousai.core",
       "kind": "package",
-      "version": "2026.11.3",
+      "version": "2026.11.4",
       "title": {
         "ja": "防災（基本）",
         "en": "Disaster preparedness (basics)"
@@ -94,7 +94,7 @@
     {
       "id": "jp.map.nishinomiya",
       "kind": "map",
-      "version": "2026.11.1",
+      "version": "2026.11.2",
       "title": {
         "ja": "地図：西宮周辺",
         "en": "Map: Nishinomiya area"
@@ -113,9 +113,8 @@
         },
         {
           "name": "jp.map.nishinomiya.sites.sqlite",
-          "size": 401408,
-          "sha256": "bd39728ef33c7f7c1fe0cef91c87fa0549794c0d7fb7d3a71cf2f2f2a7cb6371",
-          "url": "https://github.com/lychnion/lychnion-data/releases/download/2026.11.0/jp.map.nishinomiya.sites.sqlite"
+          "url": "https://github.com/lychnion/lychnion-data/releases/download/2026.11.5/jp.map.nishinomiya.sites.sqlite",
+          "path": "build/maps/jp.map.nishinomiya.sites.sqlite"
         },
         {
           "name": "jp.map.nishinomiya.routes.bin",
@@ -134,7 +133,7 @@
     {
       "id": "jp.outdoor.hiking",
       "kind": "package",
-      "version": "2026.11.2",
+      "version": "2026.11.3",
       "title": {
         "ja": "登山（基本）",
         "en": "Hiking (basics)"
@@ -174,7 +173,7 @@
     {
       "id": "jp.map.kushimoto",
       "kind": "map",
-      "version": "2026.11.0",
+      "version": "2026.11.1",
       "title": {
         "ja": "地図：串本町（和歌山県）",
         "en": "Map: Kushimoto (Wakayama)"
@@ -193,7 +192,7 @@
         {
           "name": "jp.map.kushimoto.sites.sqlite",
           "path": "build/maps/jp.map.kushimoto.sites.sqlite",
-          "url": "https://github.com/lychnion/lychnion-data/releases/download/2026.11.2/jp.map.kushimoto.sites.sqlite"
+          "url": "https://github.com/lychnion/lychnion-data/releases/download/2026.11.5/jp.map.kushimoto.sites.sqlite"
         },
         {
           "name": "jp.map.kushimoto.routes.bin",

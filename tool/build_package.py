@@ -306,7 +306,7 @@ if __name__ == "__main__":
         chars = int(args[i + 1])
         del args[i:i + 2]
     if "--meta-only" in args:
-        # Update the notice, title, note and area of a built package without
+        # Update the notice, title, note, area and version of a built package without
         # rebuilding it (keeps its passages and vectors).
         args.remove("--meta-only")
         m = json.loads(Path(args[0]).read_text(encoding="utf-8"))
@@ -316,6 +316,7 @@ if __name__ == "__main__":
                      ("icon", m.get("icon", "")),
                      ("suggestions", json.dumps(m.get("suggestions", {}), ensure_ascii=False)),
                      ("title", m.get("title", "")), ("note", m.get("note", "")),
+                     ("version", m["version"]),
                      ("area", area_meta(m, args[0]))):
             db.execute("INSERT OR REPLACE INTO meta VALUES(?,?)", (k, v))
         db.commit()
