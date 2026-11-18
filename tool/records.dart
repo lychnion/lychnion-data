@@ -41,7 +41,8 @@
 //   # key statements apply; --keys FILE adds more)
 //   dart run tool/records.dart verify build/catalog.json [FOLDER] [--keys FILE]
 //
-//   # check every record in the records folder (also run by CI)
+//   # check every record in the records folder (also run by CI; after a
+//   # key replacement add --keys keys.json)
 //   dart run tool/records.dart check-records records
 //
 // Mirrors (`--mirror`, repeatable) are nodes that keep files by hash under
@@ -638,8 +639,12 @@ Future<void> _verify(_Args args) async {
 /// Every record file under FOLDER (`<id>/<version>.json`) must be signed by
 /// a trusted key and match its place: id and version as in its path.
 Future<void> _checkRecords(_Args args) async {
-  final trust = _trust(args);
+  final given = _trust(args);
+  final keyFiles = args.all('--keys');
   final rest = args.positional();
+  // Records of a key that replaced Lychnion's count when its statement
+  // is given (keys.json), before the app ships the new key.
+  final trust = given.withStatements(await _keys(keyFiles, given));
   if (rest.isEmpty) _fail('Usage: check-records FOLDER');
   final files =
       Directory(rest.first)
