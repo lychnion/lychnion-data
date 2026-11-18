@@ -71,7 +71,9 @@ UNITS = {
            (r"°|degrees?\b", "deg"), (r"mcg\b|µg\b|μg\b|ug\b|micrograms?\b", "mcg"), (r"mmhg\b", "mmHg"),
            (r"iu\b|international units?\b|units?\b", "IU"), (r"cc\b", "ml"), (r"(?:tablet|pill|capsule)s?\b", "tablet"),
            (r"drops?\b", "drop"), (r"gm\b", "g"), (r"tsp\b|teaspoons?\b", "tsp"),
-           (r"tbsp\b|tablespoons?\b", "tbsp"), (r"cups?\b|cupfuls?\b|glass(?:es)?\b|mugs?\b|bowls?\b", "cup"), (r"spoonfuls?\b", "tsp"),
+           (r"tbsp\b|tablespoons?\b", "tbsp"), (r"cups?\b|cupfuls?\b|glass(?:es)?\b|mugs?\b|bowls?\b", "cup"), (r"spoonfuls?\b", "tsp"), (r"spoons?\b", "spoon"),
+           (r"parts? (?:of )?(?:chlorine )?bleach\b", "part-bleach"), (r"parts? (?:of )?water\b", "part-water"),
+           (r"parts? (?:of )?salt\b", "part-salt"), (r"parts? (?:of )?sugar\b", "part-sugar"), (r"parts?\b", "part"),
            (r"(?:chest )?compressions?\b", "compression"), (r"(?:rescue )?breaths?\b", "breath"),
            (r"(?:sprays?|puffs?|inhalations?|pushes)\b", "spray"),
            (r"min(?:ute)?s?\b", "min"), (r"h(?:ou)?rs?\b|hours?\b|h\b", "h"), (r"sec(?:ond)?s?\b", "s"),
@@ -86,7 +88,9 @@ UNITS = {
     "ja": [(r"dayish", "dayish"), (r"℃|°C", "°C"), (r"°F", "°F"), (r"°|度(?!目|に分け|(?:(?:と|および|または|もしくは|か|、|~|〜|-)\d+度)?の?(?:熱傷|火傷|やけど))", "°C"), (r"tsp", "tsp"), (r"tbsp", "tbsp"),
            (r"カップ|cup", "cup"), (r"mcg|µg|μg|ug|マイクログラム", "mcg"),
            (r"mmHg", "mmHg"), (r"IU|単位", "IU"), (r"cc", "ml"), (r"錠|カプセル", "tablet"), (r"compression", "compression"), (r"breath", "breath"), (r"spray", "spray"),
-           (r"噴霧|吸入|プッシュ|パフ", "spray"), (r"杯", "cup"), (r"滴", "drop"),
+           (r"噴霧|吸入|プッシュ|パフ", "spray"), (r"さじ", "spoon"),
+           (r"part-bleach", "part-bleach"), (r"part-water", "part-water"), (r"part-salt", "part-salt"),
+           (r"part-sugar", "part-sugar"), (r"part", "part"), (r"杯", "cup"), (r"滴", "drop"),
            (r"分(?!の)", "min"), (r"時間", "h"), (r"秒", "s"),
            (r"日", "day"), (r"週間?", "week"), (r"[かカヶケ]月", "month"), (r"年", "year"),
            (r"cm|センチ", "cm"), (r"mm|ミリ(?!リットル|グラム)", "mm"), (r"km|キロメートル", "km"), (r"キロ(?!グラム)", "kilo"),
@@ -97,7 +101,8 @@ UNITS = {
 # Units where a number on one side only with the unit is an error (doses,
 # temperatures): "5 mg" and 「5」 is not the same instruction.
 CRITICAL = {"°C", "°F", "deg", "mcg", "mg", "g", "kg", "ml", "l", "%", "IU", "tablet", "drop", "mmHg",
-            "tsp", "tbsp", "cup", "compression", "breath", "spray"}
+            "tsp", "tbsp", "cup", "compression", "breath", "spray", "spoon",
+            "part", "part-bleach", "part-water", "part-salt", "part-sugar"}
 TEMPERATURE = {"°C", "°F", "deg"}  # deg: English "degrees" without a scale
 # Times that must not get lost next to a number ("Wait 5 minutes" / 「5待つ」).
 SHORT_TIMES = {"min", "h", "s"}
@@ -244,6 +249,12 @@ def _normalize(text, lang):
         if re.search(r"噴霧|吸入|スプレー|噴射|点鼻", t):
             t = re.sub(r"(各[^、。\d]{0,8}?)(\d+)回(?:ずつ)?|(?<![日週月\d])(?<![日週月]に)(\d+)回ずつ",
                        lambda m: f"{m[1] or ''}{m[2] or m[3]}spray", t)
+        # Mixing ratios: 漂白剤1に対して水9, 漂白剤1:水9, 水9の割合 = 1 part bleach, 9 parts water
+        if re.search(r"に対し|割合|[:：]|対", t):
+            names = {"塩素系漂白剤": "bleach", "漂白剤": "bleach", "水": "water", "塩": "salt", "砂糖": "sugar"}
+            t = re.sub(r"(塩素系漂白剤|漂白剤|水|塩|砂糖)(?:を|は)?\s?(\d+(?:\.\d+)?)(?![\d.]|\s?[:：]\s?\d|\s?[a-zA-Z%℃度分時日回錠杯]|\s?(?:リットル|ミリ|グラム|cc|倍))",
+                       lambda m: f"{m[1]}{m[2]}part-{names[m[1]]} ", t)
+            t = re.sub(r"(?<![\d.])(\d+(?:\.\d+)?)(?=\s?に対し)", r"\1part ", t)
         # 1対1 = 1:1
         t = re.sub(r"(\d+(?:\.\d+)?)対(\d+(?:\.\d+)?)", r"\1:\2", t)
         # 週3回, 月に1回 = per week 3 times; 1回2錠 = 2 tablets per time
@@ -351,6 +362,8 @@ def numbers(text, lang):
         span = re.match(r"(?:to|or|-|–|~|〜|から|または|もしくは|か)\s*\d+(?:\.\d+)?\s*", rest, flags)
         if span:
             rest = rest[span.end():]
+        # 8 level teaspoons, 2 full glasses: the unit is after the adjective
+        rest = re.sub(r"^(?:(?:level|heaping|heaped|full|whole|large|small|rounded)\s+)+", "", rest, flags=re.I)
         unit = ""
         per = re.match(r"per-(\w+)", rest)
         for pattern, name in [] if per else UNITS[lang]:
