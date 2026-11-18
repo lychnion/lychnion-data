@@ -1,0 +1,36 @@
+{
+  "format": 1,
+  "id": "intl.firstaid.basics",
+  "kind": "package",
+  "version": "2026.11.0",
+  "publisher": "lychnion",
+  "title": {
+    "ja": "応急手当（海外の資料）",
+    "en": "First aid (foreign sources)"
+  },
+  "note": {
+    "ja": "アプリ内蔵版より新しい版があれば更新",
+    "en": "Updates the copy built into the app"
+  },
+  "licence": "Public domain (U.S. government works); Japanese translation by Lychnion",
+  "notice": {
+    "ja": [
+      "医師の診断や治療の代わりにはなりません。",
+      "米国政府の資料をLychnionが翻訳したものです。公式の訳ではなく、まだ専門家の確認を受けていません。"
+    ],
+    "en": [
+      "Does not replace a doctor's diagnosis or treatment.",
+      "Translated from US government manuals by Lychnion: not an official translation, not yet checked by an expert."
+    ]
+  },
+  "files": [
+    {
+      "name": "intl.firstaid.basics.sqlite",
+      "size": 638976,
+      "sha256": "86bfddec18758857162dd744249d502dbb7833680d7356b72b9b905f40240439"
+    }
+  ],
+  "signed": "2026-11-18T11:40:40+09:00",
+  "key": "vRIbo4Gi",
+  "signature": "IToM1mtEhPysoZK7eWbwVNJhBXBi_CGMwmDnA6S0KJQpDwTDZ1gA9i_his4BoPKPxPAyggMDTNNVH4WSDebJBQ"
+}

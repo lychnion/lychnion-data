@@ -1,0 +1,41 @@
+{
+  "format": 1,
+  "id": "jp.map.nishinomiya",
+  "kind": "map",
+  "version": "2026.11.1",
+  "publisher": "lychnion",
+  "title": {
+    "ja": "地図：西宮周辺",
+    "en": "Map: Nishinomiya area"
+  },
+  "note": {
+    "ja": "神戸東部〜大阪西部、避難場所・徒歩ルート・津波浸水想定つき",
+    "en": "Eastern Kobe to western Osaka, with evacuation sites, walking routes and tsunami inundation areas"
+  },
+  "licence": "© OpenStreetMap contributors (ODbL), Protomaps; 国土地理院 避難場所データ・標高タイル; 国土数値情報（津波浸水想定）CC BY 4.0",
+  "files": [
+    {
+      "name": "jp.map.nishinomiya.pmtiles",
+      "size": 26211536,
+      "sha256": "9735700f8ffebbfba32edca5ea6ff04891718e13a0346eae705565c324e97d25"
+    },
+    {
+      "name": "jp.map.nishinomiya.sites.sqlite",
+      "size": 401408,
+      "sha256": "bd39728ef33c7f7c1fe0cef91c87fa0549794c0d7fb7d3a71cf2f2f2a7cb6371"
+    },
+    {
+      "name": "jp.map.nishinomiya.routes.bin",
+      "size": 11541028,
+      "sha256": "94a5f22980f5fbba04facec8f6c169a4c8ab70cfc2cc6263a372130de71a725d"
+    },
+    {
+      "name": "jp.map.nishinomiya.inundation.mbtiles",
+      "size": 1462272,
+      "sha256": "2cb40ab4b55116b0b20cae4bc222295cd55d98704a6ff2d9069ccb376a25d5e8"
+    }
+  ],
+  "signed": "2026-11-18T11:40:40+09:00",
+  "key": "vRIbo4Gi",
+  "signature": "IqaNAwLlJOQ5HChlzXOdqNuI49iDA_0v0sXB7tC_fTbEx1Mr_MGwCKG0nOx_aWkRHqrEtxhH_QiFAfzl-R-UCQ"
+}

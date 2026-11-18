@@ -1,0 +1,28 @@
+{
+  "format": 1,
+  "id": "model.gemma-4-e4b-q4_0",
+  "kind": "model",
+  "version": "2026.11.0",
+  "publisher": "lychnion",
+  "title": {
+    "ja": "回答モデル Gemma 4 E4B",
+    "en": "Answer model Gemma 4 E4B"
+  },
+  "note": {
+    "ja": "パソコン向け：回答がより良く、速度は半分",
+    "en": "For computers: better answers, half the speed"
+  },
+  "licence": "Apache 2.0 (Google Gemma 4)",
+  "role": "chat",
+  "desktop": true,
+  "files": [
+    {
+      "name": "gemma-4-E4B-it-Q4_0.gguf",
+      "size": 4590807392,
+      "sha256": "a555b900214b477d8880e7832e0b8925e139b0159640036b09fe472b6f2097f2"
+    }
+  ],
+  "signed": "2026-11-18T11:40:40+09:00",
+  "key": "vRIbo4Gi",
+  "signature": "KVKKHhhqKJG7EtiQlC1y48RKB0JQqHxj5B1WbeLThaLyk--7gnnN-oMC87oNKpJ6nbN5NnDLqKLEmHiUMoZ8AA"
+}

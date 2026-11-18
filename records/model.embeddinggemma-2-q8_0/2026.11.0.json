@@ -1,0 +1,27 @@
+{
+  "format": 1,
+  "id": "model.embeddinggemma-2-q8_0",
+  "kind": "model",
+  "version": "2026.11.0",
+  "publisher": "lychnion",
+  "title": {
+    "ja": "検索モデル EmbeddingGemma 2",
+    "en": "Search model EmbeddingGemma 2"
+  },
+  "note": {
+    "ja": "意味で資料を探す（日本語・英語）",
+    "en": "Finds passages by meaning (Japanese and English)"
+  },
+  "licence": "Apache 2.0 (Google EmbeddingGemma 2)",
+  "role": "embed",
+  "files": [
+    {
+      "name": "embeddinggemma-2-Q8_0.gguf",
+      "size": 309855456,
+      "sha256": "2188ac1deca4b77dffefd603c2776a9d76d9d74ec01841392982ebb840b09135"
+    }
+  ],
+  "signed": "2026-11-18T11:40:40+09:00",
+  "key": "vRIbo4Gi",
+  "signature": "A-xvOBAUdscnBOy6TKx8WmJVz-BRungcQNI_5HIy8oEFgrSLVQfaBmv3qh9R7m3h5_y38KGE2JR91Clw6333Bg"
+}

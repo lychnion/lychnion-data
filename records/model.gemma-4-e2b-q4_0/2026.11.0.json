@@ -1,0 +1,27 @@
+{
+  "format": 1,
+  "id": "model.gemma-4-e2b-q4_0",
+  "kind": "model",
+  "version": "2026.11.0",
+  "publisher": "lychnion",
+  "title": {
+    "ja": "回答モデル Gemma 4 E2B",
+    "en": "Answer model Gemma 4 E2B"
+  },
+  "note": {
+    "ja": "スマートフォン・タブレット向け",
+    "en": "For phones and tablets"
+  },
+  "licence": "Apache 2.0 (Google Gemma 4)",
+  "role": "chat",
+  "files": [
+    {
+      "name": "gemma-4-E2B-it-Q4_0.gguf",
+      "size": 2841481184,
+      "sha256": "8e30dff3ac4c8434c49a7036fa15564bdbb6044e42bf04550bf1a096ad7e6a52"
+    }
+  ],
+  "signed": "2026-11-18T11:40:40+09:00",
+  "key": "vRIbo4Gi",
+  "signature": "FAgGC3JZkFAWavuJ3RjA4M1Neg2rfr2s8lfeZuL88_welI3iId21VrEuapxxb-wKhWXFmIg_jQ_wH6Btt0mAAQ"
+}

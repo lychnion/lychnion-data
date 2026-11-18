@@ -1,37 +1,88 @@
-# fieldkit-data
+# lychnion-data
 
-Data files for **fieldkit**, a proof of concept of an offline AI helper for
-disaster preparedness and the outdoors in Japan ("fieldkit" is a code name).
-The app downloads these files once and then works without a network.
+Data for **Lychnion**, an offline safety assistant for Japan. The app
+answers questions from knowledge packages and shows offline maps. It
+downloads these files once and then works without a network.
 
-The files are in the [releases](https://github.com/dkastl/fieldkit-data/releases).
-Each release has a `catalog.json` with the size and SHA-256 of every file;
-the app checks both before it uses a file. The newest catalog is always at
-`https://github.com/dkastl/fieldkit-data/releases/latest/download/catalog.json`.
+This repository holds:
 
-The AI models are not here: the app downloads them from Hugging Face
+- the **signed records** of every package version (`records/`),
+- Lychnion's **public key** (`keys/lychnion.pub`),
+- the data files themselves, in the
+  [releases](https://github.com/lychnion/lychnion-data/releases).
+
+The AI models are not here. The app downloads them from Hugging Face
 (`ggml-org/gemma-4-E2B-it-GGUF`, `ggml-org/gemma-4-E4B-it-GGUF`,
-`ggml-org/embeddinggemma-2-GGUF`, Apache 2.0).
+`ggml-org/embeddinggemma-2-GGUF`, Apache 2.0). Lychnion signs a record for
+each model too, so the app knows exactly which file to expect.
+
+## How the app trusts a file
+
+The app does not trust a file because of where it came from. It trusts a
+file because Lychnion signed its record.
+
+1. **Record.** For each version of a package, map area or model there is
+   one small JSON record: id, version, title, licence, notices, and every
+   file with its size and SHA-256. Lychnion signs the record with its
+   Ed25519 key. The app has the public key built in.
+2. **Catalog.** A catalog (`catalog.json`) is a list of records, plus
+   where to download the files. The app checks the signature of every
+   record and ignores records that fail.
+3. **Files.** The app downloads a file, checks its size and SHA-256
+   against the signed record, and only then installs it. A file that does
+   not match is deleted.
+4. **Versions only go up.** The app never replaces a package with an
+   older version.
+
+Because the records are signed, a copy from anywhere is fine: this
+repository, another web server, a computer at a shelter, or a USB stick.
+The signature is the same everywhere. Records say *what* a file is, not
+*where* it is; the catalog says where.
+
+The private key is never in this repository or on any server.
+
+## Layout
+
+```text
+keys/lychnion.pub                       Lychnion's public key (Ed25519, base64url)
+records/<id>/<version>.json             one signed record per package version
+```
+
+Each release contains the files that are new in it, and a `catalog.json`
+with the newest record of every item. Files that did not change stay in
+older releases; the catalog points to them. The newest catalog is always
+at
+`https://github.com/lychnion/lychnion-data/releases/latest/download/catalog.json`,
+so the app finds updates without an app update.
+
+Records and catalogs are made with `tool/records.dart` in the app
+repository.
 
 ## Files
 
-| File | What it is |
-|---|---|
-| `jp.bousai.core.sqlite` | Knowledge package "防災（基本）": passages from official Japanese pages on disaster preparedness, with their sources |
-| `jp.map.nishinomiya.pmtiles` | Base map of the Nishinomiya area (eastern Kobe to western Osaka), vector tiles, zoom 0 to 15 |
-| `jp.map.nishinomiya.sites.sqlite` | Evacuation sites in the same area, from GSI |
-| `jp.map.nishinomiya.routes.bin` | Walking routes for the same area: roads and paths from OpenStreetMap, with the ground height and the expected tsunami inundation of every point (from release 2026.11.1) |
-| `jp.map.nishinomiya.inundation.mbtiles` | Expected tsunami inundation areas for the same area as map tiles, coloured by depth (from release 2026.11.1) |
-| `catalog.json` | List of the files with version, size and SHA-256 |
+| Item | Files | What it is |
+|---|---|---|
+| `jp.bousai.core` | `jp.bousai.core.sqlite` | Knowledge package "防災（基本）" (disaster preparedness basics): passages from official Japanese pages, with their sources and an English translation |
+| `jp.outdoor.hiking` | `jp.outdoor.hiking.sqlite` | Knowledge package "登山（基本）" (hiking basics): getting lost, lightning, heat, ticks, hornets, volcanoes |
+| `intl.firstaid.basics` | `intl.firstaid.basics.sqlite` | Knowledge package "応急手当" (first aid): bites, cold injuries, heat illness, from US government manuals, with a Japanese translation |
+| `jp.map.nishinomiya` | `.pmtiles`, `.sites.sqlite`, `.routes.bin`, `.inundation.mbtiles` | Offline map of the Nishinomiya area (eastern Kobe to western Osaka) |
+| `jp.map.kushimoto` | `.pmtiles`, `.sites.sqlite`, `.routes.bin`, `.inundation.mbtiles` | Offline map of Kushimoto (Wakayama) and around |
+
+Each map area has four files: the base map (vector tiles), evacuation
+sites, walking routes (roads and paths with ground height and expected
+tsunami inundation for every point), and tsunami inundation areas as map
+tiles.
 
 ## Sources and licences
 
-### Knowledge package
+Every package also lists its sources and licences inside the file, and
+the app shows the source with each answer.
 
-All sources are published under the Public Data License (Japan) 1.0
+### 防災（基本） `jp.bousai.core`
+
+Public Data License (Japan) 1.0
 ([PDL 1.0](https://www.digital.go.jp/resources/open_data/public_data_license_v1.0)).
-The text was split into passages; the bears and mountain pages were also
-edited (加工).
+The text was split into passages; some pages were edited (加工).
 
 - 出典：首相官邸ホームページ「防災の手引き」
   (https://www.kantei.go.jp/jp/headline/bousai/ : sonae, jishin, tsunami,
@@ -43,7 +94,37 @@ edited (加工).
 - 出典：政府広報オンライン「山の事故を防ごう！登山を楽しむために知っておきたい安全対策」
   (https://www.gov-online.go.jp/article/201407/entry-9829.html) を加工して作成
 
-### Base map
+The English text is Lychnion's translation, not an official one.
+
+### 登山（基本） `jp.outdoor.hiking`
+
+PDL 1.0, as above. The English text is Lychnion's translation.
+
+- 出典：警察庁ウェブサイト「令和７年における山岳遭難の概況等」
+- 出典：気象庁ホームページ「雷」による災害、積乱雲が近づくサインを見逃さない、
+  積乱雲が近づいてきたら…、噴火速報の説明、噴火警戒レベルの説明
+- 出典：環境省熱中症予防情報サイト「熱中症の予防方法と対処方法」
+- 出典：厚生労働省ホームページ「重症熱性血小板減少症候群（SFTS）に関するQ&A」
+- 出典：林野庁ホームページ「森林内等の作業におけるダニ刺咬予防対策」「蜂刺され災害を防ごう」
+
+The exact page addresses are in the package and shown in the app.
+
+### 応急手当 `intl.firstaid.basics`
+
+Public domain: works of the US government
+([17 U.S.C. 105](https://www.law.cornell.edu/uscode/text/17/105)), marked
+"Approved for public release; distribution is unlimited". Only the civilian
+first-aid chapters are used.
+
+- US Army, ATP 4-02.11 *Casualty Response, Tactical Combat Casualty Care,
+  and First Aid* (2026), chapters 16–17
+- US Army, TC 21-3 *Cold Weather Survival and Operations* (2025), cold
+  injuries
+
+The Japanese text is Lychnion's translation, not an official one, and has
+not yet been checked by a medical expert.
+
+### Base maps
 
 © OpenStreetMap contributors, under the
 [Open Database License (ODbL)](https://opendatacommons.org/licenses/odbl/).
@@ -52,8 +133,8 @@ Built with [Protomaps](https://protomaps.com/).
 ### Walking routes
 
 Roads and paths: © OpenStreetMap contributors, under the
-[Open Database License (ODbL)](https://opendatacommons.org/licenses/odbl/),
-from the [Geofabrik](https://download.geofabrik.de/) Kansai extract.
+[ODbL](https://opendatacommons.org/licenses/odbl/), from the
+[Geofabrik](https://download.geofabrik.de/) Kansai extract.
 
 Heights: 出典：国土地理院 標高タイル（基盤地図情報 数値標高モデル DEM5A・DEM10B）を加工して作成.
 Used under the [国土地理院コンテンツ利用規約](https://www.gsi.go.jp/kikakuchousei/kikakuchousei40182.html).
@@ -62,16 +143,17 @@ Used under the [国土地理院コンテンツ利用規約](https://www.gsi.go.j
 
 出典：「国土数値情報（津波浸水想定データ）」（国土交通省）
 (https://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-A40-2024.html),
-兵庫県 2016 and 大阪府 2023 data, cut to the map area and turned into map
-tiles and per-point values (fieldkit が加工). Under
+cut to each map area and turned into map tiles and per-point values
+(リクニオンが加工). Under
 [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/deed.ja).
+Nishinomiya: 兵庫県 2016 and 大阪府 2023 data. Kushimoto: 和歌山県 2016 data.
 
 These are the prefectures' expected inundation for the largest assumed
 tsunami. A real tsunami can be larger or smaller.
 
 ### Evacuation sites
 
-出典：国土地理院「指定緊急避難場所データ」「指定避難所データ」（fieldkit が範囲を絞って加工）
+出典：国土地理院「指定緊急避難場所データ」「指定避難所データ」（リクニオンが範囲を絞って加工）
 Used under the [国土地理院コンテンツ利用規約](https://www.gsi.go.jp/kikakuchousei/kikakuchousei40182.html).
 
 GSI asks that these notes are passed on with the data (summary in English
@@ -98,5 +180,6 @@ where people stay after the danger has passed.
 
 ## No warranty
 
-This is test data for a proof of concept. Do not rely on it alone in an
-emergency; follow official warnings and your city's instructions.
+Lychnion is not yet released; this data is for testing. Do not rely on it
+alone in an emergency. Follow official warnings and your city's
+instructions.
