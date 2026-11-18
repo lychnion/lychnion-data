@@ -460,6 +460,9 @@ class Numbers(unittest.TestCase):
                        ("2 and 1/2 teaspoons", "小さじ2と1/2杯"),
                        ("Give 1 to 2 tablespoons", "大さじ1〜2杯"), ("1/2 to 1 teaspoon", "小さじ1/2〜1杯"),
                        ("1 to 2 tablespoons", "大さじ1から2杯"),
+                       ("Drink 1 to 2 cups of water.", "水を1〜2杯飲む。"), ("Mix 1 part with 4 parts water.", "1:4の割合で水と混ぜる。"),
+                       ("Give 1 and a half tablespoons.", "大さじ1杯半。"), ("Between 36 and 37 degrees.", "36〜37度。"),
+                       ("Daily, 2 times per day.", "毎日、1日2回。"),
                        ("Press at 100 to 120 per minute.", "1分間に100〜120回の速さで押す。")):
             with self.subTest(ja=ja):
                 self.assertEqual(ct.check_numbers(en, "en", ja, "ja"), [])
