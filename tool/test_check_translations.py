@@ -353,11 +353,14 @@ class Numbers(unittest.TestCase):
                        ("one to two tablets", "1〜2錠"), ("Give 5 mg once.", "1回5mgを与える。"),
                        ("first-, second- and third-degree burns", "1度、2度、3度の熱傷"),
                        ("burns of second degree or higher", "2度以上のやけど"),
-                       ("The burn is second degree.", "やけどは2度です。"), ("Third degree burns", "熱傷3度")):
+                       ("The burn is second degree.", "やけどは2度です。"), ("Third degree burns", "熱傷3度"),
+                       ("Take once or twice a week.", "週1〜2回服用します。"), ("once or twice a week", "週に1〜2回"),
+                       ("once or twice a month", "月1〜2回"), ("Take 1-2 times a week.", "週1〜2回")):
             with self.subTest(ja=ja):
                 self.assertEqual(ct.check_numbers(en, "en", ja, "ja"), [])
         self.assertTrue(ct.check_numbers("second-degree burn", "en", "3度の熱傷", "ja"))
         self.assertTrue(ct.check_numbers("Rinse once or twice.", "en", "2回洗う。", "ja"))
+        self.assertTrue(ct.check_numbers("once or twice a week", "en", "月1〜2回", "ja"))
         self.assertTrue(ct.check_numbers("Cool the burn with water at 20 °C.", "en", "20℃以下の水でやけどを冷やす。", "ja") == [])
 
     def test_phone_number(self):
