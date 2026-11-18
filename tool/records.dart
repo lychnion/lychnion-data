@@ -36,6 +36,9 @@
 //   # check a catalog's signatures, and local files against it
 //   dart run tool/records.dart verify build/catalog.json [FOLDER]
 //
+//   # check every record in the records folder (also run by CI)
+//   dart run tool/records.dart check-records records
+//
 // Mirrors (`--mirror`, repeatable) are nodes that keep files by hash under
 // `blobs/sha256/`. The app tries a file's own address first, then each
 // mirror. They are not signed: the hash in the signed record decides.
@@ -75,6 +78,8 @@ Future<void> main(List<String> argv) async {
       await _export(args);
     case 'verify':
       await _verify(args);
+    case 'check-records':
+      await _checkRecords(args);
     default:
       _fail('Unknown command ${argv.first}');
   }
@@ -505,4 +510,30 @@ Future<void> _verify(_Args args) async {
     }
   }
   if (bad > 0) _fail('$bad problems');
+}
+
+/// Every record file under FOLDER (`<id>/<version>.json`) must be signed by
+/// a trusted key and match its place: id and version as in its path.
+Future<void> _checkRecords(_Args args) async {
+  final trust = _trust(args);
+  if (args.rest.isEmpty) _fail('Usage: check-records FOLDER');
+  final files =
+      Directory(args.rest.first)
+          .listSync(recursive: true)
+          .whereType<File>()
+          .where((f) => f.path.endsWith('.json'))
+          .toList()
+        ..sort((a, b) => a.path.compareTo(b.path));
+  if (files.isEmpty) _fail('No records in ${args.rest.first}');
+  var bad = 0;
+  for (final f in files) {
+    final segs = f.uri.pathSegments;
+    final id = segs[segs.length - 2];
+    final version = segs.last.substring(0, segs.last.length - 5);
+    final r = await trust.check(_readJson(f.path));
+    final ok = r != null && r.id == id && r.version == version;
+    if (!ok) bad++;
+    stdout.writeln('${ok ? 'ok ' : 'BAD'}  $id $version');
+  }
+  if (bad > 0) _fail('$bad bad records');
 }
