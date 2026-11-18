@@ -411,6 +411,22 @@ class Numbers(unittest.TestCase):
             with self.subTest(correct=ja):
                 self.assertEqual(ct.check_numbers(en, "en", ja, "ja"), [])
 
+    def test_mixing_parts_and_spoons(self):
+        en = "Mix 1 part bleach with 9 parts water."
+        for ja in ("漂白剤1に対して水9の割合で混ぜる。", "漂白剤1:水9で混ぜる。", "漂白剤1、水9の割合"):
+            with self.subTest(correct=ja):
+                self.assertEqual(ct.check_numbers(en, "en", ja, "ja"), [])
+        for ja in ("漂白剤9に対して水1の割合で混ぜる。", "漂白剤9:水1で混ぜる。", "水1に対して漂白剤9"):
+            with self.subTest(swapped=ja):
+                self.assertTrue(ct.check_numbers(en, "en", ja, "ja"))
+        self.assertTrue(ct.check_numbers("Mix 8 spoons of sugar and 1 spoon of salt.", "en", "砂糖1杯、塩8杯", "ja"))
+        self.assertTrue(ct.check_numbers("8 spoons of sugar", "en", "砂糖8", "ja"))
+        self.assertEqual(ct.check_numbers("8 spoons of sugar", "en", "砂糖8さじ", "ja"), [])
+        for en, ja in (("8 level teaspoons of sugar", "砂糖小さじ8"), ("2 level tablets", "2錠"),
+                       ("2 full glasses of water", "コップ2杯の水"), ("1 heaping tablespoon", "大さじ1")):
+            with self.subTest(ja=ja):
+                self.assertEqual(ct.check_numbers(en, "en", ja, "ja"), [])
+
     def test_weekly_dose_and_more(self):
         for en, ja in (("Take 2 tablets once a week.", "週1回2錠。"), ("Take 2 mg once a week", "週1回2mg"),
                        ("Take 2 tablets once a month.", "月1回2錠。"), ("sleep 8 hours a night", "毎晩8時間眠る"),
