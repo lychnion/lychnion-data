@@ -376,6 +376,19 @@ class Numbers(unittest.TestCase):
             with self.subTest(swapped=ja):
                 self.assertTrue(ct.check_numbers(en, "en", ja, "ja"))
 
+    def test_common_cpr_and_inhaler_wording(self):
+        for en, ja in (("Give 30 compressions.", "30回押す。"), ("Give 30 compressions.", "胸の真ん中を30回押す。"),
+                       ("Give 30 compressions.", "胸骨圧迫（30回）"), ("Give 30 compressions.", "心臓マッサージを30回"),
+                       ("Give 2 breaths.", "息を2回吹き込む。"), ("Give 2 breaths.", "人工呼吸は2回行う。"),
+                       ("Give 2 breaths.", "2回、息を吹き込む。"), ("Take 2 puffs.", "2回吸入する。"),
+                       ("Use 1 spray.", "1回噴霧する。"), ("Take 2 puffs.", "吸入を2回行う。"),
+                       ("Push at 100 to 120 compressions per minute.", "1分間に100〜120回のテンポで胸骨圧迫する。"),
+                       ("Take 2 puffs.", "1回2吸入"), ("2 puffs", "2パフ")):
+            with self.subTest(ja=ja):
+                self.assertEqual(ct.check_numbers(en, "en", ja, "ja"), [])
+        self.assertTrue(ct.check_numbers("Give 30 compressions then 2 breaths.", "en",
+                                         "2回押して、30回息を吹き込む。", "ja"))
+
     def test_weekly_dose_and_more(self):
         for en, ja in (("Take 2 tablets once a week.", "週1回2錠。"), ("Take 2 mg once a week", "週1回2mg"),
                        ("Take 2 tablets once a month.", "月1回2錠。"), ("sleep 8 hours a night", "毎晩8時間眠る"),
