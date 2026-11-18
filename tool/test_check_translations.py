@@ -81,6 +81,30 @@ class Numbers(unittest.TestCase):
         self.assertEqual(len(found), 1)
         self.assertIn("unit min in the original, h in the translation", found[0][1])
 
+    def test_dose_unit_change_with_space_fails(self):
+        found = ct.check_numbers("Give 500 mg.", "en", "500 g を与えます。", "ja")
+        self.assertEqual([n for n, _ in found], ["500"])
+        found = ct.check_numbers("500 mg を与えます。", "ja", "Give 500 g.", "en")
+        self.assertEqual([n for n, _ in found], ["500"])
+
+    def test_minus_sign_is_kept(self):
+        for ja in ("5℃以下", "5度以下"):
+            with self.subTest(ja=ja):
+                self.assertEqual([n for n, _ in ct.check_numbers("below -5°C", "en", ja, "ja")], ["-5", "5"])
+        self.assertEqual(ct.check_numbers("below minus 5°C", "en", "−5℃以下", "ja"), [])
+        self.assertEqual(ct.check_numbers("below -5°C", "en", "氷点下5度以下", "ja"), [])
+        self.assertEqual(ct.check_numbers("3-5 minutes; TC 4-02.3", "en", "3〜5分。TC 4-02.3", "ja"), [])
+
+    def test_critical_unit_on_one_side_fails(self):
+        self.assertEqual(len(ct.check_numbers("Give 5 mg.", "en", "5を与えます。", "ja")), 1)
+        self.assertEqual(len(ct.check_numbers("Give 20 mcg.", "en", "20 mgを与えます。", "ja")), 1)
+        self.assertEqual(len(ct.check_numbers("for 3 h", "en", "3分間", "ja")), 1)
+        self.assertEqual(ct.check_numbers("30 degrees", "en", "30度", "ja"), [])
+
+    def test_kanji_minutes(self):
+        self.assertEqual(ct.check_numbers("Wait 5 minutes, then 20 minutes.", "en", "五分待ち、次に二十分待ちます。", "ja"), [])
+        self.assertEqual(ct.check_numbers("Rest enough. Never again.", "en", "十分に休み、二度としません。", "ja"), [])
+
     def test_phone_number(self):
         self.assertEqual(ct.check_numbers("119番に電話します", "ja", "Call 110.", "en"),
                          [("110", "110 in the translation, not in the original"),
@@ -139,6 +163,15 @@ class Integrity(unittest.TestCase):
     def test_source_is_required(self):
         found, _ = ct.check_entry("0000000000000000", {"text": "休みます。"}, "en", "ja", TERMS)
         self.assertEqual([(c, lvl) for c, _, _, lvl in found], [("integrity", "error")])
+
+
+class BadEntries(unittest.TestCase):
+    def test_bad_shapes_are_integrity_errors(self):
+        for e in ({"source": "Rest.", "text": None}, {"source": "Rest.", "text": "休む", "accept": "x"},
+                  {"source": "Rest.", "text": "休む", "accept": ["x"]}, "text"):
+            with self.subTest(e=e):
+                found, _ = ct.check_entry(ct.passage_key("Rest."), e, "en", "ja", TERMS)
+                self.assertIn("error", [lvl for _, _, _, lvl in found])
 
 
 class FileAndReport(unittest.TestCase):
