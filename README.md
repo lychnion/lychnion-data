@@ -58,6 +58,31 @@ so the app finds updates without an app update.
 Records and catalogs are made with `tool/records.dart` in the app
 repository.
 
+## Mirrors
+
+Any web server, or a folder on a USB stick, can hold copies of the files.
+Such a copy (a "node") keeps every file under its SHA-256:
+
+```text
+catalog.json
+blobs/sha256/<sha256 of the file>
+```
+
+A catalog can list these nodes in `mirrors`. The app tries a file's own
+address first, then each mirror. When one is unreachable, it goes on with
+the next one from where it stopped. A file from a mirror is used only if
+its SHA-256 matches the signed record, so a mirror needs no trust and no
+signature.
+
+To make a node from the files you have:
+
+```sh
+dart run tool/records.dart export catalog.json --out DIR FOLDER...
+```
+
+It copies every file it finds in the folders (only if it matches its
+record) and writes a `catalog.json` that points to them.
+
 ## Files
 
 | Item | Files | What it is |
