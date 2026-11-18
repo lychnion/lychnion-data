@@ -388,6 +388,15 @@ class Numbers(unittest.TestCase):
                 self.assertEqual(ct.check_numbers(en, "en", ja, "ja"), [])
         self.assertTrue(ct.check_numbers("Give 30 compressions then 2 breaths.", "en",
                                          "2回押して、30回息を吹き込む。", "ja"))
+        for en, ja in (("Compress 30 times and breathe 2 times.", "30回息を吹き込み、2回圧迫する。"),
+                       ("Press the chest 30 times then blow twice.", "胸を2回押し、30回吹き込む。")):
+            with self.subTest(swapped=ja):
+                self.assertTrue(ct.check_numbers(en, "en", ja, "ja"))
+        for en, ja in (("Compress 30 times and breathe 2 times.", "30回圧迫し、2回息を吹き込む。"),
+                       ("Press the chest 30 times then blow twice.", "胸を30回押し、2回吹き込む。"),
+                       ("Give 5 back blows then 5 thrusts.", "5回叩き、5回押す。")):
+            with self.subTest(correct=ja):
+                self.assertEqual(ct.check_numbers(en, "en", ja, "ja"), [])
 
     def test_weekly_dose_and_more(self):
         for en, ja in (("Take 2 tablets once a week.", "週1回2錠。"), ("Take 2 mg once a week", "週1回2mg"),
