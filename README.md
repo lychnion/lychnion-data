@@ -92,10 +92,21 @@ dart run tool/records.dart catalog --items items.json --records records \
   --out build/catalog.json
 ```
 
-The top of each tool says more. Records use the format code shared with
-the app (`packages/lychnion_format` in
-[lychnion/lychnion](https://github.com/lychnion/lychnion)); `pubspec.lock`
-pins its commit, `dart pub upgrade lychnion_format` moves it.
+The top of each tool says more. Records and catalogs use the format
+code shared with the app (`packages/lychnion_format` in
+[lychnion/lychnion](https://github.com/lychnion/lychnion): `PackageRecord`,
+`CatalogDocument`, `KeysFile`), so the tools write what the app, a base
+and a node read. `pubspec.yaml` names the commit it uses (`ref`), so a
+change on the app's `main` never changes the tools by surprise: to move
+it, set `ref` to a newer commit on the app's `main` (never a PR branch:
+it may disappear) and run `dart pub upgrade lychnion_format`.
+
+When Lychnion replaces or revokes its key, the statements go into the
+catalog with `catalog … --keys keys.json`; `export` keeps a catalog's
+statements and `verify` applies them, so records of a revoked key then
+fail `verify`. `catalog` and `export` refuse to write a catalog over
+2 MB with its key statements, as the app refuses to read one (and
+leaving statements out could leave a stolen key trusted).
 
 **Area.** A package or map area can say which places it is for, as ISO
 3166 codes: `"area": ["JP"]` for Japan, `["JP-30"]` for Wakayama. No area

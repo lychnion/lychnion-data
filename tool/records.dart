@@ -24,19 +24,25 @@
 //     --records records \
 //     --base https://github.com/lychnion/lychnion-data/releases/download/2026.11.2/ \
 //     --out build/catalog.json \
-//     [--mirror https://mirror.example.org/lychnion/ ...]
+//     [--mirror https://mirror.example.org/lychnion/ ...] \
+//     [--keys keys.json ...]
+//   (--keys: key statements of a replaced or revoked key, as the desktop
+//   app writes them; only those made by a trusted key are taken)
 //
 //   # a static node: catalog.json plus every file as blobs/sha256/<hash>,
 //   # for a USB stick or any web host (files found in the FOLDERs by name)
 //   dart run tool/records.dart export build/catalog.json \
 //     --out /Volumes/STICK/lychnion build/packages build/maps
 //   (--source-url URL: where the catalog came from, when it has no `base`
-//   and its addresses are relative)
+//   and its addresses are relative; the catalog's key statements are kept,
+//   and --keys FILE adds more)
 //
-//   # check a catalog's signatures, and local files against it
-//   dart run tool/records.dart verify build/catalog.json [FOLDER]
+//   # check a catalog's signatures, and local files against it (its own
+//   # key statements apply; --keys FILE adds more)
+//   dart run tool/records.dart verify build/catalog.json [FOLDER] [--keys FILE]
 //
-//   # check every record in the records folder (also run by CI)
+//   # check every record in the records folder (also run by CI; after a
+//   # key replacement add --keys keys.json)
 //   dart run tool/records.dart check-records records
 //
 // Mirrors (`--mirror`, repeatable) are nodes that keep files by hash under
@@ -68,7 +74,11 @@ Future<void> main(List<String> argv) async {
     case 'keygen':
       await _keygen(args);
     case 'public':
-      final pair = await keyPairFromSeed(await _readKey(args.req('--key')));
+      final keyFrom = args.req('--key');
+      if (args.positional() case [final first, ...]) {
+        _fail('Unexpected $first');
+      }
+      final pair = await keyPairFromSeed(await _readKey(keyFrom));
       stdout.writeln(await publicKeyOf(pair));
     case 'sign':
       await _sign(args);
@@ -106,6 +116,16 @@ class _Args {
   ];
 
   bool flag(String name) => rest.remove(name);
+
+  /// The arguments left once every option was read; an option this
+  /// command does not know (a typo) is refused instead of being taken
+  /// for a file.
+  List<String> positional() {
+    for (final a in rest) {
+      if (a.startsWith('--')) _fail('Unknown option $a');
+    }
+    return rest;
+  }
 }
 
 Future<String> _readKey(String from) async {
@@ -117,8 +137,11 @@ Future<String> _readKey(String from) async {
 }
 
 Future<void> _keygen(_Args args) async {
+  // A typo (--1pasword) must not print a bare seed instead of the item.
+  final onePassword = args.flag('--1password');
+  if (args.positional() case [final first, ...]) _fail('Unexpected $first');
   final k = await newKeyPair();
-  if (!args.flag('--1password')) {
+  if (!onePassword) {
     stdout.writeln(k.seed);
     stderr.writeln('public key: ${k.publicKey}');
     return;
@@ -171,6 +194,76 @@ TrustedKeys _trust(_Args args) {
       : TrustedKeys({
           'lychnion': [k],
         });
+}
+
+/// Key statements from `--keys` files (keys.json) and [more] (a source
+/// catalog's `keys`) that [trust] counts: made by a key it trusts.
+/// Others are reported and left out.
+Future<List<KeyStatement>> _keys(
+  List<String> files,
+  TrustedKeys trust, [
+  List<Object?> more = const [],
+]) async {
+  final given = <Object?>[...more];
+  final perFile = <String, Set<String>>{};
+  for (final f in files) {
+    final String text;
+    try {
+      text = File(f).readAsStringSync();
+    } on FileSystemException catch (e) {
+      _fail('$f: ${e.osError?.message ?? e.message}');
+    }
+    final s = await KeysFile.parse(text);
+    if (s.isEmpty) _fail('$f: no valid key statements');
+    perFile[f] = {for (final x in s) x.id};
+    given.addAll(s);
+  }
+  final kept = await relevantStatements(trust, given);
+  // Given on purpose and none counts: the wrong file, or another
+  // publisher's. Better to stop than to publish without the revocation.
+  // Each file on its own: one wrong file (another publisher's) must not
+  // pass because another file counts. By id: a statement also in the
+  // catalog counts once, from there.
+  final keptIds = {for (final k in kept) k.id};
+  for (final e in perFile.entries) {
+    if (!e.value.any(keptIds.contains)) {
+      _fail(
+        'None of the key statements in ${e.key} is made by a trusted key '
+        '(another publisher\'s file, or --public-key wrong?)',
+      );
+    }
+  }
+  // Only worth saying for files given here: a third party's catalog
+  // often carries statements about publishers not given.
+  if (files.isNotEmpty && kept.length < given.length) {
+    stderr.writeln(
+      '${given.length - kept.length} key statements not made by a trusted '
+      'key (or repeated), left out',
+    );
+  }
+  return kept;
+}
+
+/// [c]'s text, or a clear error when it is over the 2 MB the app reads.
+String _encode(CatalogDocument c, String out) {
+  try {
+    // Key statements left out to fit would leave records of a new key
+    // with a bad signature, or a stolen key trusted: stop instead.
+    if (c.fitted().keys.length < c.keys.length) {
+      _fail('$out: with its key statements it would be over 2 MB');
+    }
+    return c.encode();
+  } on CatalogTooLarge catch (e) {
+    _fail('$out: $e (the app refuses larger catalogs)');
+  }
+}
+
+CatalogDocument _readCatalog(String path) {
+  try {
+    return CatalogDocument.parse(File(path).readAsStringSync());
+  } on FormatException catch (e) {
+    _fail('$path: ${e.message}');
+  }
 }
 
 Map<String, Object?> _readJson(String path) =>
@@ -239,7 +332,7 @@ Future<void> _sign(_Args args) async {
   final keyFrom = args.req('--key');
   final items = _readJson(args.req('--items'));
   final dir = Directory(args.req('--records'));
-  final ids = args.rest;
+  final ids = args.positional();
   if (ids.isEmpty) _fail('Name the items to sign.');
   final pair = await keyPairFromSeed(await _readKey(keyFrom));
   final publisher = items['publisher']! as String;
@@ -357,7 +450,14 @@ Future<void> _catalog(_Args args) async {
       _fail('--mirror $m: not an http(s) address');
     }
   }
-  final trust = _trust(args);
+  final given = _trust(args);
+  final keyFiles = args.all('--keys');
+  // A mistyped option (--key, --keys=FILE) must not leave a revocation
+  // out of the catalog unnoticed.
+  if (args.positional() case [final first, ...]) _fail('Unexpected $first');
+  final keys = await _keys(keyFiles, given);
+  // Records of a successor key count when a statement names it.
+  final trust = given.withStatements(keys);
   final records = <Map<String, Object?>>[];
   final urls = <String, String>{};
   for (final i in (items['items']! as List).cast<Map>()) {
@@ -383,19 +483,16 @@ Future<void> _catalog(_Args args) async {
       if (url[f.name] != null) urls[f.sha256] = url[f.name]!;
     }
   }
-  final catalog = {
-    'format': 2,
-    'base': base,
-    'refresh': refresh,
-    'records': records,
+  final catalog = CatalogDocument(
+    base: base,
+    refresh: refresh,
+    records: records,
     // One address per hash, as a string: older apps read only that.
-    'urls': urls,
-    if (mirrors.isNotEmpty)
-      'mirrors': [for (final m in mirrors) m.endsWith('/') ? m : '$m/'],
-  };
-  await File(
-    out,
-  ).writeAsString('${const JsonEncoder.withIndent('  ').convert(catalog)}\n');
+    urls: urls,
+    mirrors: [for (final m in mirrors) m.endsWith('/') ? m : '$m/'],
+    keys: [for (final s in keys) s.json],
+  );
+  await File(out).writeAsString(_encode(catalog, out));
   stdout.writeln('$out: ${records.length} records');
 }
 
@@ -407,14 +504,17 @@ Future<void> _catalog(_Args args) async {
 Future<void> _export(_Args args) async {
   final out = Directory(args.req('--out'));
   final sourceUrl = args.opt('--source-url');
-  final trust = _trust(args);
-  if (args.rest.isEmpty) _fail('Usage: export CATALOG --out DIR [FOLDER...]');
-  final j = _readJson(args.rest.first);
-  if (j['format'] != 2) _fail('Not a format 2 catalog');
-  final folders = args.rest.skip(1).toList();
+  final keyFiles = args.all('--keys');
+  final given = _trust(args);
+  final rest = args.positional();
+  if (rest.isEmpty) _fail('Usage: export CATALOG --out DIR [FOLDER...]');
+  final j = _readCatalog(rest.first);
+  final keys = await _keys(keyFiles, given, j.keys);
+  final trust = given.withStatements(keys);
+  final folders = rest.skip(1).toList();
   // Where the source catalog gets each file, for files not exported.
-  final base = j['base'] is String
-      ? Uri.parse(j['base']! as String)
+  final base = j.base != null
+      ? Uri.parse(j.base!)
       : sourceUrl == null
       ? null
       : Uri.parse(sourceUrl);
@@ -426,19 +526,16 @@ Future<void> _export(_Args args) async {
   bool web(Uri u) =>
       (u.isScheme('http') || u.isScheme('https')) && u.host.isNotEmpty;
   final mirrors = <String>[
-    for (final m in (j['mirrors'] as List?) ?? const [])
-      if (m is String)
-        if (Uri.tryParse(m) case final u?)
-          if (u.hasScheme)
-            if (web(u)) '$u' else ...[]
-          else if (origin != null)
-            if (web(origin.resolveUri(u))) '${origin.resolveUri(u)}',
+    for (final m in j.mirrors)
+      if (Uri.tryParse(m) case final u?)
+        if (u.hasScheme)
+          if (web(u)) '$u' else ...[]
+        else if (origin != null)
+          if (web(origin.resolveUri(u))) '${origin.resolveUri(u)}',
   ];
   final hasMirrors = mirrors.isNotEmpty;
-  final from = ((j['urls'] as Map?) ?? const {}).cast<String, Object?>();
   String? elsewhere(RecordFile f) {
-    final listed = from[f.sha256];
-    final u = Uri.tryParse(listed is String ? listed : f.name);
+    final u = Uri.tryParse(j.urls[f.sha256] ?? f.name);
     if (u == null) return null;
     if (u.hasScheme) return '$u';
     return base == null ? null : '${base.resolveUri(u)}';
@@ -449,7 +546,7 @@ Future<void> _export(_Args args) async {
   final records = <Map<String, Object?>>[];
   final urls = <String, String>{};
   var missing = 0;
-  for (final raw in j['records']! as List) {
+  for (final raw in j.records) {
     final r = await trust.check(raw);
     if (r == null) _fail('${(raw as Map)['id']}: bad signature or record');
     records.add(r.json);
@@ -492,16 +589,16 @@ Future<void> _export(_Args args) async {
       stdout.writeln('copied ${f.name}');
     }
   }
-  final catalog = {
-    'format': 2,
-    if (j['refresh'] != null) 'refresh': j['refresh'],
-    'records': records,
-    'urls': urls,
-    if (mirrors.isNotEmpty) 'mirrors': mirrors,
-  };
+  final catalog = CatalogDocument(
+    refresh: j.refresh,
+    records: records,
+    urls: urls,
+    mirrors: mirrors,
+    keys: [for (final s in keys) s.json],
+  );
   await File(
     '${out.path}/catalog.json',
-  ).writeAsString('${const JsonEncoder.withIndent('  ').convert(catalog)}\n');
+  ).writeAsString(_encode(catalog, '${out.path}/catalog.json'));
   stdout.writeln(
     '${out.path}: ${records.length} records'
     '${missing > 0 ? ', $missing files not found (fetched elsewhere)' : ''}',
@@ -509,13 +606,17 @@ Future<void> _export(_Args args) async {
 }
 
 Future<void> _verify(_Args args) async {
-  final trust = _trust(args);
-  if (args.rest.isEmpty) _fail('Usage: verify CATALOG [FOLDER]');
-  final j = _readJson(args.rest.first);
-  final folder = args.rest.length > 1 ? args.rest[1] : null;
-  if (j['format'] != 2) _fail('Not a format 2 catalog');
+  final keyFiles = args.all('--keys');
+  final given = _trust(args);
+  final rest = args.positional();
+  if (rest.isEmpty) _fail('Usage: verify CATALOG [FOLDER] [--keys FILE]');
+  final j = _readCatalog(rest.first);
+  final folder = rest.length > 1 ? rest[1] : null;
+  final keys = await _keys(keyFiles, given, j.keys);
+  if (keys.isNotEmpty) stdout.writeln('${keys.length} key statements');
+  final trust = given.withStatements(keys);
   var bad = 0;
-  for (final raw in j['records']! as List) {
+  for (final raw in j.records) {
     final r = await trust.check(raw);
     if (r == null) {
       bad++;
@@ -538,16 +639,21 @@ Future<void> _verify(_Args args) async {
 /// Every record file under FOLDER (`<id>/<version>.json`) must be signed by
 /// a trusted key and match its place: id and version as in its path.
 Future<void> _checkRecords(_Args args) async {
-  final trust = _trust(args);
-  if (args.rest.isEmpty) _fail('Usage: check-records FOLDER');
+  final given = _trust(args);
+  final keyFiles = args.all('--keys');
+  final rest = args.positional();
+  // Records of a key that replaced Lychnion's count when its statement
+  // is given (keys.json), before the app ships the new key.
+  final trust = given.withStatements(await _keys(keyFiles, given));
+  if (rest.isEmpty) _fail('Usage: check-records FOLDER');
   final files =
-      Directory(args.rest.first)
+      Directory(rest.first)
           .listSync(recursive: true)
           .whereType<File>()
           .where((f) => f.path.endsWith('.json'))
           .toList()
         ..sort((a, b) => a.path.compareTo(b.path));
-  if (files.isEmpty) _fail('No records in ${args.rest.first}');
+  if (files.isEmpty) _fail('No records in ${rest.first}');
   var bad = 0;
   for (final f in files) {
     final segs = f.uri.pathSegments;
