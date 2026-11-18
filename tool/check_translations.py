@@ -136,6 +136,7 @@ def _normalize(text, lang):
         t = re.sub(r"(?<=\d)-(?=(?:second|minute|hour|day|week|month|year|meter|metre|liter|litre|mile|kilometer|km|kg|mg|mcg|g|ml|l"
                    r"|tablet|cup|iu|unit)s?\b)",
                    " ", t, flags=re.I)  # a 10-minute walk
+        t = re.sub(r"\bonce or twice\b", "1 or 2 times", t, flags=re.I)
         t = re.sub(r"\btwice\b", "2 times", t, flags=re.I)
         t = re.sub(r"\bonce(?= (?:an?|per|every) (?:\d+ )?(?:days?|weeks?|months?|years?|hours?|minutes?)\b| daily\b)",
                    "1 times", t, flags=re.I)
@@ -148,7 +149,7 @@ def _normalize(text, lang):
                    r"|\b(?:every|each)\s+(day|minute|hour|week|month|year)\b",
                    lambda m: f" 1 per-{_per(m[1] or m[2])} ", t, flags=re.I)
         t = re.sub(r"\ban? (tablet|pill|capsule|dose|drop|glass|cup|mug|bowl|spoonful)\b", r"1 \1", t, flags=re.I)
-        t = re.sub(r"(?<!\bat )(?<!\beven )\bonce(?=\s*(?:[.!?]|$))", "1 times", t, flags=re.I)  # repeat once = もう1回
+        t = re.sub(r"\bone(?= (?:or|to) (?:two|three|four|five|\d))", "1", t, flags=re.I)
         t = re.sub(r"\b(\d+) to (\d+)(?= (?:dilution|ratio|solution|mix))", r"\1:\2", t, flags=re.I)
         t = re.sub(r"(\btimes|\btwice|\bonce|\d+(?:\.\d+)?\s?(?:[a-z%]{1,10}s?)?(?: of \w+)?) an? (day|week|month|year|hour|minute)\b",
                    lambda m: f"{m[1]} 1 per-{_per(m[2])} ", t, flags=re.I)
@@ -177,7 +178,7 @@ def _normalize(text, lang):
                    r"|drop|dose|gram|milligram|liter|litre|cup|meter|metre|kilogram|unit)s?\b)", "1", t, flags=re.I)
         t = re.sub(r"\bthe first one\b", "1", t, flags=re.I)
         # second-degree burn = 2度の熱傷; first- and second-degree = 1度と2度
-        t = re.sub(r"\b(first|second|third)-?(?=,? (?:and|or|to) (?:first|second|third|fourth)[- ]degree\b)",
+        t = re.sub(r"\b(first|second|third)-?(?=,? (?:(?:second|third)-?,? )*(?:and|or|to) (?:first|second|third|fourth)[- ]degree\b)",
                    lambda m: f"{['first', 'second', 'third'].index(m[1].lower()) + 1} grade", t, flags=re.I)
         t = re.sub(r"\b(first|second|third|fourth)[- ]degree\b",
                    lambda m: f"{['first', 'second', 'third', 'fourth'].index(m[1].lower()) + 1} grade", t, flags=re.I)
@@ -204,6 +205,9 @@ def _normalize(text, lang):
         t = re.sub(r"隔週|(?<![\d.])1週間?おき", " 2 per-week ", t)
         t = re.sub(r"一(?=日\s?\d|回\s?\d)|(?<=日)一(?=回)", "1", t)
         t = re.sub(r"(?<![\d.])1日(?=量|の(?:上限|量|摂取量|最大|最高))", " 1 per-day ", t)
+        # In a sentence about burns, N度 is a grade (1度、2度、3度の熱傷; 2度以上のやけど)
+        t = re.sub(r"[^。\n]*(?:熱傷|火傷|やけど)[^。\n]*",
+                   lambda m: re.sub(r"(\d+)\s?度", r"\1級", m[0]), t)
         # 度 as "times": 1日2度, 週3度, 2度塗る
         t = re.sub(r"(?<=[日週月])(\d+)度", r"\1回", t)
         t = re.sub(r"(\d+)度(?=塗|繰り返|行|洗|拭|測|飲|服用|吸|使|かけ)", r"\1回", t)
@@ -221,12 +225,12 @@ def _normalize(text, lang):
         # 1対1 = 1:1
         t = re.sub(r"(\d+(?:\.\d+)?)対(\d+(?:\.\d+)?)", r"\1:\2", t)
         # 週3回, 月に1回 = per week 3 times; 1回2錠 = 2 tablets per time
-        t = re.sub(r"(?<![\d.毎一-鿿])(週|月|年)に?(?=\d+(?:\.\d+)?\s?(?:回|日))", lambda m: f" 1 per-{_per(m[1])} ", t)
+        t = re.sub(r"(?<![\d.毎一-鿿かカヶケ])(週|月|年)に?(?=\d+(?:\.\d+)?\s?(?:回|日))", lambda m: f" 1 per-{_per(m[1])} ", t)
         # (only before a dose: 1日1回5mg keeps its "once")
         t = re.sub(r"(?<![\d.第一日週月にでと])1回(?:に|あたり|につき)?"
                    r"(?=\d+(?:\.\d+)?\s?(?:錠|カプセル|滴|包|粒|mg|g|ml|cc|μg|mcg|ug|IU|単位|杯|tsp|tbsp))|毎回", " ", t,
                    flags=re.I)
-        t = re.sub(r"(?<![\d.月])1\s?(日|分間?|時間|週間?|人)\s?(?:あたり|当たり|につき|ごと|に(?!は)|(?=1\s?日\s?\d)|(?=\d+(?:\.\d+)?\s?(?![\d.]|秒|分|時間|日|週|か月|ヶ月|カ月|年)))",
+        t = re.sub(r"(?<![\d.月])1\s?(日|分間?|時間|週間?|人|[かカヶケ]月|年)\s?(?:あたり|当たり|につき|ごと|に(?!は)|(?=1\s?日\s?\d)|(?=\d+(?:\.\d+)?\s?(?![\d.]|秒|分|時間|日|週|か月|ヶ月|カ月|年)))",
                    lambda m: f" 1 per-{_per(m[1])} ", t)
         # 時速200km = 200 km/h = 200 km 1時間
         t = re.sub(r"([時分秒])速\s?(\d+(?:\.\d+)?)\s?(km|キロ(?:メートル)?|m(?![lgL])|メートル)",
@@ -248,7 +252,8 @@ def _normalize(text, lang):
 ONE_TO_NINE = {w: i + 1 for i, w in enumerate(ONES.split("|"))}
 PER = {"day": "day", "日": "day", "person": "person", "人": "person", "minute": "min", "min": "min", "分": "min",
        "分間": "min", "hour": "h", "hr": "h", "h": "h", "時間": "h", "時": "h", "second": "s", "sec": "s", "s": "s",
-       "秒": "s", "week": "week", "週": "week", "週間": "week", "month": "month", "月": "month"}
+       "秒": "s", "week": "week", "週": "week", "週間": "week", "month": "month", "月": "month",
+       "か月": "month", "カ月": "month", "ヶ月": "month", "ケ月": "month"}
 
 
 FREQ = {"daily": "day", "weekly": "week", "monthly": "month", "hourly": "hour", "yearly": "year",
