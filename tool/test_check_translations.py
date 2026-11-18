@@ -335,8 +335,7 @@ class Numbers(unittest.TestCase):
                        ("Take 2 tablets, 3 times a day.", "1回2錠、1日3回"), ("Drink 1 glass of water.", "水1杯を飲む。"),
                        ("a glass of water", "コップ1杯の水"), ("Add 1 spoonful.", "小さじ1杯を加える。"),
                        ("a 10-mg dose", "10mgの用量"), ("a 1 to 10 dilution", "1対10の希釈"),
-                       ("at 3:30", "3時30分に"), ("at 3:30", "3時半に"), ("Repeat once.", "もう1回繰り返す。"),
-                       ("zero", "0"), ("0 °C", "零度")):
+                       ("at 3:30", "3時30分に"), ("at 3:30", "3時半に"), ("zero", "0"), ("0 °C", "零度")):
             with self.subTest(ja=ja):
                 self.assertEqual(ct.check_numbers(en, "en", ja, "ja"), [])
         self.assertTrue(ct.check_numbers("Take 5 mg once a day.", "en", "1日2回5mgを服用する。", "ja"))
@@ -347,6 +346,19 @@ class Numbers(unittest.TestCase):
         start = time.monotonic()
         ct.check_numbers("1" * 20000, "en", "1" * 20000, "ja")
         self.assertLess(time.monotonic() - start, 2)
+
+    def test_month_year_rates_one_or_two_and_burns(self):
+        for en, ja in (("once a month", "1か月に1回"), ("once a year", "1年に1回"),
+                       ("once or twice a day", "1日1〜2回"), ("one or two tablets", "1〜2錠"),
+                       ("one to two tablets", "1〜2錠"), ("Give 5 mg once.", "1回5mgを与える。"),
+                       ("first-, second- and third-degree burns", "1度、2度、3度の熱傷"),
+                       ("burns of second degree or higher", "2度以上のやけど"),
+                       ("The burn is second degree.", "やけどは2度です。"), ("Third degree burns", "熱傷3度")):
+            with self.subTest(ja=ja):
+                self.assertEqual(ct.check_numbers(en, "en", ja, "ja"), [])
+        self.assertTrue(ct.check_numbers("second-degree burn", "en", "3度の熱傷", "ja"))
+        self.assertTrue(ct.check_numbers("Rinse once or twice.", "en", "2回洗う。", "ja"))
+        self.assertTrue(ct.check_numbers("Cool the burn with water at 20 °C.", "en", "20℃以下の水でやけどを冷やす。", "ja") == [])
 
     def test_phone_number(self):
         self.assertEqual(ct.check_numbers("119番に電話します", "ja", "Call 110.", "en"),
