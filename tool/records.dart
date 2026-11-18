@@ -429,6 +429,9 @@ Future<Map<String, Object?>> _recordFor(
     if (notice != null && notice.isNotEmpty) 'notice': notice,
     if (item['role'] != null) 'role': item['role'],
     if (item['desktop'] == true) 'desktop': true,
+    // Platforms the model runs on ('android'); none means every one.
+    if (item['platforms'] case final List p when p.isNotEmpty)
+      'platforms': p.cast<String>(),
     if (area != null && area.isNotEmpty) 'area': _checkedArea(id, area),
     'files': files,
     'signed': _now(),

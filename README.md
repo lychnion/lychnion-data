@@ -15,8 +15,11 @@ This repository holds:
 
 The AI models are not here. The app downloads them from Hugging Face
 (`ggml-org/gemma-4-E2B-it-GGUF`, `ggml-org/gemma-4-E4B-it-GGUF`,
-`ggml-org/embeddinggemma-2-GGUF`, Apache 2.0). Lychnion signs a record for
-each model too, so the app knows exactly which file to expect.
+`ggml-org/embeddinggemma-2-GGUF`, and for Android
+`litert-community/gemma-4-E2B-it-litert-lm`, Apache 2.0). Lychnion signs a
+record for each model too, so the app knows exactly which file to expect.
+A model record may say which platforms it is for (`"platforms":
+["android"]`); without it, a model is for every platform.
 
 ## How the app trusts a file
 
