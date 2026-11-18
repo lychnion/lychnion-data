@@ -100,8 +100,10 @@ TEMPERATURE = {"°C", "°F", "deg"}  # deg: English "degrees" without a scale
 SHORT_TIMES = {"min", "h", "s"}
 # A rate after a unit: 0.1 mg/kg, 5 mg/kg/dose. Rates per time are read as
 # numbers instead (per minute = 1 minute, /日 = 1日), so both languages agree.
-RATE = {"en": r"\s*(?:/|per\s+)\s*(kg|kilograms?|dose)\b", "ja": r"\s*/\s*(kg|回)"}
-RATE_NAMES = {"kilogram": "kg", "kilograms": "kg", "回": "dose"}
+RATE = {"en": r"\s*(?:/|per\s+)\s*(kg|kilograms?|dose|ml|millilit(?:er|re)s?|l|lit(?:er|re)s?|m|cm|m2)\b",
+        "ja": r"\s*/\s*(kg|回|ml|l|m|cm|m2)(?![a-zA-Z])"}
+RATE_NAMES = {"kilogram": "kg", "kilograms": "kg", "回": "dose", "milliliter": "ml", "milliliters": "ml",
+              "millilitre": "ml", "millilitres": "ml", "liter": "l", "liters": "l", "litre": "l", "litres": "l"}
 # Minus sign from words (マイナス, 氷点下, minus): always a sign.
 MINUS = "−"
 JA_COUNTERS = ("つ|回|分|時間|日|人|度|週間|か月|ヶ月|カ月|年|歳|倍|枚|本|個|件|段階|か所|箇所|錠|粒|滴|包|袋|杯"
@@ -114,7 +116,8 @@ def _canon(n):
 
 def _normalize(text, lang):
     # NFKC makes º an "o", and m² or CO₂ a number
-    t = unicodedata.normalize("NFKC", re.sub(r"[²³₂₃]", "", text.replace("º", "°")))
+    # (mg/m² keeps its area: m2)
+    t = unicodedata.normalize("NFKC", re.sub(r"(?<!/m)[²³₂₃]", "", text.replace("º", "°")))
     t = re.sub(r"(?<=\d),(?=\d{3}(?!\d))", "", t)  # 3,122
     # Dashes as minus or range: –5 °C, 3–5. (Joining dashes are told apart in numbers().)
     t = re.sub(r"[‐‑‒–—]|(?<![ァ-ヶー])ー(?=\d)", "-", t)
@@ -138,8 +141,11 @@ def _normalize(text, lang):
                    lambda m: f" 1 per-{_per(m[1] or m[2])} ", t, flags=re.I)
         t = re.sub(r"(\btimes|\btwice|\bonce|\d+(?:\.\d+)?\s?(?:[a-z%]{1,10}s?)?) an? (day|week|month|hour|minute)\b",
                    lambda m: f"{m[1]} 1 per-{_per(m[2])} ", t, flags=re.I)
-        t = re.sub(r"\b(daily|weekly|monthly|hourly)\b(?! (?:life|lives|living|use|routine|activities))",
-                   lambda m: f" 1 per-{_per(m[1][:-2] if m[1].lower() != 'daily' else 'day')} ", t, flags=re.I)
+        t = re.sub(r"\b(daily|weekly|monthly|hourly|yearly|annually|nightly)\b"
+                   r"(?! (?:life|lives|living|use|routine|activities))",
+                   lambda m: f" 1 per-{_per(FREQ[m[1].lower()])} ", t, flags=re.I)
+        t = re.sub(r"\b(?:every|each) (night|morning|evening|year|time)\b",
+                   lambda m: f" 1 per-{_per(m[1])} ", t, flags=re.I)
         t = re.sub(r"\b(" + TENS + r")[- ](" + ONES + r")\b",
                    lambda m: str(WORDS[m[1].lower()] + ONE_TO_NINE[m[2].lower()]), t, flags=re.I)
         t = re.sub(r"\ba dozen\b", "12", t, flags=re.I)
@@ -173,8 +179,8 @@ def _normalize(text, lang):
         # 隔日 = every other day
         t = re.sub(r"隔日", " 2 per-day ", t)
         t = re.sub(r"\s*/\s*(日|分|時間|秒|週|人|月|min|h|s|day)(?![a-zA-Z])|\s*/\s*(日|分|時間|秒|週|人|月)"
-                   r"|毎(日|週|月|時|分)", lambda m: f" 1 per-{_per(m[1] or m[2] or m[3])} ", t)
-        t = re.sub(r"(?<![\d.月])1\s?(日|分間?|時間|週間?|人)\s?(?:あたり|当たり|につき|ごと|に(?!は)|(?=\d))",
+                   r"|毎(日|週|月|時|分|年|回|朝|晩|夜)", lambda m: f" 1 per-{_per(m[1] or m[2] or m[3])} ", t)
+        t = re.sub(r"(?<![\d.月])1\s?(日|分間?|時間|週間?|人)\s?(?:あたり|当たり|につき|ごと|に(?!は)|(?=1\s?日\s?\d)|(?=\d+(?:\.\d+)?\s?(?![\d.]|秒|分|時間|日|週|か月|ヶ月|カ月|年)))",
                    lambda m: f" 1 per-{_per(m[1])} ", t)
         # 時速200km = 200 km/h = 200 km 1時間
         t = re.sub(r"([時分秒])速\s?(\d+(?:\.\d+)?)\s?(km|キロ(?:メートル)?|m(?![lgL])|メートル)",
@@ -197,6 +203,12 @@ ONE_TO_NINE = {w: i + 1 for i, w in enumerate(ONES.split("|"))}
 PER = {"day": "day", "日": "day", "person": "person", "人": "person", "minute": "min", "min": "min", "分": "min",
        "分間": "min", "hour": "h", "hr": "h", "h": "h", "時間": "h", "時": "h", "second": "s", "sec": "s", "s": "s",
        "秒": "s", "week": "week", "週": "week", "週間": "week", "month": "month", "月": "month"}
+
+
+FREQ = {"daily": "day", "weekly": "week", "monthly": "month", "hourly": "hour", "yearly": "year",
+        "annually": "year", "nightly": "night"}
+PER.update({"year": "year", "年": "year", "night": "night", "晩": "night", "夜": "night", "morning": "morning",
+            "朝": "morning", "evening": "night", "time": "time", "回": "time"})
 
 
 def _per(word):
@@ -237,10 +249,15 @@ def numbers(text, lang):
     t = _normalize(text, lang)
     found, units, order = Counter(), {}, []
     # A ratio or a clock time is one value: 1:10 is not 10:1.
-    for m in re.finditer(r"(?<![\d.:])(\d+(?:\.\d+)?):(\d+(?:\.\d+)?)(?!\d|\.\d|:\d)", t):
-        n = f"{_canon(m[1])}:{_canon(m[2])}"
-        found[n] += 1
-    t = re.sub(r"(?<![\d.:])\d+(?:\.\d+)?:\d+(?:\.\d+)?(?!\d|\.\d|:\d)", " ", t)
+    # Not when a unit follows: 「手順1：5分」 is a label and 5 minutes;
+    # "2:30 minutes" is read as 2 and 30 minutes.
+    def ratio(m):
+        after = t[m.end():m.end() + 12].lstrip()
+        if any(re.match(p, after, re.I) for p, _ in UNITS[lang]):
+            return m[0]
+        found[f"{_canon(m[1])}:{_canon(m[2])}"] += 1
+        return " "
+    t = re.sub(r"(?<![\d.:])(\d+(?:\.\d+)?):(\d+(?:\.\d+)?)(?!\d|\.\d|:\d)", ratio, t)
     for m in re.finditer(r"(?<![\d.])([-−]?)(\d+(?:\.\d+)?|\.\d+)", t):
         # − (from マイナス, 氷点下, minus) is a sign; "-" is one unless it
         # joins two words or numbers (3-5, TC 4-02, COVID-19), so 「外は-5℃」 keeps it.
