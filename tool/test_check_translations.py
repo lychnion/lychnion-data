@@ -143,6 +143,46 @@ class Numbers(unittest.TestCase):
                                     "10, 5 in the translation")])
         self.assertEqual(ct.check_order("Give 5 mg of A, then 10 mg of B.", "en", "Aを5 mg、Bを10 mg与えます。", "ja"), [])
 
+    def test_japanese_minus_after_a_word(self):
+        # The sign follows は or が in normal Japanese; it must not be lost.
+        for ja in ("気温は氷点下5℃", "気温はマイナス5℃です", "外は-5℃", "外は−5℃", "気温が零下5度"):
+            with self.subTest(ja=ja):
+                self.assertEqual([n for n, _ in ct.check_numbers("The temperature is 5 °C", "en", ja, "ja")],
+                                 ["-5", "5"])
+                self.assertEqual(ct.check_numbers("The temperature is -5 °C", "en", ja, "ja"), [])
+        self.assertEqual(len(ct.check_numbers("気温は氷点下5度", "ja", "The temperature is 5 degrees", "en")), 2)
+        self.assertEqual(ct.check_numbers("COVID-19 and 3-5 days", "en", "COVID-19と3-5日", "ja"), [])
+
+    def test_two_level_rates(self):
+        self.assertTrue(ct.check_numbers("5 mg/kg/day", "en", "5 mg/kg", "ja"))
+        self.assertTrue(ct.check_numbers("5 mg/kg/dose", "en", "5 mg/kg/日", "ja"))
+        self.assertEqual(ct.check_numbers("5 mg/kg/day", "en", "5 mg/kg/日", "ja"), [])
+        self.assertEqual(ct.check_numbers("5 mg per day", "en", "5mg/日", "ja"), [])
+        self.assertEqual(ct.check_numbers("5 mg/kg/dose", "en", "5 mg/kg/回", "ja"), [])
+
+    def test_spoons(self):
+        for en in ("2 teaspoons of salt", "2 tsp of salt"):
+            with self.subTest(en=en):
+                self.assertTrue(ct.check_numbers(en, "en", "塩大さじ2", "ja"))
+                self.assertEqual(ct.check_numbers(en, "en", "塩小さじ2", "ja"), [])
+        self.assertEqual(ct.check_numbers("1 tablespoon of sugar", "en", "砂糖大さじ一", "ja"), [])
+        self.assertTrue(ct.check_numbers("1 cup of water", "en", "水1杯", "ja"))
+
+    def test_lost_frequency_and_time(self):
+        self.assertTrue(ct.check_numbers("Give 5 mg daily.", "en", "5mgを与えます。", "ja"))
+        self.assertEqual(ct.check_numbers("Give 5 mg daily.", "en", "毎日5mgを与えます。", "ja"), [])
+        self.assertEqual(ct.check_numbers("Prepare for earthquakes in daily life.", "en", "日頃から備えます。", "ja"), [])
+        self.assertTrue(ct.check_numbers("Wait 5 minutes.", "en", "5待ちます。", "ja"))
+        self.assertEqual(ct.check_numbers("100 to 120 per minute", "en", "1分間に100〜120回", "ja"), [])
+
+    def test_fahrenheit_is_not_japanese_degrees(self):
+        self.assertTrue(ct.check_numbers("38 °F", "en", "体温38度", "ja"))
+        self.assertEqual(ct.check_numbers("a slope of 30 degrees", "en", "30度の斜面", "ja"), [])
+
+    def test_compound_number_words_and_formulas(self):
+        self.assertEqual(ct.check_numbers("twenty-five people, a dozen eggs", "en", "25人、卵12個", "ja"), [])
+        self.assertEqual(ct.check_numbers("CO₂ in 1 m²", "en", "1 m²のCO₂", "ja"), [])
+
     def test_phone_number(self):
         self.assertEqual(ct.check_numbers("119番に電話します", "ja", "Call 110.", "en"),
                          [("110", "110 in the translation, not in the original"),
@@ -223,7 +263,8 @@ class Integrity(unittest.TestCase):
 class BadEntries(unittest.TestCase):
     def test_bad_shapes_are_integrity_errors(self):
         for e in ({"source": "Rest.", "text": None}, {"source": "Rest.", "text": "休む", "accept": "x"},
-                  {"source": "Rest.", "text": "休む", "accept": ["x"]}, "text", {"source": "Rest.", "text": ["x"]}):
+                  {"source": "Rest.", "text": "休む", "accept": ["x"]}, "text", {"source": "Rest.", "text": ["x"]},
+                  {"source": "Rest.", "text": "", "accept": [{"check": ["numbers"], "item": "1"}]}):
             with self.subTest(e=e):
                 found, _ = ct.check_entry(ct.passage_key("Rest."), e, "en", "ja", TERMS)
                 self.assertIn("error", [lvl for _, _, _, lvl in found])
@@ -253,6 +294,9 @@ class FileAndReport(unittest.TestCase):
 
 
 class Updates(unittest.TestCase):
+    def test_stale_entry_that_is_not_an_object(self):
+        ct.print_changes({"headings": {}, "passages": {"k": "text"}}, [], "test")  # no crash
+
     def test_new_and_stale_passages(self):
         old_key, old = entry("Rest for 2 hours.", "2時間休みます。")
         tr = {"headings": {}, "passages": {old_key: old}}
