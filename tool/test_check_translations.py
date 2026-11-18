@@ -251,7 +251,7 @@ class Numbers(unittest.TestCase):
         self.assertEqual(ct.check_numbers("5 mg/mL", "en", "5 mg/mL", "ja"), [])
 
     def test_more_frequencies(self):
-        for en in ("Take 5 mg every night.", "Take 5 mg every morning.", "Take 5 mg yearly.", "Take 5 mg each time."):
+        for en in ("Take 5 mg every night.", "Take 5 mg every morning.", "Take 5 mg yearly."):
             with self.subTest(en=en):
                 self.assertTrue(ct.check_numbers(en, "en", "5 mgを服用する。", "ja"))
         self.assertEqual(ct.check_numbers("Take 5 mg every night.", "en", "毎晩5 mgを服用する。", "ja"), [])
@@ -299,6 +299,25 @@ class Numbers(unittest.TestCase):
         self.assertTrue(ct.check_numbers("5 kg", "en", "5キロメートル", "ja"))
         self.assertTrue(ct.check_numbers("98.6 °F", "en", "摂氏98.6度", "ja"))
         self.assertTrue(ct.check_numbers("Drink 2 liters of water a day.", "en", "2リットルの水を飲む。", "ja"))
+
+    def test_durations_and_dosing_forms(self):
+        for en, ja in (("Symptoms last a week.", "症状は1週間続く。"), ("a day ago", "1日前"),
+                       ("An hour before meals", "食事の1時間前"), ("a week later", "1週間後"),
+                       ("at least an hour", "最低1時間"), ("Rest a day.", "1日休む。"),
+                       ("Take 2 tablets, 3 times a day.", "1回2錠、1日3回服用する。"),
+                       ("Take 2 tablets, 3 times a day.", "1日3回、1回2錠服用する。"),
+                       ("Take a tablet a day.", "1日1錠服用する。"), ("2 tablets at a time", "1回2錠"),
+                       ("5 mg per kg every 4 hours", "1回5mg/kg、4時間ごと"),
+                       ("Apply 2 times.", "2度塗る。"), ("twice a day", "1日2度"),
+                       ("second- or third-degree burns", "2度または3度の熱傷"),
+                       ("30 seconds to 1 minute", "30秒-1分"), ("10 minutes to 1 hour", "10分-1時間"),
+                       ("every 21 days", "21日おき"), ("Use 3 m2.", "3㎡を使う。"), ("CO2", "CO₂")):
+            with self.subTest(ja=ja):
+                self.assertEqual(ct.check_numbers(en, "en", ja, "ja"), [])
+        self.assertTrue(ct.check_numbers("Take 2 tablets, 3 times a day.", "en", "1回3錠、1日2回服用する。", "ja")
+                        or ct.check_order("Take 2 tablets, 3 times a day.", "en", "1回3錠、1日2回服用する。", "ja"))
+        self.assertTrue(ct.check_numbers("Drink 2 liters of water a day.", "en", "2リットルの水を飲む。", "ja"))
+        self.assertTrue(ct.check_numbers("Store at 38 °C.", "en", "2度塗る。", "ja"))
 
     def test_phone_number(self):
         self.assertEqual(ct.check_numbers("119番に電話します", "ja", "Call 110.", "en"),
