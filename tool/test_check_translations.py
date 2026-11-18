@@ -237,6 +237,29 @@ class Numbers(unittest.TestCase):
         self.assertTrue(ct.check_numbers("Use 1 mL monthly.", "en", "1mLを1個使います。", "ja"))
         self.assertEqual(ct.check_numbers("50 km/h", "en", "50km/hで走る", "ja"), [])
 
+    def test_compound_durations(self):
+        for en, ja in (("1 hour 30 minutes", "1時間30分"), ("1 minute 30 seconds", "1分30秒"),
+                       ("1 day 3 hours", "1日3時間"), ("1 week 2 days", "1週間2日")):
+            with self.subTest(ja=ja):
+                self.assertEqual(ct.check_numbers(en, "en", ja, "ja"), [])
+        self.assertEqual(ct.check_numbers("3 tablets a day", "en", "1日3錠", "ja"), [])
+
+    def test_concentrations(self):
+        self.assertTrue(ct.check_numbers("Give 5 mg/mL.", "en", "5 mgを与える。", "ja"))
+        self.assertTrue(ct.check_numbers("5 mg/mL", "en", "5 mg/L", "ja"))
+        self.assertTrue(ct.check_numbers("5 mg/m²", "en", "5 mg", "ja"))
+        self.assertEqual(ct.check_numbers("5 mg/mL", "en", "5 mg/mL", "ja"), [])
+
+    def test_more_frequencies(self):
+        for en in ("Take 5 mg every night.", "Take 5 mg every morning.", "Take 5 mg yearly.", "Take 5 mg each time."):
+            with self.subTest(en=en):
+                self.assertTrue(ct.check_numbers(en, "en", "5 mgを服用する。", "ja"))
+        self.assertEqual(ct.check_numbers("Take 5 mg every night.", "en", "毎晩5 mgを服用する。", "ja"), [])
+
+    def test_label_with_colon_is_not_a_ratio(self):
+        self.assertEqual(ct.check_numbers("Step 1: wait 5 minutes.", "en", "手順1：5分待つ。", "ja"), [])
+        self.assertTrue(ct.check_numbers("Wait 2:30 minutes.", "en", "2:30時間待つ。", "ja"))
+
     def test_phone_number(self):
         self.assertEqual(ct.check_numbers("119番に電話します", "ja", "Call 110.", "en"),
                          [("110", "110 in the translation, not in the original"),
