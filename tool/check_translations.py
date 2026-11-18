@@ -69,7 +69,7 @@ KANJI = {"一": 1, "二": 2, "三": 3, "四": 4, "五": 5, "六": 6, "七": 7, "
 UNITS = {
     "en": [(r"°\s?c\b|degrees? (?:celsius|c\b)|℃", "°C"), (r"°\s?f\b|degrees? (?:fahrenheit|f\b)", "°F"),
            (r"°|degrees?\b", "deg"), (r"mcg\b|µg\b|μg\b|ug\b|micrograms?\b", "mcg"), (r"mmhg\b", "mmHg"),
-           (r"iu\b|international units?\b|units?\b", "IU"), (r"cc\b", "ml"), (r"(?:tablet|pill|capsule)s?\b", "tablet"),
+           (r"iu\b|international units?\b|units?\b", "IU"), (r"cc\b", "ml"), (r"(?:tablet|pill)s?\b", "tablet"), (r"capsules?\b", "capsule"),
            (r"drops?\b", "drop"), (r"gm\b", "g"), (r"tsp\b|teaspoons?\b", "tsp"),
            (r"tbsp\b|tablespoons?\b", "tbsp"), (r"cups?\b|cupfuls?\b|glass(?:es)?\b|mugs?\b|bowls?\b", "cup"), (r"spoonfuls?\b", "tsp"), (r"spoons?\b", "spoon"),
            (r"parts? (?:of )?(?:chlorine )?bleach\b", "part-bleach"), (r"parts? (?:of )?water\b", "part-water"),
@@ -87,7 +87,7 @@ UNITS = {
     # 度 alone is Celsius in Japanese (or an angle, which English writes as degrees)
     "ja": [(r"dayish", "dayish"), (r"℃|°C", "°C"), (r"°F", "°F"), (r"°|度(?!目|に分け|(?:(?:と|および|または|もしくは|か|、|~|〜|-)\d+度)?の?(?:熱傷|火傷|やけど))", "°C"), (r"tsp", "tsp"), (r"tbsp", "tbsp"),
            (r"カップ|cup", "cup"), (r"mcg|µg|μg|ug|マイクログラム", "mcg"),
-           (r"mmHg", "mmHg"), (r"IU|単位", "IU"), (r"cc", "ml"), (r"錠|カプセル", "tablet"), (r"compression", "compression"), (r"breath", "breath"), (r"spray", "spray"),
+           (r"mmHg", "mmHg"), (r"IU|単位", "IU"), (r"cc", "ml"), (r"錠", "tablet"), (r"カプセル", "capsule"), (r"compression", "compression"), (r"breath", "breath"), (r"spray", "spray"),
            (r"噴霧|吸入|プッシュ|パフ", "spray"), (r"さじ", "spoon"),
            (r"part-bleach", "part-bleach"), (r"part-water", "part-water"), (r"part-salt", "part-salt"),
            (r"part-sugar", "part-sugar"), (r"part", "part"), (r"杯", "cup"), (r"滴", "drop"),
@@ -101,7 +101,7 @@ UNITS = {
 # Units where a number on one side only with the unit is an error (doses,
 # temperatures): "5 mg" and 「5」 is not the same instruction.
 CRITICAL = {"°C", "°F", "deg", "mcg", "mg", "g", "kg", "ml", "l", "%", "IU", "tablet", "drop", "mmHg",
-            "tsp", "tbsp", "cup", "compression", "breath", "spray", "spoon",
+            "tsp", "tbsp", "cup", "compression", "breath", "spray", "spoon", "capsule",
             "part", "part-bleach", "part-water", "part-salt", "part-sugar"}
 TEMPERATURE = {"°C", "°F", "deg"}  # deg: English "degrees" without a scale
 # Times that must not get lost next to a number ("Wait 5 minutes" / 「5待つ」).
@@ -142,12 +142,21 @@ def _normalize(text, lang):
         # Paragraph numbers, chapter lines, page footers and figure titles
         # of the US manuals ("16-40. In the event of ...", "50 TC 21-3").
         t = re.sub(r"(?m)^\s*\d+-\d+\.\s", " ", t)
+        # "daily … per day" in one sentence is one rate
+        t = re.sub(r"\bdaily\b(?=(?:[^.!?]|\.\d)*\b(?:per|a) day\b)", "", t, flags=re.I)
+        t = re.sub(r"(\b(?:per|a) day\b(?:[^.!?]|\.\d)*?)\bdaily\b", r"\1", t, flags=re.I)
         t = re.sub(r"(?m)^(?:Chapter \d+|\d+ (?:TC|ATP) [\d.-]+|(?:TC|ATP) [\d.-]+ \d+|Figure \d+-\d+\..*)$",
                    " ", t)
         t = re.sub(r"(?<=\d)-(?=(?:second|minute|hour|day|week|month|year|meter|metre|liter|litre|mile|kilometer|km|kg|mg|mcg|g|ml|l"
                    r"|tablet|cup|iu|unit)s?\b)",
                    " ", t, flags=re.I)  # a 10-minute walk
         t = re.sub(r"\bonce or twice\b", "1 or 2 times", t, flags=re.I)
+        # every 1 hour = 1時間ごと (a rate); every 4 hours = 4時間ごと (an interval)
+        t = re.sub(r"\bevery 1 (hour|day|week|month|minute)s?\b", lambda m: f" 1 per-{_per(m[1])} ", t, flags=re.I)
+        # In a sentence about a ratio or mixing, "3 to 1" is 3:1 (= 3対1)
+        t = "".join(re.sub(r"(?<![\d.])(\d+(?:\.\d+)?) to (\d+(?:\.\d+)?)(?!\d|\.\d| ?[a-z%°])", r"\1:\2", part)
+                    if re.search(r"ratio|proportion|mix|dilut", part, re.I) else part
+                    for part in re.split(r"((?<=[.!?])\s+)", t))
         # bleach and water 1:10 = 1 part bleach, 10 parts water (as in Japanese 漂白剤と水を1：10)
         t = re.sub(r"\b(bleach|water|salt|sugar),? (?:and|to|with) (bleach|water|salt|sugar)\b(\D{0,16}?)"
                    r"(\d+(?:\.\d+)?)\s?(?::|to)\s?(\d+(?:\.\d+)?)",
@@ -479,8 +488,9 @@ def _units_differ(x, y):
     rates = {u for u in x | y if "/" in u and _base(u) not in TEMPERATURE}
     if any(x[u] != y[u] for u in rates):
         return True
-    # A frequency on one side only: "1 mL monthly" / 「1mLを1個」
-    if sum(k for u, k in x.items() if u.startswith("per-")) != sum(k for u, k in y.items() if u.startswith("per-")):
+    # Frequencies must match kind for kind: per day is not per week, and
+    # a frequency on one side only fails ("1 mL monthly" / 「1mLを1個」)
+    if any(x[u] != y[u] for u in set(x) | set(y) if u.startswith("per-")):
         return True
     bx = {_base(u) for u in x} - CRITICAL
     by = {_base(u) for u in y} - CRITICAL

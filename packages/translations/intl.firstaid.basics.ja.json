@@ -514,7 +514,15 @@
   "c13e14ab0d76acd9": {
    "source": "4-45. Dehydration can cause serious physical problems and make Soldiers more susceptible to other\ndifficulties such as frostbite and hypothermia. The following are suggestions to prevent dehydration:\n• The minimum daily liquid requirement for Soldiers performing demanding physical work in the\ncold is approximately 3.75 quarts (3.5 liters) per day.",
    "text": "脱水は深刻な体の問題を引き起こすことがあり、凍傷や低体温症など、ほかの問題にもかかりやすくなります。脱水を防ぐためのポイントは次のとおりです。\n・寒い中で激しい肉体労働をする人が1日に必要とする水分の最低量は、1日あたり約3.75クオート（3.5リットル）です。",
-   "reviewed": false
+   "reviewed": false,
+   "accept": [
+    {
+     "check": "numbers",
+     "item": "1",
+     "for": "e65fe86ebb55b52b",
+     "reason": "\"daily … per day\" in one English sentence is translated as 1日に … 1日あたり (the rate twice); same meaning."
+    }
+   ]
   },
   "77c69045c3d27a6c": {
    "source": "• By the time a Soldier feels thirsty, they are already dehydrated and should drink water whenever\npossible, particularly during halts.\n• Ensure that canteens are full before any type of movement and fill with hot water, if possible.\n• During periods when water is scarce, do not eat snow as it can lower body temperature and the air\nit contains can cause stomach aches:",
