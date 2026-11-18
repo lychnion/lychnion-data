@@ -141,6 +141,9 @@ def _normalize(text, lang):
                    " ", t, flags=re.I)  # a 10-minute walk
         t = re.sub(r"\bonce or twice\b", "1 or 2 times", t, flags=re.I)
         t = re.sub(r"\btwice\b", "2 times", t, flags=re.I)
+        # compress 30 times = 30 compressions; breathe 2 times = 2 breaths
+        t = re.sub(r"\b((?:compress|press|push)\w*\b[^.;:\d]{0,30}?)(\d+) times\b", r"\1\2 compressions", t, flags=re.I)
+        t = re.sub(r"\b((?:breathe|blow|ventilate)\w*\b[^.;:\d]{0,30}?)(\d+) times\b", r"\1\2 breaths", t, flags=re.I)
         t = re.sub(r"\bonce(?= (?:an?|per|every) (?:\d+ )?(?:days?|weeks?|months?|years?|hours?|minutes?)\b| daily\b)",
                    "1 times", t, flags=re.I)
         # Frequencies and rates are "1 per-day" (not a duration "1 day"):
@@ -231,7 +234,9 @@ def _normalize(text, lang):
         t = re.sub(r"(\d+)回の?(?:胸骨)?圧迫", r"\1compression", t)
         t = re.sub(r"(?:人工呼吸|息の吹き込み|吹き込み)を?(\d+)回", r"\1breath", t)
         t = re.sub(r"(\d+)回の?(?:人工呼吸|息を吹き込|息の吹き込み|吹き込み)", r"\1breath", t)
-        t = re.sub(r"(\d+)回(?:連続で)?(?:押|圧迫|心臓マッサージ|胸部圧迫)", r"\1compression", t)
+        t = re.sub(r"(\d+)回(?:連続で)?(?:圧迫|心臓マッサージ|胸部圧迫)", r"\1compression", t)
+        t = re.sub(r"(胸[^。、\d]{0,6}?)(\d+)回(?:連続で)?押|(\d+)回(?:連続で)?(胸[^。、\d]{0,6}?)押",
+                   lambda m: f"{m[1] or ''}{m[2] or m[3]}compression{m[4] or ''}", t)
         t = re.sub(r"(\d+)回(?:、)?(?:息を)?吹き込", r"\1breath", t)
         t = re.sub(r"(\d+)回(?:噴霧|吸入|スプレー|噴射)", r"\1spray", t)
         # 1対1 = 1:1
@@ -380,6 +385,10 @@ def check_numbers(src, src_lang, dst, dst_lang):
     # 「1日2回3噴霧」 the 2回 is not a spray.
     for x, y in ((au, bu), (bu, au)):
         named = {c for units in x.values() for c in ("compression", "breath", "spray") if units[c]}
+        other_named = {c for units in y.values() for c in ("compression", "breath", "spray") if units[c]}
+        plain = sum(units["times"] for units in x.values())
+        if plain > 1 and len(other_named) > 1:
+            continue  # which 回 is which is unknown: let a difference show
         for n, units in x.items():
             other = y.get(n, Counter())
             for count in ("compression", "breath", "spray"):
