@@ -260,6 +260,24 @@ class Numbers(unittest.TestCase):
         self.assertEqual(ct.check_numbers("Step 1: wait 5 minutes.", "en", "手順1：5分待つ。", "ja"), [])
         self.assertTrue(ct.check_numbers("Wait 2:30 minutes.", "en", "2:30時間待つ。", "ja"))
 
+    def test_japanese_area_rate(self):
+        self.assertEqual(ct.check_numbers("5 mg/m²", "en", "5mg/m²", "ja"), [])
+        self.assertTrue(ct.check_numbers("5 mg/m²", "en", "5mg/m", "ja"))
+        self.assertTrue(ct.check_numbers("5 mg/dL", "en", "5mg", "ja"))
+
+    def test_common_correct_japanese_passes(self):
+        for en, ja in (("10 to 15 days", "10日-15日"), ("10 to 15 minutes", "10分-15分"),
+                       ("3 times a week", "週3回"), ("once a month", "月に1回"), ("5 days a week", "週5日"),
+                       ("a second-degree burn", "2度の熱傷"), ("give it in 2 doses", "2度に分けて与える"),
+                       ("about an hour", "約1時間"), ("2 tablets at a time", "1回2錠"),
+                       ("5 m per second", "毎秒5m"), ("2 capsules", "2カプセル"), ("5 ug", "5μg")):
+            with self.subTest(ja=ja):
+                self.assertEqual(ct.check_numbers(en, "en", ja, "ja"), [])
+        self.assertTrue(ct.check_numbers("3 times a week", "en", "週3日", "ja"))
+        self.assertTrue(ct.check_numbers("38 °C", "en", "38度以上の熱", "ja") == [])
+        self.assertTrue(ct.check_numbers("38 °F", "en", "38度以上の熱", "ja"))
+        self.assertTrue(ct.check_numbers("-15 °C", "en", "外は15℃", "ja"))
+
     def test_phone_number(self):
         self.assertEqual(ct.check_numbers("119番に電話します", "ja", "Call 110.", "en"),
                          [("110", "110 in the translation, not in the original"),
