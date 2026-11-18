@@ -81,7 +81,7 @@ UNITS = {
            (r"%|percent\b|per cent\b", "%"), (r"people\b|persons?\b", "person"),
            (r"times\b", "times")],
     # 度 alone is Celsius in Japanese (or an angle, which English writes as degrees)
-    "ja": [(r"℃|°C", "°C"), (r"°F", "°F"), (r"°|度(?!目|に分け|(?:(?:と|および|、|~|〜|-)\d+度)?の?(?:熱傷|火傷|やけど))", "°C"), (r"tsp", "tsp"), (r"tbsp", "tbsp"),
+    "ja": [(r"℃|°C", "°C"), (r"°F", "°F"), (r"°|度(?!目|に分け|(?:(?:と|および|または|もしくは|か|、|~|〜|-)\d+度)?の?(?:熱傷|火傷|やけど))", "°C"), (r"tsp", "tsp"), (r"tbsp", "tbsp"),
            (r"カップ|cup", "cup"), (r"mcg|µg|μg|ug|マイクログラム", "mcg"),
            (r"mmHg", "mmHg"), (r"IU|単位", "IU"), (r"cc", "ml"), (r"錠|カプセル", "tablet"), (r"滴", "drop"),
            (r"分(?!の)", "min"), (r"時間", "h"), (r"秒", "s"),
@@ -120,6 +120,8 @@ def _normalize(text, lang):
     text = text.replace("º", "°").replace("㎡", "m²").replace("㎥", "m³")
     t = unicodedata.normalize("NFKC", re.sub(r"(?<!/m)[²³₂₃]", "", text))
     t = re.sub(r"(?<=\d),(?=\d{3}(?!\d))", "", t)  # 3,122
+    t = re.sub(r"(?<=\d)(\s?m)[23](?!\d)", r"\1", t)  # 3 m2 = 3㎡
+    t = re.sub(r"\bCO2\b", "CO", t)
     # Dashes as minus or range: –5 °C, 3–5. (Joining dashes are told apart in numbers().)
     t = re.sub(r"[‐‑‒–—]|(?<![ァ-ヶー])ー(?=\d)", "-", t)
     # Figure references, which translations may leave out.
@@ -140,13 +142,15 @@ def _normalize(text, lang):
         t = re.sub(r"(?:/\s*|\bper\s+)(day|person|minute|min|hour|hr|h|second|sec|s|week|month|year)\b"
                    r"|\b(?:every|each)\s+(day|minute|hour|week|month|year)\b",
                    lambda m: f" 1 per-{_per(m[1] or m[2])} ", t, flags=re.I)
-        t = re.sub(r"(\btimes|\btwice|\bonce|\d+(?:\.\d+)?\s?(?:[a-z%]{1,10}s?)?) an? (day|week|month|year|hour|minute)\b",
+        t = re.sub(r"\ban? (tablet|pill|capsule|dose|drop)\b", r"1 \1", t, flags=re.I)
+        t = re.sub(r"(\btimes|\btwice|\bonce|\d+(?:\.\d+)?\s?(?:[a-z%]{1,10}s?)?(?: of \w+)?) an? (day|week|month|year|hour|minute)\b",
                    lambda m: f"{m[1]} 1 per-{_per(m[2])} ", t, flags=re.I)
         t = re.sub(r"\b(daily|weekly|monthly|hourly|yearly|annually|nightly)\b"
                    r"(?! (?:life|lives|living|use|routine|activities))",
                    lambda m: f" 1 per-{_per(FREQ[m[1].lower()])} ", t, flags=re.I)
-        t = re.sub(r"\b(?:at a|per|each|every) (time|dose)\b", " 1 per-time ", t, flags=re.I)
-        t = re.sub(r"\b(?:every|each) (night|morning|evening|year|time)\b",
+        # "at a time", "each time" = 1回, 毎回: no number on either side
+        t = re.sub(r"\b(?:at a|per|each|every) (?:time|dose)\b", " ", t, flags=re.I)
+        t = re.sub(r"\b(?:every|each) (night|morning|evening|year)\b",
                    lambda m: f" 1 per-{_per(m[1])} ", t, flags=re.I)
         t = re.sub(r"\b(" + TENS + r")[- ](" + ONES + r")\b",
                    lambda m: str(WORDS[m[1].lower()] + ONE_TO_NINE[m[2].lower()]), t, flags=re.I)
@@ -154,9 +158,7 @@ def _normalize(text, lang):
         # "half an hour", "an hour or two"; "for a day" is a duration, "2 liters a day" a rate
         t = re.sub(r"\bhalf an hour\b", "30 minutes", t, flags=re.I)
         t = re.sub(r"\ban? (hour|minute|day|week|month|year) or two\b", r"1 to 2 \1s", t, flags=re.I)
-        t = re.sub(r"\b((?:for|in|within|after|than|about|around|over|under|of|once|take|takes|took|spend|wait)\s+)"
-                   r"an? (hour|minute|day|week|month|year)\b", r"\1 1 \2", t, flags=re.I)
-        t = re.sub(r"\ban? (hour|minute|day|week|month|year)\b", lambda m: f" 1 per-{_per(m[1])} ", t, flags=re.I)
+        t = re.sub(r"\ban? (hour|minute|day|week|month|year)\b", r"1 \1", t, flags=re.I)
         # Reiwa 8 (2026): one year, not two numbers.
         # (a wrong year in brackets stays, so it shows as a difference)
         t = re.sub(r"\b(Reiwa|Heisei|Showa) (\d+)(?: \((\d{4})\))?", _era, t, flags=re.I)
@@ -190,19 +192,22 @@ def _normalize(text, lang):
                    lambda m: f"{KANJI.get(m[2], m[2])} {'tbsp' if m[1] == '大' else 'tsp'}", t)
         # Frequencies and rates: /日, 毎日, 1日3回, 1日あたり, 1分間に = 1 per-…;
         # 隔日 = every other day
-        t = re.sub(r"隔日|1日おき", " 2 per-day ", t)
-        t = re.sub(r"隔週|1週間?おき", " 2 per-week ", t)
+        t = re.sub(r"隔日|(?<![\d.])1日おき", " 2 per-day ", t)
+        t = re.sub(r"隔週|(?<![\d.])1週間?おき", " 2 per-week ", t)
         t = re.sub(r"一(?=日\s?\d|回\s?\d)|(?<=日)一(?=回)", "1", t)
-        t = re.sub(r"1日(?=量|の(?:上限|量|摂取量|最大|最高))", " 1 per-day ", t)
+        t = re.sub(r"(?<![\d.])1日(?=量|の(?:上限|量|摂取量|最大|最高))", " 1 per-day ", t)
+        # 度 as "times": 1日2度, 週3度, 2度塗る
+        t = re.sub(r"(?<=[日週月])(\d+)度", r"\1回", t)
+        t = re.sub(r"(\d+)度(?=塗|繰り返|行|洗|拭|測|飲|服用|吸|使|かけ)", r"\1回", t)
         # 華氏98.6度 = 98.6 °F; 摂氏 = °C; Ⅱ度熱傷 (NFKC: II度) = 2度
         t = re.sub(r"華氏\s?(-?\d+(?:\.\d+)?)\s?度", r"\1°F", t)
         t = re.sub(r"摂氏\s?(?=-?\d)", "", t)
         t = re.sub(r"(?<![A-Za-z])(IV|III|II|I)(?=度)", lambda m: str(["I", "II", "III", "IV"].index(m[1]) + 1), t)
         t = re.sub(r"\s*/\s*(日|分|時間|秒|週|人|月|min|h|s|day)(?![a-zA-Z])|\s*/\s*(日|分|時間|時|秒|週|人|月)"
-                   r"|毎(日|週|月|時|分|秒|年|回|朝|晩|夜)", lambda m: f" 1 per-{_per(m[1] or m[2] or m[3])} ", t)
+                   r"|毎(日|週|月|時|分|秒|年|朝|晩|夜)", lambda m: f" 1 per-{_per(m[1] or m[2] or m[3])} ", t)
         # 週3回, 月に1回 = per week 3 times; 1回2錠 = 2 tablets per time
         t = re.sub(r"(?<![\d.毎一-鿿])(週|月|年)に?(?=\d+(?:\.\d+)?\s?(?:回|日))", lambda m: f" 1 per-{_per(m[1])} ", t)
-        t = re.sub(r"(?<![\d.])1回(?:に|あたり|につき)?(?=\d)", " 1 per-time ", t)
+        t = re.sub(r"(?<![\d.第一])1回(?:に|あたり|につき)?(?=\d)|毎回", " ", t)
         t = re.sub(r"(?<![\d.月])1\s?(日|分間?|時間|週間?|人)\s?(?:あたり|当たり|につき|ごと|に(?!は)|(?=1\s?日\s?\d)|(?=\d+(?:\.\d+)?\s?(?![\d.]|秒|分|時間|日|週|か月|ヶ月|カ月|年)))",
                    lambda m: f" 1 per-{_per(m[1])} ", t)
         # 時速200km = 200 km/h = 200 km 1時間
@@ -288,8 +293,10 @@ def numbers(text, lang):
         # after a counter, a range only when the same counter follows: 10日-15日, 5℃-10℃
         # (not 3日間-5℃ or 保管温度-18℃)
         after = t[m.end():m.end() + 3].lstrip()
+        times = "秒分時間日週月年"
         joined = (before.isascii() and before.isalnum()) or (before in "日分時間秒週年月人回歳%℃度個錠"
-                                                             and before in after)
+                                                             and (before in after or (before in times
+                                                                                      and after[:1] in times)))
         sign = "-" if m[1] == MINUS or (m[1] == "-" and not joined) else ""
         n = sign + _canon(m[2])
         found[n] += 1
