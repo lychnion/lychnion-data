@@ -157,6 +157,8 @@ def _normalize(text, lang):
         t = "".join(re.sub(r"(?<![\d.])(\d+(?:\.\d+)?) to (\d+(?:\.\d+)?)(?!\d|\.\d| ?[a-z%°])", r"\1:\2", part)
                     if re.search(r"ratio|proportion|mix|dilut", part, re.I) else part
                     for part in re.split(r"((?<=[.!?])\s+)", t))
+        # 3 parts to 1 part = 3:1 (= 3対1)
+        t = re.sub(r"(?<![\d.])(\d+(?:\.\d+)?) parts? to (\d+(?:\.\d+)?) parts?\b", r"\1:\2", t, flags=re.I)
         # bleach and water 1:10 = 1 part bleach, 10 parts water (as in Japanese 漂白剤と水を1：10)
         t = re.sub(r"\b(bleach|water|salt|sugar),? (?:and|to|with) (bleach|water|salt|sugar)\b(\D{0,16}?)"
                    r"(\d+(?:\.\d+)?)\s?(?::|to)\s?(\d+(?:\.\d+)?)",
@@ -174,7 +176,7 @@ def _normalize(text, lang):
         t = re.sub(r"\bevery other (day|week)\b", lambda m: f" 2 per-{m[1].lower()} ", t, flags=re.I)
         t = re.sub(r"\b24 hours a day\b", "24 hours", t, flags=re.I)  # = 24時間体制
         t = re.sub(r"(?:/\s*|\bper\s+)(day|person|minute|min|hour|hr|h|second|sec|s|week|month|year)\b"
-                   r"|\b(?:every|each)\s+(day|minute|hour|week|month|year)\b",
+                   r"|\b(?:every|each)\s+(day|minute|hour|week|month)\b",
                    lambda m: f" 1 per-{_per(m[1] or m[2])} ", t, flags=re.I)
         t = re.sub(r"\ban? (tablet|pill|capsule|dose|drop|glass|cup|mug|bowl|spoonful)\b", r"1 \1", t, flags=re.I)
         t = re.sub(r"\bone(?= (?:or|to) (?:two|three|four|five|\d))", "1", t, flags=re.I)
@@ -186,7 +188,8 @@ def _normalize(text, lang):
                    lambda m: f" 1 per-{_per(FREQ[m[1].lower()])} ", t, flags=re.I)
         # "at a time", "each time" = 1回, 毎回: no number on either side
         t = re.sub(r"\b(?:at a|per|each|every) (?:time|dose)\b", " ", t, flags=re.I)
-        t = re.sub(r"\b(?:every|each) (night|morning|evening|year)\b",
+        # ("every year" stays a plain phrase, like 例年 and 毎年: main read it so)
+        t = re.sub(r"\b(?:every|each) (night|morning|evening)\b",
                    lambda m: f" 1 per-{_per(m[1])} ", t, flags=re.I)
         t = re.sub(r"\b(" + TENS + r")[- ](" + ONES + r")\b",
                    lambda m: str(WORDS[m[1].lower()] + ONE_TO_NINE[m[2].lower()]), t, flags=re.I)
@@ -245,7 +248,7 @@ def _normalize(text, lang):
         t = re.sub(r"摂氏\s?(?=-?\d)", "", t)
         t = re.sub(r"(?<![A-Za-z])(IV|III|II|I)(?=度)", lambda m: str(["I", "II", "III", "IV"].index(m[1]) + 1), t)
         t = re.sub(r"\s*/\s*(日|分|時間|秒|週|人|月|min|h|s|day)(?![a-zA-Z])|\s*/\s*(日|分|時間|時|秒|週|人|月)"
-                   r"|毎(日|週|月|時|分|秒|年|朝|晩|夜)", lambda m: f" 1 per-{_per(m[1] or m[2] or m[3])} ", t)
+                   r"|毎(日|週|月|時|分|秒|朝|晩|夜)", lambda m: f" 1 per-{_per(m[1] or m[2] or m[3])} ", t)
         # 1日30分 is "30 minutes a day" or "1 day 30 minutes": either, by the other side
         t = re.sub(r"(?<![\d.月])1日(?=\s?\d+(?:\.\d+)?\s?(?:秒|分|時間))", " 1 dayish ", t)
         # 3時30分, 3時半 = 3:30; 零度 = 0度

@@ -439,15 +439,7 @@
   "13d2cd2c3ddd1c4b": {
    "source": "～歩行時の転倒にも注意！滑りやすい場所を知りましょう～\n冬期間は豪雪地帯に限らず、雪が少ない地域でも、積雪・凍結を原因とする転倒災害が多く発生しています。\n転倒災害件数は、降雪量にほぼ比例しており、例年１～３月に集中して発生しています。事故が多く発生している滑りやすい場所を確認しておきましょう。\n横断歩道の白線の上\n乾いているように見えても薄い氷膜ができて、滑りやすくなっている場合があります。\n車の出入りのある歩道（駐車場の出入口、ガソリンスタンドなど）\n出入りする車のタイヤで路面上の氷が磨かれ、非常に滑りやすくなっている場合があります。\nバスやタクシーの乗り場\n踏み固められて滑りやすくなっている場合があります。また、歩道と車道との段差にも注意。\n坂道\n上りよりも下るときの方が滑って転びやすく危険です。下るときは特に注意しましょう。\nロードヒーティングの切れ目\n雪や氷が融けておらず段差ができて、部分的に滑りやすい状態になっていることがあります。",
    "text": "- Watch out for falls while walking too! Know the slippery places -\nIn winter, many falls caused by snow and ice happen not only in heavy-snow areas but also in areas with little snow.\nThe number of falls is roughly proportional to the amount of snowfall, and they are concentrated in January to March every year. Check the slippery places where many accidents happen.\nOn the white lines of pedestrian crossings\nEven if they look dry, a thin film of ice may have formed and made them slippery.\nPavements where cars go in and out (car park entrances, petrol stations, etc.)\nThe tyres of cars going in and out polish the ice on the surface, and it may be very slippery.\nBus and taxi stops\nThe snow may be packed down hard and slippery. Also watch out for the step between the pavement and the road.\nSlopes\nYou are more likely to slip and fall going down than going up, which is dangerous. Take special care when going down.\nWhere road heating ends\nSnow and ice may not have melted, leaving a step, and it may be slippery in places.",
-   "reviewed": false,
-   "accept": [
-    {
-     "check": "numbers",
-     "item": "1",
-     "for": "8ebd39baba795a93",
-     "reason": "例年 (in a usual year) is translated as \"each year\", read as a frequency; the months 1~3月 match."
-    }
-   ]
+   "reviewed": false
   },
   "a00399a95a068dc5": {
    "source": "～転びにくい上手な歩き方を知りましょう！～\n小さな歩幅で歩きましょう\n歩幅を小さくし、そろそろと歩く「ペンギン歩き」が基本です。\n靴の裏全体を路面に付けて歩きましょう\n体の重心をやや前におき、できるだけ靴の裏全体を路面につける気持ちで歩きましょう。\nまた、履物は靴底が滑りにくいものを選びましょう。（摩擦係数の高いゴム長靴等）\nその他\n転んだときために、帽子や手袋をするなど、身に着ける物の工夫も安全対策の一つです。\n両手をポケットに入れて歩いたり、飲酒時もバランス感覚が鈍り危険です。また、屋根の上の雪や氷が落ちてくることがありますので、屋根にも目を配り歩きましょう。特に、暖かい日は要注意。\n雪のレジャーでの事故\n04",

@@ -454,7 +454,9 @@ class Numbers(unittest.TestCase):
                        ("A ratio of 3 to 1.", "3対1の割合。"), ("Mix 3 to 1.", "3対1で混ぜる。"), ("Ratio 1 to 10", "1対10"),
                        ("The minimum daily liquid requirement is about 3.75 quarts (3.5 liters) per day.",
                         "水分の最低量は、1日あたり約3.75クオート（3.5リットル）です。"),
-                       ("2 capsules", "2カプセル"), ("wait 3 to 5 days", "3〜5日待つ")):
+                       ("2 capsules", "2カプセル"), ("wait 3 to 5 days", "3〜5日待つ"),
+                       ("Every year in January to March.", "例年1〜3月に多発します。"),
+                       ("It happens every year.", "毎年起こる。"), ("Mix 3 parts to 1 part.", "3対1で混ぜる。")):
             with self.subTest(ja=ja):
                 self.assertEqual(ct.check_numbers(en, "en", ja, "ja"), [])
         self.assertTrue(ct.check_numbers("Take 2 tablets.", "en", "2カプセルを服用する。", "ja"))
