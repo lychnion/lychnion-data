@@ -127,7 +127,7 @@ def _normalize(text, lang):
         t = re.sub(r"(?m)^(?:Chapter \d+|\d+ (?:TC|ATP) [\d.-]+|(?:TC|ATP) [\d.-]+ \d+|Figure \d+-\d+\..*)$",
                    " ", t)
         t = re.sub(r"\btwice\b", "2 times", t, flags=re.I)
-        t = re.sub(r"\bonce(?= (?:a|per) (?:day|week|month|year)\b| daily\b)", "1 times", t, flags=re.I)
+        t = re.sub(r"\bonce(?= (?:an?|per) (?:day|week|month|year|hour|minute)\b| daily\b)", "1 times", t, flags=re.I)
         # Frequencies and rates are "1 per-day" (not a duration "1 day"):
         # per day, a day (after a dose), every day, daily = 1日あたり, 毎日;
         # every other day = 隔日
@@ -136,7 +136,7 @@ def _normalize(text, lang):
         t = re.sub(r"(?:/\s*|\bper\s+)(day|person|minute|min|hour|hr|h|second|sec|s|week|month)\b"
                    r"|\b(?:every|each)\s+(day|minute|hour|week|month)\b",
                    lambda m: f" 1 per-{_per(m[1] or m[2])} ", t, flags=re.I)
-        t = re.sub(r"(\btimes|\btwice|\bonce|\d+(?:\.\d+)?\s?(?:[a-z%]{1,10}s?)?) a (day|week|month|hour|minute)\b",
+        t = re.sub(r"(\btimes|\btwice|\bonce|\d+(?:\.\d+)?\s?(?:[a-z%]{1,10}s?)?) an? (day|week|month|hour|minute)\b",
                    lambda m: f"{m[1]} 1 per-{_per(m[2])} ", t, flags=re.I)
         t = re.sub(r"\b(daily|weekly|monthly|hourly)\b(?! (?:life|lives|living|use|routine|activities))",
                    lambda m: f" 1 per-{_per(m[1][:-2] if m[1].lower() != 'daily' else 'day')} ", t, flags=re.I)
@@ -172,7 +172,7 @@ def _normalize(text, lang):
         # Frequencies and rates: /日, 毎日, 1日3回, 1日あたり, 1分間に = 1 per-…;
         # 隔日 = every other day
         t = re.sub(r"隔日", " 2 per-day ", t)
-        t = re.sub(r"\s*/\s*(日|分|時間|秒|週|人|月|min|h|s|day)\b|\s*/\s*(日|分|時間|秒|週|人|月)"
+        t = re.sub(r"\s*/\s*(日|分|時間|秒|週|人|月|min|h|s|day)(?![a-zA-Z])|\s*/\s*(日|分|時間|秒|週|人|月)"
                    r"|毎(日|週|月|時|分)", lambda m: f" 1 per-{_per(m[1] or m[2] or m[3])} ", t)
         t = re.sub(r"(?<![\d.月])1\s?(日|分間?|時間|週間?|人)\s?(?:あたり|当たり|につき|ごと|に(?!は)|(?=\d))",
                    lambda m: f" 1 per-{_per(m[1])} ", t)
@@ -196,8 +196,7 @@ def _normalize(text, lang):
 ONE_TO_NINE = {w: i + 1 for i, w in enumerate(ONES.split("|"))}
 PER = {"day": "day", "日": "day", "person": "person", "人": "person", "minute": "min", "min": "min", "分": "min",
        "分間": "min", "hour": "h", "hr": "h", "h": "h", "時間": "h", "時": "h", "second": "s", "sec": "s", "s": "s",
-       "秒": "s", "week": "week", "週": "week", "週間": "week", "month": "month", "月": "month", "dai": "day",
-       "week": "week", "month": "month", "hour": "h"}
+       "秒": "s", "week": "week", "週": "week", "週間": "week", "month": "month", "月": "month"}
 
 
 def _per(word):
@@ -237,6 +236,11 @@ def numbers(text, lang):
     """Counter of numbers, and for each number the units found after it."""
     t = _normalize(text, lang)
     found, units, order = Counter(), {}, []
+    # A ratio or a clock time is one value: 1:10 is not 10:1.
+    for m in re.finditer(r"(?<![\d.:])(\d+(?:\.\d+)?):(\d+(?:\.\d+)?)(?!\d|\.\d|:\d)", t):
+        n = f"{_canon(m[1])}:{_canon(m[2])}"
+        found[n] += 1
+    t = re.sub(r"(?<![\d.:])\d+(?:\.\d+)?:\d+(?:\.\d+)?(?!\d|\.\d|:\d)", " ", t)
     for m in re.finditer(r"(?<![\d.])([-−]?)(\d+(?:\.\d+)?|\.\d+)", t):
         # − (from マイナス, 氷点下, minus) is a sign; "-" is one unless it
         # joins two words or numbers (3-5, TC 4-02, COVID-19), so 「外は-5℃」 keeps it.
@@ -276,7 +280,7 @@ def check_numbers(src, src_lang, dst, dst_lang):
     a, au, _ = numbers(src, src_lang)
     b, bu, _ = numbers(dst, dst_lang)
     flags = []
-    for n in sorted(set(a) | set(b), key=lambda x: float(x)):
+    for n in sorted(set(a) | set(b), key=lambda x: (float(x.split(":")[0]), x)):
         if a[n] > b[n]:
             flags.append((n, f"{n} in the original{_times(a[n] - b[n])}, missing in the translation"))
         elif b[n] > a[n]:
@@ -323,6 +327,9 @@ def _units_differ(x, y):
         return True
     rates = {u for u in x | y if "/" in u and _base(u) not in TEMPERATURE}
     if any(x[u] != y[u] for u in rates):
+        return True
+    # A frequency on one side only: "1 mL monthly" / 「1mLを1個」
+    if sum(k for u, k in x.items() if u.startswith("per-")) != sum(k for u, k in y.items() if u.startswith("per-")):
         return True
     bx = {_base(u) for u in x} - CRITICAL
     by = {_base(u) for u in y} - CRITICAL
