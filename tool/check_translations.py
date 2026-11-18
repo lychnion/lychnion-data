@@ -62,13 +62,16 @@ WORDS = {"two": 2, "three": 3, "four": 4, "five": 5, "six": 6, "seven": 7, "eigh
          "thirteen": 13, "fourteen": 14, "sixteen": 16, "seventeen": 17, "eighteen": 18,
          "nineteen": 19, "thirty": 30, "forty": 40, "fifty": 50, "sixty": 60, "seventy": 70,
          "eighty": 80, "ninety": 90, "hundred": 100}
+TENS = "twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety"
+ONES = "one|two|three|four|five|six|seven|eight|nine"
 KANJI = {"一": 1, "二": 2, "三": 3, "四": 4, "五": 5, "六": 6, "七": 7, "八": 8, "九": 9, "十": 10}
 # What follows a number, by language: canonical unit names.
 UNITS = {
     "en": [(r"°\s?c\b|degrees? (?:celsius|c\b)|℃", "°C"), (r"°\s?f\b|degrees? (?:fahrenheit|f\b)", "°F"),
            (r"°|degrees?\b", "deg"), (r"mcg\b|µg\b|μg\b|micrograms?\b", "mcg"), (r"mmhg\b", "mmHg"),
            (r"iu\b|international units?\b|units?\b", "IU"), (r"cc\b", "ml"), (r"(?:tablet|pill)s?\b", "tablet"),
-           (r"drops?\b", "drop"), (r"gm\b", "g"),
+           (r"drops?\b", "drop"), (r"gm\b", "g"), (r"tsp\b|teaspoons?\b", "tsp"),
+           (r"tbsp\b|tablespoons?\b", "tbsp"), (r"cups?\b", "cup"),
            (r"min(?:ute)?s?\b", "min"), (r"h(?:ou)?rs?\b|hours?\b|h\b", "h"), (r"sec(?:ond)?s?\b", "s"),
            (r"days?\b", "day"), (r"weeks?\b", "week"), (r"months?\b", "month"), (r"years?\b", "year"),
            (r"cm\b|centimet(?:er|re)s?\b", "cm"), (r"mm\b|millimet(?:er|re)s?\b", "mm"),
@@ -77,7 +80,9 @@ UNITS = {
            (r"ml\b|millilit(?:er|re)s?\b", "ml"), (r"l\b|lit(?:er|re)s?\b", "l"),
            (r"%|percent\b|per cent\b", "%"), (r"people\b|persons?\b", "person"),
            (r"times\b", "times")],
-    "ja": [(r"℃|°C", "°C"), (r"°F", "°F"), (r"°|度(?!と)", "deg"), (r"mcg|µg|μg|マイクログラム", "mcg"),
+    # 度 alone is Celsius in Japanese (or an angle, which English writes as degrees)
+    "ja": [(r"℃|°C", "°C"), (r"°F", "°F"), (r"°|度(?!と)", "°C"), (r"tsp", "tsp"), (r"tbsp", "tbsp"),
+           (r"カップ|cup", "cup"), (r"mcg|µg|μg|マイクログラム", "mcg"),
            (r"mmHg", "mmHg"), (r"IU|単位", "IU"), (r"cc", "ml"), (r"錠", "tablet"), (r"滴", "drop"),
            (r"分(?!の)", "min"), (r"時間", "h"), (r"秒", "s"),
            (r"日", "day"), (r"週間?", "week"), (r"[かカヶケ]月", "month"), (r"年", "year"),
@@ -88,13 +93,17 @@ UNITS = {
 }
 # Units where a number on one side only with the unit is an error (doses,
 # temperatures): "5 mg" and 「5」 is not the same instruction.
-CRITICAL = {"°C", "°F", "deg", "mcg", "mg", "g", "kg", "ml", "l", "%", "IU", "tablet", "drop", "mmHg"}
-TEMPERATURE = {"°C", "°F", "deg"}  # 度 (deg) is a degree of either scale
-# A rate after a unit or a number: 0.1 mg/kg, 100 per minute, 5 mg/日.
-RATE = {"en": r"\s*(?:/|per\s+)\s*(kg|kilograms?|min(?:ute)?|h(?:ou)?rs?|hour|h|day|s(?:ec(?:ond)?)?)\b",
-        "ja": r"\s*/\s*(kg|分|時間|日|秒)"}
-RATE_NAMES = {"kilogram": "kg", "kilograms": "kg", "minute": "min", "hour": "h", "hours": "h", "hr": "h",
-              "hrs": "h", "sec": "s", "second": "s", "分": "min", "時間": "h", "日": "day", "秒": "s"}
+CRITICAL = {"°C", "°F", "deg", "mcg", "mg", "g", "kg", "ml", "l", "%", "IU", "tablet", "drop", "mmHg",
+            "tsp", "tbsp", "cup"}
+TEMPERATURE = {"°C", "°F", "deg"}  # deg: English "degrees" without a scale
+# Times that must not get lost next to a number ("Wait 5 minutes" / 「5待つ」).
+SHORT_TIMES = {"min", "h", "s"}
+# A rate after a unit: 0.1 mg/kg, 5 mg/kg/dose. Rates per time are read as
+# numbers instead (per minute = 1 minute, /日 = 1日), so both languages agree.
+RATE = {"en": r"\s*(?:/|per\s+)\s*(kg|kilograms?|dose)\b", "ja": r"\s*/\s*(kg|回)"}
+RATE_NAMES = {"kilogram": "kg", "kilograms": "kg", "回": "dose"}
+# Minus sign from words (マイナス, 氷点下, minus): always a sign.
+MINUS = "−"
 JA_COUNTERS = ("つ|回|分|時間|日|人|度|週間|か月|ヶ月|カ月|年|歳|倍|枚|本|個|件|段階|か所|箇所|錠|粒|滴|包|袋|杯"
                "|グラム|ミリ|キロ|リットル|メートル|センチ")
 
@@ -104,12 +113,13 @@ def _canon(n):
 
 
 def _normalize(text, lang):
-    t = unicodedata.normalize("NFKC", text.replace("º", "°"))  # NFKC makes º an "o"
+    # NFKC makes º an "o", and m² or CO₂ a number
+    t = unicodedata.normalize("NFKC", re.sub(r"[²³₂₃]", "", text.replace("º", "°")))
     t = re.sub(r"(?<=\d),(?=\d{3}(?!\d))", "", t)  # 3,122
     # Minus: −5℃, minus 5, negative 5, マイナス5, 氷点下5度, 零下5度, 5 degrees below zero
-    t = re.sub(r"−|\b(?:minus|negative)\s+(?=\d)|(?:マイナス|氷点下|零下)\s?(?=\d)", "-", t, flags=re.I)
+    t = re.sub(r"\b(?:minus|negative)\s+(?=\d)|(?:マイナス|氷点下|零下)\s?(?=\d)", MINUS, t, flags=re.I)
     t = re.sub(r"(?<![\d.-])(\d+(?:\.\d+)?)(\s*(?:°\s?[CF]\b|degrees?(?: (?:celsius|fahrenheit|c|f)\b)?)?)\s+below zero\b",
-               r"-\1\2", t, flags=re.I)
+               MINUS + r"\1\2", t, flags=re.I)
     # Figure references, which translations may leave out.
     t = re.sub(r"\((?:see )?(?:figure|table) [\d-]+(?: on page \d+)?\.?\)|[(]図\s?[\d-]+[)]", " ", t, flags=re.I)
     if lang == "en":
@@ -120,9 +130,16 @@ def _normalize(text, lang):
                    " ", t)
         t = re.sub(r"\btwice\b", "2 times", t, flags=re.I)
         t = re.sub(r"\bonce(?= (?:a|per) (?:day|week|month|year)\b| daily\b)", "1 times", t, flags=re.I)
-        t = re.sub(r"\bper (day|person)\b|(?<=times) (?:daily|a day)\b|(?<=2 times) daily\b",
-                   lambda m: f" 1 {m[1] or 'day'} ", t, flags=re.I)
+        # per day = 1日, 5 mg daily = 5 mg 1日, per minute = 1分
+        t = re.sub(r"(?:/\s*|\bper\s+)(day|person|minute|min|hour|hr|h|second|sec|s|week)\b"
+                   r"|(?<=times) (?:daily|a day)\b|(?<=2 times) daily\b"
+                   r"|(?<=\d)(?= ?[a-zA-Z%]{0,12} (?:daily|every day|each day)\b)",
+                   lambda m: f" 1 {m[1] or 'day'} " if m[0] else "", t, flags=re.I)
+        t = re.sub(r"(?<=\d)( ?[a-zA-Z%]{0,12}) (?:daily|every day|each day)\b", r"\1 1 day", t, flags=re.I)
         t = re.sub(r"\bevery hour\b|\bhourly\b", " 1 hour ", t, flags=re.I)
+        t = re.sub(r"\b(" + TENS + r")[- ](" + ONES + r")\b",
+                   lambda m: str(WORDS[m[1].lower()] + ONE_TO_NINE[m[2].lower()]), t, flags=re.I)
+        t = re.sub(r"\ba dozen\b", "12", t, flags=re.I)
         # Reiwa 8 (2026): one year, not two numbers.
         # (a wrong year in brackets stays, so it shows as a difference)
         t = re.sub(r"\b(Reiwa|Heisei|Showa) (\d+)(?: \((\d{4})\))?", _era, t, flags=re.I)
@@ -146,9 +163,14 @@ def _normalize(text, lang):
         t = re.sub(r"(?<![一-鿿])([二三四五六七八九]?十[一二三四五六七八九]?|[二三四五六七八九])(?=" + JA_COUNTERS + "|輪)",
                    _kanji, t)
         t = re.sub(r"三が日", "3日間", t)
-        # 時速200km = 200 km/h
+        # 大さじ2 = 2 tbsp; /日 = 1日; 毎日5mg = 1日5mg
+        t = re.sub(r"([大小])さじ\s?(\d+(?:\.\d+)?|[一二三四五六七八九十])",
+                   lambda m: f"{KANJI.get(m[2], m[2])} {'tbsp' if m[1] == '大' else 'tsp'}", t)
+        t = re.sub(r"\s*/\s*(日|分|時間|秒|週)", r" 1\1", t)
+        t = re.sub(r"毎日(?=[^。\n]{0,6}\d)|(?<=\d)(\s?[a-zA-Z%]+)\s?毎日", lambda m: f"{m[1] or ''} 1日", t)
+        # 時速200km = 200 km/h = 200 km 1時間
         t = re.sub(r"([時分秒])速\s?(\d+(?:\.\d+)?)\s?(km|キロ(?:メートル)?|m(?![lgL])|メートル)",
-                   lambda m: f"{m[2]}{'km' if m[3].startswith(('k', 'キ')) else 'm'}/"
+                   lambda m: f"{m[2]}{'km' if m[3].startswith(('k', 'キ')) else 'm'} 1"
                              f"{ {'時': '時間', '分': '分', '秒': '秒'}[m[1]]}", t)
         # 10万, 19万9千, 8割 (= 80 %)
         t = re.sub(r"(\d+(?:\.\d+)?)万(?:(\d+)千)?",
@@ -156,6 +178,9 @@ def _normalize(text, lang):
         t = re.sub(r"(\d+)千(?!葉)", lambda m: str(int(m[1]) * 1000), t)
         t = re.sub(r"(\d+)割", lambda m: f"{int(m[1]) * 10}%", t)
     return t
+
+
+ONE_TO_NINE = {w: i + 1 for i, w in enumerate(ONES.split("|"))}
 
 
 def _era(m):
@@ -191,23 +216,32 @@ def numbers(text, lang):
     """Counter of numbers, and for each number the units found after it."""
     t = _normalize(text, lang)
     found, units, order = Counter(), {}, []
-    for m in re.finditer(r"(?<![\d.])(-?)(\d+(?:\.\d+)?|\.\d+)", t):
-        # A minus sign, not a hyphen between words or a range (3-5, TC 4-02).
-        sign = "-" if m[1] and (m.start() == 0 or not t[m.start() - 1].isalnum()) else ""
+    for m in re.finditer(r"(?<![\d.])([-−]?)(\d+(?:\.\d+)?|\.\d+)", t):
+        # − (from マイナス, 氷点下, minus) is a sign; "-" is one unless it
+        # joins two words or numbers (3-5, TC 4-02, COVID-19), so 「外は-5℃」 keeps it.
+        before = t[m.start() - 1] if m.start() else " "
+        sign = "-" if m[1] == MINUS or (m[1] == "-" and not (before.isascii() and before.isalnum())) else ""
         n = sign + _canon(m[2])
         found[n] += 1
-        rest = t[m.end():m.end() + 30].lstrip()
+        rest = t[m.end():m.end() + 40].lstrip()
         flags = re.I if lang == "en" else 0
+        # 15 to 30 minutes, 3〜5分: the unit after the range is for both numbers
+        span = re.match(r"(?:to|-|–|~|〜|から)\s*\d+(?:\.\d+)?\s*", rest, flags)
+        if span:
+            rest = rest[span.end():]
         unit = ""
         for pattern, name in UNITS[lang]:
             u = re.match(pattern, rest, flags)
             if u:
                 unit, rest = name, rest[u.end():]
                 break
-        rate = re.match(RATE[lang], rest, flags)
-        if rate:
+        for _ in range(2):  # mg/kg/dose
+            rate = re.match(RATE[lang], rest, flags) if unit else None
+            if not rate:
+                break
             per = rate[1].lower()
-            unit += "/" + RATE_NAMES.get(per, RATE_NAMES.get(per.rstrip("s"), per))
+            unit += "/" + RATE_NAMES.get(per, per)
+            rest = rest[rate.end():]
         if unit:
             units.setdefault(n, Counter())[unit] += 1
             order.append(n)
@@ -253,8 +287,12 @@ def _units_differ(x, y):
     when one side uses a unit the other does not (5 minutes / 5時間)."""
     tx = sum(k for u, k in x.items() if _base(u) in TEMPERATURE)
     ty = sum(k for u, k in y.items() if _base(u) in TEMPERATURE)
-    if tx != ty or ({"°C", "°F"} <= {_base(u) for u in x} | {_base(u) for u in y}
-                    and {_base(u) for u in x} != {_base(u) for u in y} and not {"deg"} & set(map(_base, x | y))):
+    sx, sy = {_base(u) for u in x} & {"°C", "°F"}, {_base(u) for u in y} & {"°C", "°F"}
+    if tx != ty or (sx and sy and sx != sy):
+        return True
+    # A short time on one side only: "Wait 5 minutes" / 「5待つ」
+    if sum(k for u, k in x.items() if u in SHORT_TIMES) != sum(k for u, k in y.items() if u in SHORT_TIMES) \
+            and not ({u for u in x} & SHORT_TIMES and {u for u in y} & SHORT_TIMES):
         return True
     crit = {u for u in x | y if _base(u) in CRITICAL - TEMPERATURE}
     if any(x[u] != y[u] for u in crit):
@@ -369,7 +407,7 @@ def apply_accept(flags, accept, text):
     current = passage_key(text)
     accepted, outdated = {}, []
     for a in accept:
-        k = (a.get("check"), str(a.get("item")))
+        k = (str(a.get("check")), str(a.get("item")))
         if a.get("for") == current:
             accepted[k] = str(a.get("reason") or "")
         else:
@@ -408,6 +446,8 @@ def check_file(path, report_dir=REPORTS, quiet=False):
     if not isinstance(data.get("passages"), dict) or not isinstance(data.get("headings", {}), dict):
         sys.exit(f"{path}: needs \"passages\" and \"headings\" objects")
     terms = load_terms(src_lang, dst_lang)
+    if not terms and not quiet:
+        print(f"{path.name}: no word list terms.{src_lang}-{dst_lang}.json: word checks are off")
     results = []
     for key, e in data["passages"].items():
         flags, unused = check_entry(key, e, src_lang, dst_lang, terms)
@@ -514,7 +554,8 @@ def print_changes(tr, rows, where):
     for h, t in new:
         print(f"  new or changed: {passage_key(t)} [{h}] {_first(t)}")
     for k, e in stale:
-        print(f"  no longer in the source: {k} {_first(e.get('source') or e.get('text', ''))}")
+        e = e if isinstance(e, dict) else {}
+        print(f"  no longer in the source: {k} {_first(_text(e.get('source')) or _text(e.get('text')))}")
     if new or stale:
         print(f"{where}: {len(new)} passages need a translation, "
               f"{len(stale)} stored translations are no longer used")
