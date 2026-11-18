@@ -1,0 +1,269 @@
+{
+ "about": "Degree, negation and urgency words for tool/check_translations.py, English and Japanese. A passage (or sentence, when both sides have the same number of sentences) is flagged when a group matches on one side only. Patterns are Python regular expressions, case-insensitive. A flag is a warning for the reviewer, not an error. Per-passage exceptions go in the translation entry: \"accept\": [{\"check\": \"words\", \"item\": \"<group id>\", \"reason\": \"...\"}].",
+ "reviewed": false,
+ "groups": [
+  {
+   "id": "not-too-tight",
+   "note": "A limit on pressure: snakebite and other bandages. 「しっかりと縛って」 for \"snug but not too tight\" is the error this list was made for.",
+   "en": [
+    "not too tight",
+    "\\bsnug",
+    "not (?:be |so |overly )?tight",
+    "\\bloos(?:e|en|ely|ening)\\b",
+    "(?:too|overly) tight"
+   ],
+   "ja": [
+    "(?:締め|縛り|巻き)すぎ",
+    "きつ(?:く|すぎ)(?:締め|縛ら|巻か)?(?:ない|すぎ)",
+    "ぴったり",
+    "ゆったり",
+    "ゆる[くめ]",
+    "(?<!気を)緩[くめ]"
+   ]
+  },
+  {
+   "id": "tight-firm",
+   "note": "Firm pressure. Not the negated forms, which are in not-too-tight.",
+   "en": [
+    "(?<!too )(?<!not )\\btight(?:ly|en)?\\b",
+    "\\bfirm(?:ly)?\\b"
+   ],
+   "ja": [
+    "しっかり(?:と)?(?:縛|締|巻|押さえ|固定)",
+    "きつく(?!締めすぎ|縛りすぎ|巻きすぎ|しすぎ|締めない|縛らない)",
+    "強く(?:縛|締|巻|押)",
+    "きつい"
+   ]
+  },
+  {
+   "id": "tie-bind",
+   "note": "Tying or binding a limb. Japanese 縛る is not a translation of \"apply a bandage\".",
+   "en": [
+    "\\bt(?:ie|ied|ies|ying)\\b",
+    "\\bbind(?:s|ing)?\\b",
+    "\\bbound\\b",
+    "\\bknot"
+   ],
+   "ja": [
+    "縛",
+    "結[ぶびんべ]"
+   ]
+  },
+  {
+   "id": "immediately",
+   "note": "Urgency.",
+   "en": [
+    "\\bimmediate(?:ly)?\\b",
+    "\\bat once\\b",
+    "\\bright away\\b",
+    "\\bprompt(?:ly)?\\b",
+    "as soon as (?:possible|you can)",
+    "as (?:quickly|fast) as possible",
+    "without delay",
+    "\\burgent(?:ly)?\\b"
+   ],
+   "ja": [
+    "(?<!まっ)すぐ",
+    "直ちに",
+    "ただちに",
+    "速やか",
+    "至急",
+    "一刻も早く",
+    "早急",
+    "緊急に",
+    "(?:できるだけ|できる限り|可能な限り)(?:早く|すばやく|速く)"
+   ]
+  },
+  {
+   "id": "gently",
+   "note": "Gentle handling: wounds, frostbite, hypothermia.",
+   "en": [
+    "\\bgentl[ey]",
+    "\\blightly\\b"
+   ],
+   "ja": [
+    "やさしく",
+    "優しく",
+    "そっと",
+    "軽く(?:押|ふ|たた|叩|拭|洗|触|こす|もむ|マッサ)"
+   ]
+  },
+  {
+   "id": "slowly",
+   "note": "Slow or gradual: rewarming, descent, drinking.",
+   "en": [
+    "\\bslow(?:ly)?\\b",
+    "\\bgradual(?:ly)?\\b",
+    "\\bin stages\\b",
+    "\\bstep by step\\b",
+    "little at a time",
+    "\\bsmall (?:amounts|sips)\\b",
+    "\\bsips?\\b"
+   ],
+   "ja": [
+    "ゆっくり",
+    "徐々に",
+    "少しずつ",
+    "段階的",
+    "減速",
+    "(?:スピード|速度)を(?:落と|控え)"
+   ]
+  },
+  {
+   "id": "rapid-fast",
+   "note": "Fast or rapid: rapid rewarming of frostbite is not the same as slow rewarming; a rapid pulse is a sign.",
+   "en": [
+    "\\brapid(?:ly)?\\b",
+    "\\bfast(?:er)?\\b",
+    "\\bquick(?:ly)?\\b"
+   ],
+   "ja": [
+    "急速",
+    "急激",
+    "速[いくまめ]",
+    "すばや",
+    "素早",
+    "早[くいめ]",
+    "急いで"
+   ]
+  },
+  {
+   "id": "prohibition",
+   "note": "Do not, never, avoid: an instruction not to do something. Plain negative statements (食欲がない, \"no appetite\") are left out, they are too common to compare.",
+   "en": [
+    "(?:(?<![a-z] )|(?<=\\bso )|(?<=\\band )|(?<=\\bor )|(?<=\\bthen )|(?<=\\bplease ))\\bdo(?: not|n['’]t)\\b",
+    "\\b(?:must|should)(?: not|n['’]t)\\b",
+    "\\bnever\\b",
+    "\\bavoid"
+   ],
+   "ja": [
+    "ないで",
+    "[てで]はいけ",
+    "[てで]はなら",
+    "ないように(?:しましょう|します|して|する|心が|心掛)",
+    "ないこと",
+    "禁止",
+    "避け",
+    "やめ",
+    "控え",
+    "決して",
+    "絶対に",
+    "(?:あわて|慌て|焦ら|急が|無理をせ)ず"
+   ]
+  },
+  {
+   "id": "always",
+   "note": "Always, every time.",
+   "en": [
+    "\\balways\\b",
+    "\\bevery time\\b"
+   ],
+   "ja": [
+    "必ず(?!しも)",
+    "(?<![非異])常に",
+    "いつも(?!の)"
+   ]
+  },
+  {
+   "id": "only",
+   "note": "Only, just this.",
+   "en": [
+    "\\bonly\\b",
+    "\\bsolely\\b"
+   ],
+   "ja": [
+    "(?<!できる)(?<!いた)(?<!どれ)だけ",
+    "のみ(?!こ)",
+    "しか(?![もし])"
+   ]
+  },
+  {
+   "id": "at-least",
+   "note": "Lower limit, including 以上 (60歳以上: 60 or over).",
+   "en": [
+    "\\bat least\\b",
+    "\\bminimum\\b",
+    "no (?:less|fewer) than",
+    "\\b(?:or|and) (?:more|over|above|higher|greater)\\b"
+   ],
+   "ja": [
+    "少なくとも",
+    "最低",
+    "(?<!それ)以上"
+   ]
+  },
+  {
+   "id": "at-most",
+   "note": "Upper limit.",
+   "en": [
+    "\\bat most\\b",
+    "\\bmaximum\\b",
+    "no more than",
+    "\\bup to (?:\\d|about|a|an)\\b",
+    "\\bwithin (?:\\d|about|a|an|the next)\\b",
+    "less than \\d",
+    "fewer than",
+    "\\b(?:or|and) (?:less|under|below|lower)\\b",
+    "\\bunder \\d"
+   ],
+   "ja": [
+    "以内",
+    "以下(?!の|に|と)",
+    "最大",
+    "未満",
+    "まで(?:の間)"
+   ]
+  },
+  {
+   "id": "more-than",
+   "note": "Above a value.",
+   "en": [
+    "more than \\d",
+    "\\bover \\d",
+    "\\bexceed",
+    "\\babove \\d"
+   ],
+   "ja": [
+    "超え",
+    "超過",
+    "上回",
+    "を超"
+   ]
+  },
+  {
+   "id": "if-possible",
+   "note": "A condition that softens an instruction.",
+   "en": [
+    "if possible",
+    "whenever possible",
+    "when possible",
+    "where possible",
+    "as \\w+ as possible",
+    "if you are able"
+   ],
+   "ja": [
+    "可能であれば",
+    "可能な(?:限り|場合)",
+    "できれば",
+    "できる(?:限り|だけ)",
+    "可能なら"
+   ]
+  },
+  {
+   "id": "rub",
+   "note": "Rubbing or massaging (never for frostbite).",
+   "en": [
+    "\\brub",
+    "\\bmassag"
+   ],
+   "ja": [
+    "こす",
+    "擦",
+    "もむ",
+    "もみ",
+    "揉",
+    "マッサージ"
+   ]
+  }
+ ]
+}

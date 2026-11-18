@@ -107,6 +107,30 @@ against the region file the app ships with (`assets/regions/regions.sqlite`
 in the app repository, found next to this checkout or by
 `LYCHNION_REGIONS`; `tool/check_areas.py` checks all manifests).
 
+**Translations.** Passages in another language are translated once, by a
+strong model, and stored in `packages/translations/<id>.<lang>.json`: for
+each passage its original (`source`), the translation (`text`) and
+`reviewed` (set by the person who checks it, never by a tool). The key is a
+hash of the original. `tool/check_translations.py` runs in the build and in
+CI, and writes a report per file to `build/translation-checks/` for the
+reviewer:
+
+- numbers and units must match (minutes, °C, phone numbers; 令和8年 =
+  2026): the build fails otherwise;
+- degree, negation and urgency words that appear on one side only ("not too
+  tight", 「縛る」, "do not", 「すぐに」) are warnings, from the word list
+  `packages/translations/terms.en-ja.json`.
+
+A flag a person has checked and found fine gets an exception in the
+passage, with a reason: `"accept": [{"check": "numbers", "item": "2",
+"reason": "..."}]`. When a source changes, the build lists the passages that
+need a new translation and the stored ones no longer used.
+
+```sh
+python3 -I tool/check_translations.py          # all translation files
+python3 -I -m unittest discover -s tool -p 'test_*.py'
+```
+
 **Packages the app ships with.** The app bundles some packages and the
 Nishinomiya evacuation sites, and its own copy of the catalog. After a
 release, copy `build/packages/*.sqlite`, the bundled areas'

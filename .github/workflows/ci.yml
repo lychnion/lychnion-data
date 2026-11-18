@@ -43,6 +43,14 @@ jobs:
           for f in items.json packages/*.json maps/*.json packages/translations/*.json; do
             python -I -m json.tool "$f" > /dev/null || { echo "bad JSON: $f"; exit 1; }
           done
+      - name: Tool tests
+        run: python -I -m unittest discover -s tool -p 'test_*.py'
+      # Numbers must match (fails); degree and negation words are warnings
+      # for the reviewer. Run the tool locally for the full report.
+      - name: Translations keep numbers and meaning words
+        run: |
+          set -o pipefail
+          python -I tool/check_translations.py | tee -a "$GITHUB_STEP_SUMMARY"
       - name: Areas use known region codes
         env:
           LYCHNION_REGIONS: app/assets/regions/regions.sqlite

@@ -19,366 +19,531 @@
  },
  "passages": {
   "364fba463e3b673b": {
+   "source": "16-5. First aid for human or animal bites aims to prevent infection and provide initial care for the wound. To\nperform first aid for a human or animal bite:\n• Remove yourself from further harm. If dealing with an animal bite, ensure that you are no longer at\nrisk of being bitten again.\n• Control bleeding. If the bite wound is bleeding, apply direct pressure with a clean cloth or sterile",
    "text": "人や動物にかまれたときの応急手当は、感染を防ぎ、傷の最初の手当てをすることを目的とします。人や動物にかまれたときは、次のように応急手当をします。\n・さらなる危険から離れます。動物にかまれた場合は、再びかまれる危険がもうないことを確かめます。\n・出血を抑えます。かまれた傷から出血している場合は、清潔な布または滅菌ガーゼで直接押さえ、",
    "reviewed": false
   },
   "30d303896d6408be": {
+   "source": "gauze to stop or minimize the bleeding. Elevating the wound, if possible, can also help reduce\nbleeding.\n• Clean the wound. Rinse the bite wound thoroughly with clean water or saline solution to flush out\nany dirt, bacteria, or saliva that may have entered the wound. Gently remove any debris from the\nwound using mild soap and water.",
    "text": "出血を止めるか、できるだけ少なくします。可能であれば、傷を高く上げることも出血を減らすのに役立ちます。\n・傷を洗います。傷に入ったかもしれない汚れ、細菌、唾液を洗い流すため、かまれた傷をきれいな水または生理食塩水で十分にすすぎます。刺激の少ない石けんと水を使って、傷から異物をそっと取り除きます。",
    "reviewed": false
   },
   "a3a2070016f157c7": {
+   "source": "• Apply an antiseptic. After cleaning, apply an antiseptic solution or ointment to the wound to help\nreduce the risk of infection. Follow the instructions on the product label and ensure it is suitable for\nuse on open wounds.\n• Cover the wound. Use a sterile dressing or clean bandage to cover the wound. This will protect it\nfrom further contamination and promote healing. Change dressing regularly to maintain cleanliness.",
    "text": "・消毒薬を使います。洗った後、感染の危険を減らすため、傷に消毒液または消毒用の軟膏を塗ります。製品ラベルの指示に従い、開いた傷に使えるものであることを確かめます。\n・傷を覆います。滅菌された被覆材（ガーゼなど）または清潔な包帯で傷を覆います。これにより、傷がさらに汚れるのを防ぎ、治りを助けます。清潔を保つため、被覆材は定期的に交換します。",
    "reviewed": false
   },
   "96ae64c9ac7f81bb": {
+   "source": "• Seek medical attention. It is important to seek medical evaluation for all animal bites, especially\nthose from unfamiliar or wild animals, deep wounds, or those that become red, swollen, or\nincreasingly painful. A health care professional can assess the severity of the bite, prescribe\nantibiotics if necessary, and administer tetanus prophylaxis if required.",
    "text": "・医師の診察を受けます。動物にかまれた場合は、すべて医師の診察を受けることが大切です。特に、よく知らない動物や野生動物にかまれた場合、傷が深い場合、傷が赤くなる・腫れる・だんだん痛くなる場合はそうです。医療従事者は、かまれた傷の重さを評価し、必要であれば抗生物質を処方し、必要な場合には破傷風の予防処置を行うことができます。",
    "reviewed": false
   },
   "656193b722f82e19": {
+   "source": "16-40. In the event of a snakebite, prompt first aid is crucial to minimizing the potential effects of the venom.\nTo perform first aid for a snakebite:\n• Stay calm and call for medical assistance immediately. Provide medical personnel with information\nabout the snake, if possible, but do not attempt to capture or kill the snake as it may increase the risk\nof further bites.",
    "text": "ヘビにかまれた場合、毒の影響をできるだけ小さくするには、速やかな応急手当がとても重要です。ヘビにかまれたときは、次のように応急手当をします。\n・落ち着いて、すぐに医療の助けを呼びます。可能であれば、ヘビについての情報を救急隊や医療従事者に伝えます。ただし、さらにかまれる危険が高まることがあるため、ヘビを捕まえたり殺したりしようとしてはいけません。",
    "reviewed": false
   },
   "b55b4df5890ff3bb": {
+   "source": "• Keep the bitten Service member as still and calm as possible. Restrict movement and avoid\nunnecessary exertion, as it can accelerate the spread of venom in the bloodstream.\n• Remove any constricting items, such as jewelry or tight clothing, from the affected area, as swelling\nmay occur.\n• Position the affected limb slightly below the level of the heart, if possible. This can help slow the\nspread of venom.",
    "text": "・かまれた人を、できるだけ動かさず、落ち着かせます。動きを制限し、不要な力を使う動作を避けます。体を動かすと、毒が血液中に広がるのが速まることがあるためです。\n・腫れることがあるため、かまれた部分から、装身具（アクセサリー）やきつい衣服など、締めつけるものを取り外します。\n・可能であれば、かまれた手足を心臓の高さより少し低くします。これは、毒が広がるのを遅らせるのに役立つことがあります。",
    "reviewed": false
   },
   "7a01b41cd5b62234": {
+   "source": "• Cleanse the wound gently with mild soap and water to reduce the risk of infection. Do not apply ice\nor use a TQ, as they are not effective and can cause additional harm.\n• Apply a sterile bandage or dress over the bite, ensuring it is snug but not too tight. This can help\nimmobilize the area and reduce the spread of venom.",
    "text": "・感染の危険を減らすため、刺激の少ない石けんと水で傷をやさしく洗います。氷を当てたり、止血帯を使ったりしてはいけません。効果がなく、さらに害を与えることがあるためです。\n・かまれた部分の上に、滅菌された包帯または被覆材を当てます。ぴったりと当てますが、きつく締めすぎないようにします。これは、その部分を動かないようにし、毒の広がりを抑えるのに役立つことがあります。",
    "reviewed": false
   },
   "032dbdba2ee8d88d": {
+   "source": "• Encourage the person to remain calm and still, while waiting for medical help to arrive. Monitor\ntheir vital signs, such as breathing and heart rate, and be prepared to administer CPR if necessary.\n16-41. The above steps are general guidelines and may vary depending on the snake species and the region.\nIt is crucial to seek medical attention immediately after a snakebite, as they can provide appropriate anti-",
    "text": "・助けが来るのを待つ間、本人が落ち着いて動かずにいられるよう声をかけます。呼吸や心拍などのバイタルサインを観察し、必要であれば心肺蘇生を行えるよう準備しておきます。\n上記の手順は一般的な目安であり、ヘビの種類や地域によって異なることがあります。ヘビにかまれた後は、すぐに医師の診察を受けることがとても重要です。医療機関では適切な抗毒素による治療を行い、",
    "reviewed": false
   },
   "3a0b1d8daeb7c497": {
+   "source": "venom treatment and further evaluate the situation.",
    "text": "さらに状況を詳しく評価することができるためです。",
    "reviewed": false
   },
   "5551506be1ce44cd": {
+   "source": "16-78. A tick is a small arachnid parasite that feeds on the blood of animals, including humans. Ticks are\nfound in various environments, such as forests, grasslands, and shrubby areas. They latch onto their hosts\nand can transmit diseases through their bites.\n16-79. When a tick bites, it burrows its mouth parts into the skin to feed on blood. If you discover a tick",
    "text": "マダニは小さなクモの仲間の寄生虫で、人を含む動物の血を吸います。マダニは森林、草地、やぶなど、さまざまな環境にいます。宿主に取りつき、かむことで病気をうつすことがあります。\nマダニはかむと、口の部分を皮膚に食い込ませて血を吸います。皮膚にマダニがついているのを見つけたら、",
    "reviewed": false
   },
   "443623a9dec072ea": {
+   "source": "attached to your skin, it's important to remove it promptly and take the following first aid steps:\n• Prepare for tick removal: Use fine-tipped tweezers to grasp the tick as close to the skin's surface as\npossible. Avoid squeezing or crushing the tick's body.\n• Remove the tick: Gently and steadily pull the tick upward with even pressure. Do not twist or jerk",
    "text": "速やかに取り除き、次の応急手当を行うことが大切です。\n・取り除く準備：先の細いピンセットを使い、できるだけ皮膚に近いところでマダニをつかみます。マダニの胴体を押したりつぶしたりしないようにします。\n・マダニを取り除く：むらのない力で、そっと、ゆっくり一定にマダニを上に引きます。ねじったり、急に引っぱったりしてはいけません。",
    "reviewed": false
   },
   "a6edf0c5b86554a6": {
+   "source": "it. The goal is to remove the entire tick, including its mouthparts. Dispose of the tick by placing it\nin a sealed bag or container or by submerging it in alcohol.\n• Clean the bite area: Thoroughly clean the bite area with soap and water or an antiseptic solution to\nreduce the risk of infection.\n• Apply an antiseptic: After cleaning the bite area, you can apply an antiseptic ointment or cream to\nfurther prevent infection.",
    "text": "口の部分も含めて、マダニ全体を取り除くことが目的です。取ったマダニは、密閉できる袋や容器に入れるか、アルコールに沈めて処分します。\n・かまれた部分を洗う：感染の危険を減らすため、石けんと水、または消毒液で、かまれた部分を十分に洗います。\n・消毒薬を塗る：かまれた部分を洗った後、感染をさらに防ぐため、消毒用の軟膏やクリームを塗ることもできます。",
    "reviewed": false
   },
   "dfd026213d0fa487": {
+   "source": "• Monitor for symptoms: Keep an eye on the bite site for any signs of an allergic reaction, infection,\nor the appearance of a rash. If you notice any concerning symptoms, seek medical attention.\n16-80. Certain tick-borne diseases, such as Lyme disease or Rocky Mountain spotted fever, may take time to\nmanifest symptoms. If in an area where these diseases are prevalent or if you develop symptoms such as",
    "text": "・症状に注意する：アレルギー反応、感染の兆候、発疹が出ていないか、かまれた部分に気をつけて見ます。気になる症状があれば、医師の診察を受けます。\nライム病やロッキー山紅斑熱など、マダニが媒介する一部の病気は、症状が出るまでに時間がかかることがあります。これらの病気が多い地域にいる場合、またはマダニにかまれた後に",
    "reviewed": false
   },
   "fe4d96720a67fedd": {
+   "source": "fever, rash, joint pain, or flu-like symptoms after a tick bite, it is crucial to consult a health care professional\nfor proper evaluation, diagnosis, and treatment.\n16-81. Prevention is key when it comes to ticks. To minimize the risk of tick bites, wear protective clothing\nwhen in tick-prone areas, use insect repellents containing DEET, perform regular tick checks after outdoor",
    "text": "発熱、発疹、関節の痛み、インフルエンザのような症状が出た場合は、適切な評価、診断、治療を受けるため、医療従事者に相談することがとても重要です。\nマダニについては予防が大切です。マダニにかまれる危険を減らすため、マダニの多い場所では肌を守る服を着る、ディート（DEET）を含む虫よけ剤を使う、屋外での",
    "reviewed": false
   },
   "34736ae345fbd811": {
+   "source": "activities, and take appropriate measures to protect pets from ticks as well. DEET (chemical name, N, N-\ndiethyl-meta-toluamide) is the active ingredient in many repellent products. It is widely used to repel biting\npests such as mosquitoes and ticks.",
    "text": "活動の後は定期的にマダニがついていないか確認する、ペットもマダニから守るための適切な対策をとる、といったことを行います。ディート（化学名：N,N-ジエチル-メタ-トルアミド）は、多くの虫よけ製品の有効成分です。蚊やマダニなど、かんだり刺したりする虫を寄せつけないために広く使われています。",
    "reviewed": false
   },
   "848ee3913d1f15e1": {
+   "source": "17-5. Heat injury prevention is of utmost importance in the military, where Service members face intense\nphysical challenges and operate in diverse climatic conditions. When the body gets overheated, it can lead to\nserious health risks and impair a Service member’s ability to perform their duties effectively. Heat-related",
    "text": "厳しい身体的負荷にさらされ、さまざまな気候の中で活動する人にとって、暑さによる障害の予防はきわめて重要です。体が過熱すると、深刻な健康上の危険につながり、その人が役割を十分に果たす力が損なわれることがあります。",
    "reviewed": false
   },
   "9939fe74841ccf1b": {
+   "source": "injuries, such as heat exhaustion and heat stroke, can be prevented through various measures, including\nwearing appropriate clothing, taking regular rest breaks, acclimatization and fluid replacement. By\nprioritizing heat injury prevention, Leaders ensure the well-being and operational readiness of their\npersonnel, allowing them to fulfill their responsibilities and accomplish their missions with strength and\nresilience.",
    "text": "熱疲労や熱中症（熱射病）などの暑さに関連する障害は、適切な服装、定期的な休憩、暑さへの慣れ（暑熱順化）、水分補給など、さまざまな対策で防ぐことができます。暑さによる障害の予防を優先することで、責任者は人々の健康と活動できる状態を守り、その人たちが役割を果たし、目的を力強くやり遂げられるようにします。",
    "reviewed": false
   },
   "a84da232edc70317": {
+   "source": "17-6. Exertional heat illness refers to a spectrum of heat-related conditions that occur when the body's core\ntemperature rises excessively during physical activity or exercise. It is primarily caused by prolonged exertion\nin hot and humid environments, leading to an imbalance between heat production and heat dissipation.",
    "text": "労作性の暑熱障害とは、身体活動や運動中に体の深部体温が上がりすぎることで起こる、一連の暑さに関連する状態を指します。主な原因は、暑く湿度の高い環境で長時間体を動かすことで、熱がつくられる量と熱が逃げる量のバランスが崩れることです。",
    "reviewed": false
   },
   "ec263822f68c5670": {
+   "source": "Exertional heat illness encompasses various conditions ranging from mild heat exhaustion to severe heat\nstroke, which is a medical emergency. Symptoms of heat injuries may include:\n• Fatigue.\n• Dizziness.\n• Headache.\n• Nausea.\n• Excessive sweating.\n• Rapid heartbeat.\n• Confusion.\n• Loss of consciousness in severe cases.\n17-7. Prompt recognition and treatment of exertional heat illness are essential to prevent complications and",
    "text": "労作性の暑熱障害には、軽い熱疲労から、緊急の対応が必要な重い熱中症（熱射病）まで、さまざまな状態が含まれます。暑さによる障害の症状には、次のようなものがあります。\n・疲労\n・めまい\n・頭痛\n・吐き気\n・大量の汗\n・速い心拍\n・意識の混乱\n・重い場合は意識を失う\n合併症や命にかかわるおそれのある結果を防ぐには、労作性の暑熱障害に早く気づき、速やかに手当てすることが欠かせません。",
    "reviewed": false
   },
   "b28cd2e37a95f3b0": {
+   "source": "potentially life-threatening consequences. Effective prevention strategies, such as acclimatization,\nappropriate clothing, fluid replacement, and regular rest breaks, are crucial in minimizing the risk of\nexertional heat illness. For more information on heat illness refer to TB MED 507 and TC 4-02.3.\n17-8. While there is a range of adverse effects that can result from the body overheating, the two major kinds",
    "text": "暑さへの慣れ、適切な服装、水分補給、定期的な休憩などの効果的な予防策は、労作性の暑熱障害の危険をできるだけ小さくするためにとても重要です。暑熱障害についての詳しい情報は、TB MED 507 および TC 4-02.3 を参照してください。",
-   "reviewed": false
+   "reviewed": false,
+   "accept": [
+    {
+     "check": "numbers",
+     "item": "2",
+     "reason": "The source cuts this sentence (\"the two major kinds\") across two passages; the translation puts the whole sentence in f87cb180bc21e44a."
+    }
+   ]
   },
   "f87cb180bc21e44a": {
+   "source": "of heat illnesses that are referred to as heat casualties are heat exhaustion (can be mild or more severe) or\nheat stroke. Heat stroke is the most severe form of heat illness and possibly fatal.\nNote. For more information on heat illness prevention, refer to the Defense Centers for Public\nHealth – Aberdeen website.",
    "text": "体の過熱によって起こる悪影響にはさまざまなものがありますが、暑さによる傷病として扱われる主な暑熱障害は、熱疲労（軽い場合も、より重い場合もあります）と熱中症（熱射病）の2種類です。熱射病は最も重い暑熱障害で、命にかかわることがあります。\n注：暑熱障害の予防についての詳しい情報は、Defense Centers for Public Health – Aberdeen のウェブサイトを参照してください。",
-   "reviewed": false
+   "reviewed": false,
+   "accept": [
+    {
+     "check": "numbers",
+     "item": "2",
+     "reason": "The start of this sentence is in the previous passage (b28cd2e37a95f3b0); 2種類 = \"the two major kinds\"."
+    }
+   ]
   },
   "6aff203e48d35424": {
+   "source": "17-9. Heat exhaustion is a heat-related condition that occurs when the body becomes overheated due to\nprolonged exposure to high temperatures and inadequate fluid replacement. It is considered a milder form of\nheat illness compared to heat stroke. Signs and symptoms of heat exhaustion may include:\n• Heavy sweating.\n• Weaknesses and fatigue.\n• Dizziness or lightheadedness.\n• Headache.\n• Nausea or vomiting.",
    "text": "熱疲労は、高温に長時間さらされ、水分補給が不十分なために体が過熱して起こる、暑さに関連する状態です。熱中症（熱射病）に比べると、軽い暑熱障害とされています。熱疲労の兆候と症状には、次のようなものがあります。\n・大量の汗\n・脱力感と疲労\n・めまい、またはふらつき\n・頭痛\n・吐き気または嘔吐",
    "reviewed": false
   },
   "5775334c162dba2d": {
+   "source": "• Pale, cool, or clammy skin.\n• Rapid and shallow breathing.\n• Elevated heart rate.\n• Muscle cramps.\n• Feeling faint or fainting.\n17-10. If a Service member is suspected to have heat exhaustion, immediate first aid treatment should be\nprovided. The first aid steps to treat heat exhaustion are:\n• Move the Service member to a cooler environment: Get them out of the heat and into a shaded or\nair-conditioned area.",
    "text": "・皮膚が青白い、冷たい、またはじっとりしている\n・呼吸が速く浅い\n・心拍数の上昇\n・筋肉のけいれん\n・気が遠くなる感じ、または失神\n熱疲労が疑われる場合は、すぐに応急手当を行う必要があります。熱疲労の応急手当の手順は次のとおりです。\n・涼しい場所へ移す：暑い場所から出し、日陰や冷房のきいた場所へ移します。",
    "reviewed": false
   },
   "fd5fae07e61f44a8": {
+   "source": "• Encourage rest and rehydration: Have the Service member lie down and elevate their legs slightly.\nProvide them with cool water and or an electrolyte-containing sports drink to sip on. Avoid alcohol\nor caffeine.\n• Cool the Service member's body: Loosen or remove any tight or unnecessary clothing. Apply a cool,\nwet cloth or towels to their skin, especially on the neck, face, and armpits. Use a fan or create air",
    "text": "・休ませて水分を補給する：横に寝かせ、足を少し高くします。冷えた水と（または）電解質を含むスポーツドリンクを渡し、少しずつ飲んでもらいます。アルコールやカフェインは避けます。\n・体を冷やす：きつい衣服や不要な衣服をゆるめるか脱がせます。冷えた水でぬらした布やタオルを皮膚、特に首、顔、わきの下に当てます。扇風機を使うか風を起こして、蒸発を助けます。",
    "reviewed": false
   },
   "ad4c8b36935ab289": {
+   "source": "movement to aid in evaporation.\n• Monitor their condition: Stay with the Service member and observe their symptoms. If they do not\nimprove within 30 minutes or their condition worsens, seek medical assistance immediately.\n17-11. Heat exhaustion can progress to heat stroke, a life-threatening condition. If the person's symptoms",
    "text": "・様子を観察する：本人に付き添い、症状を観察します。30分以内に良くならない場合や、状態が悪化した場合は、すぐに医療の助けを求めます。\n熱疲労は、命にかかわる状態である熱中症（熱射病）に進むことがあります。",
    "reviewed": false
   },
   "ba17d70794829165": {
+   "source": "worsen, they become disoriented, confused, or lose consciousness, immediately call for medical assistance.\n17-12. Prevention is key in avoiding heat exhaustion. Practice proper fluid replacement, especially when\nengaging in physical activity or spending time in hot environments. Wear lightweight and loose-fitting\nclothing, use sunscreen, and take regular breaks in cool areas to avoid prolonged exposure to heat.",
    "text": "本人の症状が悪化したり、周りの状況がわからなくなったり、混乱したり、意識を失ったりした場合は、すぐに医療の助けを呼びます。\n熱疲労を防ぐには予防が大切です。特に体を動かすときや暑い環境で過ごすときは、適切に水分を補給します。軽くゆったりした服を着て、日焼け止めを使い、涼しい場所で定期的に休憩をとり、長時間暑さにさらされないようにします。",
    "reviewed": false
   },
   "8a265b18fd6df160": {
+   "source": "17-13. Heat exhaustion is often preceded by heat cramps, muscle cramps of the arms, legs, or abdomen. Heat\ncramps and heat exhaustion often act as indicators. These conditions need to be identified and treated before\nthey get to an extreme case of heat stroke. Catch these conditions early, as the casualty needs rest, water,\nshade, evaluation, and possible medical care.",
    "text": "熱疲労の前には、熱けいれん（腕、脚、腹部の筋肉のけいれん）が起こることがよくあります。熱けいれんと熱疲労は、多くの場合、警告のサインになります。これらの状態は、極端な熱射病に至る前に見つけて手当てする必要があります。本人には休息、水、日陰、評価、そして場合によっては医療が必要なため、これらの状態を早めに見つけます。",
    "reviewed": false
   },
   "bfc3048268c0b426": {
+   "source": "17-14. Heat stroke is a severe and potentially life-threatening illness characterized by a rapid increase in body\ntemperature. It occurs when the body's cooling mechanisms fail to regulate internal heat, often because of\nprolonged exposure to high temperatures or physical exertion in hot environments. Heat stroke is a medical",
    "text": "熱中症（熱射病）は、体温が急に上がることを特徴とする、重く命にかかわるおそれのある病気です。体の冷却のしくみが体内の熱を調節できなくなると起こり、多くの場合、高温に長時間さらされたり、暑い環境で体を動かしたりすることが原因です。",
    "reviewed": false
   },
   "6333da2a5de4e216": {
+   "source": "emergency that requires immediate intervention. The signs and symptoms of heat stroke may include:\n• Altered mental state or confusion.\n• Headache, dizziness, or fainting.\n• Nausea or vomiting.\n• Difficulty breathing.\n• Hot, dry skin (lack of sweating).\n• High body temperature (typically above 104°Fahrenheit or 40°Celsius).\n• Rapid and strong heartbeat.\n• Seizures.",
    "text": "熱射病は、すぐに処置が必要な緊急事態です。熱射病の兆候と症状には、次のようなものがあります。\n・意識の変化、または混乱\n・頭痛、めまい、または失神\n・吐き気または嘔吐\n・呼吸が苦しい\n・皮膚が熱く乾いている（汗が出ない）\n・高い体温（通常は 104°F または 40°C を超える）\n・速く強い心拍\n・けいれん発作",
    "reviewed": false
   },
   "210d66f1ff9bc755": {
+   "source": "17-15. If someone is suspected of having heat stroke, it is crucial to seek emergency medical help\nimmediately. While waiting for medical professionals to arrive, follow these first aid steps:\n• Move the person to a cooler location: Get them out of the heat and into a shaded or air-conditioned\narea as quickly as possible.\n• Cool the person rapidly: Reduce their body temperature as quickly as possible. You can immerse",
    "text": "熱射病が疑われる場合は、すぐに救急の医療の助けを求めることがとても重要です。医療従事者が到着するのを待つ間、次の応急手当を行います。\n・涼しい場所へ移す：できるだけ早く暑い場所から出し、日陰や冷房のきいた場所へ移します。\n・すばやく体を冷やす：できるだけ早く体温を下げます。",
    "reviewed": false
   },
   "74802a18f7397baf": {
+   "source": "the person in a tub of cold water, use ice cooling sheets or apply cold water to their body using wet\ntowels or sponges. Fan the person while misting them with cool water to enhance cooling.\n• Monitor their vital signs: Keep a close eye on the person's breathing, pulse, and level of\nconsciousness. If they stop breathing and you can no longer find a pulse, begin CPR if you are\ntrained to do so.",
    "text": "冷たい水を入れた浴槽に体を浸す、氷の冷却シートを使う、ぬらしたタオルやスポンジで体に冷たい水をかける、といった方法があります。冷えた水を霧状に吹きかけながらあおいで、冷却効果を高めます。\n・バイタルサインを観察する：呼吸、脈、意識の状態を注意深く見守ります。呼吸が止まり、脈が確認できなくなった場合は、訓練を受けていれば心肺蘇生を始めます。",
    "reviewed": false
   },
   "a341c312b8bba810": {
+   "source": "17-16. It's important to note that heat stroke is a severe condition, and professional medical treatment is\nessential. Rapid cooling of the body is crucial in preventing potential organ damage and reducing the risk of\ncomplications.\n17-17. To prevent heat stroke, it is important to avoid excessive physical exertion in hot environments, wear",
    "text": "熱射病は重い状態であり、専門的な医療による治療が欠かせないことに注意が必要です。臓器が傷つくのを防ぎ、合併症の危険を減らすには、体をすばやく冷やすことがとても重要です。",
    "reviewed": false
   },
   "d9e15c1af642ef9b": {
+   "source": "lightweight and breathable clothing, and take regular breaks in cool areas. Understanding the signs and\nsymptoms of heat stroke and promptly seeking medical help can save lives.\nNote. The same person should observe the Service member during cooling and evacuation to spot\nsymptom changes.",
    "text": "熱射病を防ぐには、暑い環境で体を動かしすぎないこと、軽く通気性のよい服を着ること、涼しい場所で定期的に休憩をとることが大切です。熱射病の兆候と症状を理解し、速やかに医療の助けを求めることで、命を救うことができます。\n注：体を冷やしている間と搬送中は、症状の変化に気づけるよう、同じ人が本人を観察するようにします。",
    "reviewed": false
   },
   "6c5707a251366d4e": {
+   "source": "17-18. Hyponatremia (water intoxication) is a condition characterized by abnormally low levels of sodium\nin the blood. Sodium plays a crucial role in maintaining the body's fluid balance and proper nerve and muscle\nfunction. When sodium levels become significantly diluted, usually due to excessive water intake or\ninadequate sodium intake, hyponatremia can occur. The signs and symptoms of hyponatremia can vary",
    "text": "低ナトリウム血症（水中毒）は、血液中のナトリウムの濃度が異常に低くなる状態です。ナトリウムは、体の水分バランスを保ち、神経や筋肉が正しく働くために重要な役割を果たしています。多くの場合、水のとりすぎやナトリウムの摂取不足によってナトリウムが大きく薄まると、低ナトリウム血症が起こることがあります。低ナトリウム血症の兆候と症状は、状態の重さによって異なることがあります。",
    "reviewed": false
   },
   "caa7d83a629dd460": {
+   "source": "depending on the severity of the condition. Common manifestations include:\n• Nausea and vomiting.\n• Headache.\n• Confusion or altered mental state.\n• Fatigue and weakness.\n• Seizures.\n• Muscle cramps or spasms.\n• Loss of appetite.\n• Swelling in the hands, feet, or legs.\n• Low blood pressure.\n• Coma (in severe cases).\n17-19. If someone is suspected to have hyponatremia, it is important to seek medical attention. In the",
    "text": "よく見られる症状は次のとおりです。\n・吐き気と嘔吐\n・頭痛\n・混乱、または意識の変化\n・疲労と脱力感\n・けいれん発作\n・筋肉のけいれんやひきつり\n・食欲がない\n・手、足、脚のむくみ\n・低血圧\n・昏睡（重い場合）\n低ナトリウム血症が疑われる場合は、医師の診察を受けることが大切です。",
    "reviewed": false
   },
   "b379d1990501ac85": {
+   "source": "meantime, you can provide the following first aid measures:\n• Assess the person's condition: Check for any signs of severe symptoms such as seizures, loss of\nconsciousness, or difficulty breathing. If any of these are present, call emergency services\nimmediately.\n• Move the person to a cool, shaded area: Ensure they are away from direct sunlight or heat sources.",
    "text": "それまでの間、次の応急手当を行うことができます。\n・状態を確認する：けいれん発作、意識がない、呼吸が苦しいなど、重い症状の兆候がないか確認します。これらのどれかがある場合は、すぐに救急に連絡します。\n・涼しい日陰に移す：直射日光や熱源から離れた場所にいるようにします。",
    "reviewed": false
   },
   "20c3a897bf983cd9": {
+   "source": "• Encourage fluid intake: If the person is conscious and able to swallow, give them small sips of a\nbeverage containing electrolytes, such as a sports drink. This can help restore sodium levels.\n• Do not give more water. Providing additional water will make the casualty more hyponatremic.\n• If awake, allow the Service member to consume salty foods or snacks.",
    "text": "・水分補給を促す：意識があり、飲み込める場合は、スポーツドリンクなど電解質を含む飲み物を少しずつ飲ませます。これはナトリウムの濃度を回復させるのに役立つことがあります。\n・それ以上水を与えてはいけません。水をさらに与えると、低ナトリウム血症が悪化します。\n・目が覚めていれば、塩気のある食べ物や軽食を食べてもらってかまいません。",
    "reviewed": false
   },
   "b1e74f74ce968c8b": {
+   "source": "• Monitor the person's vital signs: Keep an eye on their breathing, heart rate, and level of\nconsciousness. If their condition worsens, be prepared to administer CPR if necessary.\n17-20. Hyponatremia can be mistaken for heat stroke, and the treatment is very different. Hyponatremia is a\nmedical emergency that requires professional diagnosis and treatment. It is important to address the",
    "text": "・バイタルサインを観察する：呼吸、心拍、意識の状態を見守ります。状態が悪化した場合は、必要に応じて心肺蘇生を行えるよう準備しておきます。\n低ナトリウム血症は熱射病と間違えられることがありますが、手当ての方法は大きく異なります。低ナトリウム血症は緊急事態であり、専門家による診断と治療が必要です。",
    "reviewed": false
   },
   "b99f466174617a97": {
+   "source": "underlying cause and restore sodium levels under the guidance of a health care professional.\nNote. This condition most often occurs during initial entry training; however, it may occur anytime\nwhen overhydration is encountered.",
    "text": "医療従事者の指導のもとで、根本的な原因に対処し、ナトリウムの濃度を回復させることが大切です。\n注：この状態は、訓練を始めたばかりの時期に最も多く起こりますが、水分をとりすぎた場合にはいつでも起こることがあります。",
    "reviewed": false
   },
   "05296d245d5d907e": {
+   "source": "17-50. Changes in consciousness, confusion, or disorientation can occur due to factors like altitude sickness,\ndehydration, or exhaustion. Recognizing and responding to an altered mental status promptly is essential for\nensuring the well-being of Service members. Some general first aid measures for Service members\nexperiencing altered mental status in mountainous terrain include:",
    "text": "意識の変化、混乱、周りの状況がわからなくなること（見当識障害）は、高山病、脱水、疲労などが原因で起こることがあります。意識の状態の変化にすばやく気づいて対応することは、人々の安全と健康を守るために欠かせません。山岳地帯で意識の状態に変化がある人への一般的な応急手当には、次のようなものがあります。",
    "reviewed": false
   },
   "53ccf19e3db61583": {
+   "source": "• Move to Lower Altitude: If the altered mental status is due to altitude sickness, move the Service\nmember to a lower altitude immediately. Descending to lower elevations allows the body to\nacclimatize and receive more oxygen, potentially alleviating symptoms.\n• Rest and Hydration: Ensure the Service member rests and stays hydrated. Dehydration and fatigue",
    "text": "・低い場所へ移動する：意識の変化が高山病によるものであれば、すぐに本人を低い場所へ移動させます。低い場所へ下りると、体が順応し、より多くの酸素を取り込めるため、症状が和らぐことがあります。\n・休息と水分補給：本人を休ませ、水分をとらせます。",
    "reviewed": false
   },
   "0bcd4a9108518eb1": {
+   "source": "can contribute to an altered mental status, so providing water and allowing for adequate rest are\nimportant.\n• Monitor Breathing: Keep a close eye on the Service member's breathing. Shallow or irregular\nbreathing may indicate respiratory distress. If breathing difficulties persist, promptly seek medical\nassistance.\n• Check for Signs of Hypoxia: Assess for signs of hypoxia, which occurs when the body doesn't",
    "text": "脱水や疲労は意識の変化の原因になることがあるため、水を与え、十分に休ませることが大切です。\n・呼吸を観察する：本人の呼吸を注意深く見守ります。呼吸が浅い、または不規則な場合は、呼吸困難の兆候のことがあります。呼吸の苦しさが続く場合は、速やかに医療の助けを求めます。\n・低酸素の兆候を確認する：低酸素とは、体に十分な酸素が届かない状態です。その兆候がないか確認します。",
    "reviewed": false
   },
   "c9874040df8fbd63": {
+   "source": "receive enough oxygen. Look for bluish discoloration of the lips or fingertips. If observed, it may\nindicate a more severe oxygen deficiency, requiring immediate medical attention.\n• Keep Warm: If the altered mental status is due to cold temperatures, provide warmth by using\nblankets, jackets, or other insulating materials. Preventing hypothermia is crucial.",
    "text": "唇や指先が青紫色になっていないか見ます。見られた場合は、より重い酸素不足のことがあり、すぐに医療の対応が必要です。\n・体を温める：意識の変化が寒さによるものであれば、毛布、上着、その他の断熱材を使って温めます。低体温症を防ぐことがとても重要です。",
    "reviewed": false
   },
   "466b83a5b8a5adbf": {
+   "source": "• Monitor for Improvement or Worsening: Keep a close watch on the Service members’ condition. If\nthere is no improvement or if the symptoms worsen, seek medical assistance as soon as possible.\n• Administer Oxygen (if available): If you have access to supplemental oxygen and the person is\nexperiencing severe symptoms, administering oxygen can be beneficial. However, this may require\nspecific training and equipment.",
    "text": "・改善や悪化を観察する：本人の状態を注意深く見守ります。改善しない場合や症状が悪化した場合は、できるだけ早く医療の助けを求めます。\n・酸素を与える（ある場合）：補助用の酸素があり、本人に重い症状がある場合は、酸素を与えることが有効なことがあります。ただし、これには特定の訓練と器具が必要なことがあります。",
    "reviewed": false
   },
   "ee4219b4f04213bc": {
+   "source": "• Evacuation if Necessary: In severe cases or if the person's condition doesn't improve, consider\nevacuating them to a medical facility at a lower altitude. This may involve calling for professional\nrescue or using available means of transportation.\n17-51. First aid of an altered mental status is a temporary measure, and medical assistance should be sought",
    "text": "・必要であれば搬送する：重い場合や状態が改善しない場合は、より低い場所にある医療機関への搬送を検討します。これには、専門の救助を呼ぶことや、利用できる交通手段を使うことが含まれることがあります。\n意識の変化に対する応急手当は一時的な処置であり、重い症状や悪化していく症状がある場合は医療の助けを求める必要があります。",
    "reviewed": false
   },
   "c3dfc80cf6138e8e": {
+   "source": "for any significant or worsening symptoms. If in doubt or if the altered mental status persists, it is essential\nto prioritize the Service member's safety and seek timely medical help.",
    "text": "迷う場合や意識の変化が続く場合は、本人の安全を最優先し、遅れずに医療の助けを求めることが欠かせません。",
    "reviewed": false
   },
   "63d6058ab830680d": {
+   "source": "17-52. High-Altitude Pulmonary Edema is a serious condition that can occur at higher elevations, typically\nabove 2,500 meters (8,200 feet). It involves the accumulation of fluid fluids in the lungs and can be life-\nthreatening. Some general first aid measures for Service members experiencing HAPE in mountainous terrain\ninclude:",
    "text": "高地肺水腫（HAPE）は、高い場所、通常は標高2,500メートル（8,200フィート）を超える場所で起こることがある重い状態です。肺に水分がたまり、命にかかわることがあります。山岳地帯で高地肺水腫になった人への一般的な応急手当には、次のようなものがあります。",
    "reviewed": false
   },
   "8633150a47542226": {
+   "source": "• Immediate Descent. The most critical first aid measure for HAPE is an immediate descent to lower\naltitudes. Every effort should be made to get the affected individual to a lower elevation as quickly\nas possible, as this is the most effective way to alleviate symptoms.\n• Rest and Oxygen. Ensure the person rests and provide supplemental oxygen if available. Oxygen",
    "text": "・すぐに下山する：高地肺水腫で最も重要な応急手当は、すぐに低い場所へ下りることです。症状を和らげる最も効果的な方法であるため、本人をできるだけ早く低い場所へ移すよう、あらゆる努力をします。\n・休息と酸素：本人を休ませ、酸素があれば補助的に与えます。",
    "reviewed": false
   },
   "c72e6367ba93aef8": {
+   "source": "therapy can help improve oxygen levels in the blood and alleviate breathing difficulties.\n• Keep Warm. Maintain the person's warmth by using blankets and insulating layers. Cold\ntemperatures can exacerbate symptoms, so preventing hypothermia is important.\n• Stay Hydrated. Encourage the individual to drink fluids to stay hydrated. Dehydration can worsen\nthe condition, so maintaining adequate fluid intake is essential.",
    "text": "酸素療法は、血液中の酸素濃度を高め、呼吸の苦しさを和らげるのに役立つことがあります。\n・体を温める：毛布や断熱性のある衣類を重ねて、体を温かく保ちます。寒さは症状を悪化させることがあるため、低体温症を防ぐことが大切です。\n・水分をとる：本人に水分をとるよう促します。脱水は状態を悪化させることがあるため、十分な水分をとることが欠かせません。",
    "reviewed": false
   },
   "3872dd908608bb7f": {
+   "source": "• Monitor Breathing. Keep a close watch on the person's breathing. If there are signs of severe\nrespiratory distress, such as blue lips or fingertips, it may indicate a critical situation, and\nprofessional medical help should be sought immediately.\n• Administer Medications (if available). In some cases, medications such as nifedipine or sildenafil",
    "text": "・呼吸を観察する：本人の呼吸を注意深く見守ります。唇や指先が青紫色になるなど、重い呼吸困難の兆候がある場合は、危険な状態のことがあるため、すぐに専門の医療の助けを求めます。\n・薬を使う（ある場合）：場合によっては、ニフェジピンやシルデナフィルなどの薬が、高地肺水腫の症状を抑えるために使われることがあります。",
    "reviewed": false
   },
   "2ca7ba9d538a118d": {
+   "source": "may be used to help manage HAPE symptoms. The medical professional should determine the\navailability and use of these medications.\n• Evacuation. Seek evacuation to the MTF at a lower altitude as soon as possible. Evacuation may\ninvolve contacting medical personnel and requesting evacuation to a lower elevation where more\ndefinitive medical care can be provided.",
    "text": "これらの薬が使えるかどうか、また使うかどうかは、医療従事者が判断する必要があります。\n・搬送する：できるだけ早く、より低い場所にある医療機関への搬送を求めます。搬送には、医療従事者に連絡し、より確実な治療を受けられる低い場所への搬送を依頼することが含まれることがあります。",
    "reviewed": false
   },
   "92f7866b7f080f25": {
+   "source": "17-53. HAPE is a medical emergency, and prompt action is crucial. While these first aid measures can\nprovide initial assistance, professional medical help should be sought without delay. If you suspect someone\nhas HAPE, it's essential to prioritize their safety and act swiftly to get them to a lower altitude and seek\nimmediate medical attention.",
    "text": "高地肺水腫は緊急事態であり、速やかな行動がとても重要です。これらの応急手当は最初の助けにはなりますが、専門の医療の助けを遅れずに求める必要があります。高地肺水腫が疑われる場合は、本人の安全を最優先し、すばやく行動して低い場所へ移し、すぐに医師の診察を受けさせることが欠かせません。",
    "reviewed": false
   },
   "ad6095da6086a847": {
+   "source": "17-54. High-Altitude Cerebral Edema is a severe and life-threatening condition that can occur at high\nelevations, typically above 3,000 meters (9,800 feet). It involves swelling of the brain and can lead to\nneurological symptoms. Some general first aid measures for Service members experiencing HACE in\nmountainous terrain include:",
    "text": "高地脳浮腫（HACE）は、高い場所、通常は標高3,000メートル（9,800フィート）を超える場所で起こることがある、重く命にかかわる状態です。脳がむくみ（腫れ）、神経の症状が出ることがあります。山岳地帯で高地脳浮腫になった人への一般的な応急手当には、次のようなものがあります。",
    "reviewed": false
   },
   "c526199343d5c05b": {
+   "source": "• Immediate Descent. The most critical first aid measure for HACE is an immediate and rapid descent\nto lower altitudes. Descending to a lower elevation is essential to reduce the impact of high altitude\non the brain.\n• Rest and Oxygen. Ensure the affected person rests and provide supplemental oxygen if available.\nOxygen therapy can help improve oxygen levels in the blood and alleviate neurological symptoms.",
    "text": "・すぐに下山する：高地脳浮腫で最も重要な応急手当は、すぐに、すばやく低い場所へ下りることです。高地が脳に与える影響を減らすには、低い場所へ下りることが欠かせません。\n・休息と酸素：本人を休ませ、酸素があれば補助的に与えます。酸素療法は、血液中の酸素濃度を高め、神経の症状を和らげるのに役立つことがあります。",
    "reviewed": false
   },
   "48fb30e7fbc9368e": {
+   "source": "• Keep Warm. Maintain the person's warmth using blankets and insulating layers. Cold temperatures\ncan worsen symptoms, so preventing hypothermia is important.\n• Hydration. Encourage the individual to drink fluids to stay hydrated. Dehydration can exacerbate\nthe condition, so maintaining adequate fluid intake is crucial.\n• Administer Medications (if available). In some cases, medications such as dexamethasone may be",
    "text": "・体を温める：毛布や断熱性のある衣類を重ねて、体を温かく保ちます。寒さは症状を悪化させることがあるため、低体温症を防ぐことが大切です。\n・水分補給：本人に水分をとるよう促します。脱水は状態を悪化させることがあるため、十分な水分をとることがとても重要です。\n・薬を使う（ある場合）：場合によっては、デキサメタゾンなどの薬が、高地脳浮腫の症状を抑えるために使われることがあります。",
    "reviewed": false
   },
   "4373c0eaf080b970": {
+   "source": "used to help manage HACE symptoms. Medical professionals should determine the use of\nmedications, and access to such medications may be limited in remote mountainous areas.\n• Monitor Neurological Symptoms. Keep a close watch on the person's neurological symptoms. Signs\nof severe neurological impairment, such as confusion, loss of coordination, or changes in\nconsciousness, require urgent medical attention.",
    "text": "薬を使うかどうかは医療従事者が判断する必要があり、人里離れた山岳地帯ではこうした薬が手に入りにくいことがあります。\n・神経の症状を観察する：本人の神経の症状を注意深く見守ります。混乱、体の動きをうまく調整できない、意識の変化など、重い神経障害の兆候がある場合は、緊急の医療対応が必要です。",
    "reviewed": false
   },
   "99f1e0e1f9dfb293": {
+   "source": "• Evacuation. Seek evacuation to an MTF at a lower altitude as quickly as possible. HACE is a\nmedical emergency, and professional medical help should be sought without delay.\n• Reassure and calm. Keep the affected individual calm and reassure them. Stress and anxiety can\nexacerbate symptoms, so a supportive and calming environment is beneficial.",
    "text": "・搬送する：できるだけ早く、より低い場所にある医療機関への搬送を求めます。高地脳浮腫は緊急事態であり、専門の医療の助けを遅れずに求める必要があります。\n・安心させ、落ち着かせる：本人を落ち着かせ、安心させる言葉をかけます。ストレスや不安は症状を悪化させることがあるため、支えとなる落ち着いた環境が役立ちます。",
    "reviewed": false
   },
   "dfbdc9c4f389568c": {
+   "source": "17-55. HACE is a critical condition, and time is of the essence. While these first aid measures can provide\ninitial assistance, medical assistance should be sought urgently. If HACE is suspected in a Service member,\nprioritize their safety by facilitating a rapid descent and seeking immediate medical attention.\nThis page intentionally left blank.\nSickle Cell Trait",
    "text": "高地脳浮腫は危険な状態であり、一刻を争います。これらの応急手当は最初の助けにはなりますが、急いで医療の助けを求める必要があります。高地脳浮腫が疑われる場合は、本人の安全を最優先し、すばやく下山させ、すぐに医師の診察を受けさせます。",
    "reviewed": false
   },
   "4215e47b10258d42": {
+   "source": "4-15. Trench foot and immersion foot are injuries caused by prolonged exposure of skin in cold or wet\nconditions. In extreme cases, the skin dies, and amputation of the foot or leg may be necessary. The following\nhelps prevent trench foot or immersion foot:\n• Change into dry socks at least twice daily.\n• Dry and massage feet regularly with foot powder.\n• Wear VB boots.\n• Weari dry leather boots whenever possible, if worn.",
    "text": "塹壕足・浸水足は、寒い、またはぬれた状態に皮膚が長時間さらされることで起こるけがです。極端な場合には皮膚が死に、足や脚の切断が必要になることがあります。塹壕足・浸水足を防ぐには、次のことが役立ちます。\n・少なくとも1日2回、乾いた靴下にはき替えます。\n・足用パウダーを使って、足を定期的に乾かし、マッサージします。\n・VB（ベーパーバリア）ブーツをはきます。\n・革のブーツをはく場合は、できるだけ乾いたものをはきます。",
    "reviewed": false
   },
   "0088ec3337875d89": {
+   "source": "4-16. In the early stages of trench or immersion foot, feet and toes are cold, numb, and difficult\nto move. Walking becomes challenging, feet swell and become painful, and skin appears wrinkled\n(like a prune). In the early stages, keep feet dry, clean, and exposed to the air. In later stages, evacuate\nthe victim to a medical facility.",
    "text": "塹壕足・浸水足の初期には、足や足の指が冷たく、しびれ、動かしにくくなります。歩くのが難しくなり、足が腫れて痛むようになり、皮膚がしわしわに見えます（干しプラムのように）。初期には、足を乾いた清潔な状態に保ち、空気にさらしておきます。進んだ段階では、医療機関へ搬送します。",
    "reviewed": false
   },
   "e026a85197e4083f": {
+   "source": "4-21. Snow blindness is caused by the ultraviolet and ultra blue rays of the sun reflecting from a\nsnow-covered surface into the eyes. This condition occurs even in cloudy conditions. Oddly, it is more likely\nto occur in hazy, cloudy conditions than in sunny conditions.\n4-22. Sun blindness prevention is easy: wear the issued sunglasses. (See figure 4-1 on page 50.) If sunglasses",
    "text": "雪目（雪眼炎）は、雪に覆われた地面に反射した太陽の紫外線と青い光が目に入ることで起こります。曇りの日でも起こります。意外なことに、晴れた日よりも、かすんだ曇りの日のほうが起こりやすいです。\n雪目の予防は簡単です。サングラスをかけます。",
    "reviewed": false
   },
   "98bad7fc75fe28a4": {
+   "source": "are not available, make glasses with slits from cardboard, thin wood, tree bark, or similar materials. Common\nsymptoms of snow blindness include—\n• A scratchy, sandy feeling under the eyelids.\nChapter 4\n50 TC 21-3\n• Red and watering eyes.\n• Headache.\nFigure 4-1. Snow blindness prevention\n4-23. Adhere to the following for proper treatment:\n• Blindfold the Soldier using a dark cloth.\n• Reassure the patient.",
    "text": "サングラスがない場合は、段ボール、薄い木の板、木の皮などの材料で、細いすき間（スリット）のあるめがねを作ります。雪目のよくある症状は次のとおりです。\n・まぶたの裏がざらざらする、砂が入ったような感じ\n・目が赤くなり、涙が出る\n・頭痛\n正しい手当てとして、次のことを守ります。\n・暗い色の布で目を覆います。\n・本人を安心させます。",
    "reviewed": false
   },
   "4795c9c2d01bd21a": {
+   "source": "• Evacuate the casualty to a medical treatment facility.",
    "text": "・医療機関へ搬送します。",
    "reviewed": false
   },
   "9a4bc05cf930eef1": {
+   "source": "4-34. Hypothermia occurs when the core body temperature falls below 95ºF (35ºC). Hypothermia\nis characterized as mild, moderate, or severe. Mild hypothermia occurs when the core body temperature is\nbetween 90° (32.2ºC) and 95ºF (35ºC). Moderate hypothermia occurs at a core body temperature\nof 80° to 89ºF (26.6° to 31.6ºC). Severe hypothermia exists when the core body temperature falls",
    "text": "低体温症は、体の深部体温が95°F（35°C）を下回ったときに起こります。低体温症は軽度、中等度、重度に分けられます。軽度の低体温症は、深部体温が90°（32.2°C）から95°F（35°C）の間のときに起こります。中等度の低体温症は、深部体温が80°～89°F（26.6°～31.6°C）のときに起こります。重度の低体温症は、深部体温が80°F（26.6°C）を下回ったときです。",
-   "reviewed": false
+   "reviewed": false,
+   "accept": [
+    {
+     "check": "numbers",
+     "item": "26.6",
+     "reason": "The source cuts the sentence on severe hypothermia (below 80°F, 26.6°C) across two passages; the translation finishes it here."
+    },
+    {
+     "check": "numbers",
+     "item": "80",
+     "reason": "Same sentence as 26.6, finished here."
+    }
+   ]
   },
   "12795d5e6a08760d": {
+   "source": "below 80ºF (26.6°C). Rectal temperature measurement is the only way to determine an accurate core body\ntemperature. As it is unlikely this method can safely be used in the field, obvious signs and symptoms\nare used to make a diagnosis. All levels of hypothermia are potentially life-threatening health emergencies\nrequiring immediate care in a medical facility.\nLevels of Hypothermia",
    "text": "正確な深部体温を知る方法は、直腸での体温測定だけです。野外でこの方法を安全に使える可能性は低いため、はっきりわかる兆候と症状をもとに判断します。低体温症はどの段階でも命にかかわるおそれのある緊急事態であり、医療機関ですぐに治療を受ける必要があります。\n低体温症の段階",
-   "reviewed": false
+   "reviewed": false,
+   "accept": [
+    {
+     "check": "numbers",
+     "item": "26.6",
+     "reason": "The start of this passage (\"below 80ºF (26.6°C)\") ends a sentence translated in 9a4bc05cf930eef1."
+    },
+    {
+     "check": "numbers",
+     "item": "80",
+     "reason": "Same as 26.6."
+    }
+   ]
   },
   "b62ec610353c88c5": {
+   "source": "4-35. As the core body temperature begins to fall, shivering becomes the most noticeable symptom. Shivering\nalone is not a sign of hypothermia, but it does indicate that the body is having a problem with the cold. Mild\nhypothermia symptoms include—\n• Shivering.\n• Lack of sound judgment; confusion, apathy, and mild stupidity.\n• Pale, cool skin.\n• Increased heart and respiratory rates.",
    "text": "深部体温が下がり始めると、最も目立つ症状はふるえです。ふるえだけでは低体温症の兆候とはいえませんが、体が寒さに対処しきれていないことを示しています。軽度の低体温症の症状は次のとおりです。\n・ふるえ\n・正しい判断ができない：混乱、無関心、軽い頭の鈍り\n・皮膚が青白く冷たい\n・心拍数と呼吸数の増加",
    "reviewed": false
   },
   "125bd31ca5fa5b02": {
+   "source": "• The umbles: fumbles, stumbles, tumbles, grumbles, mumbles:\n Fine motor skills decrease (fumbling with tasks that require manual dexterity such as\nmanipulating a rifle).\n Next, the gross motor skills start slipping (stumbling when just walking).\n Finally, intellectual and personality changes occur, including grumbling and incoherent\nmumbling.\n4-36. Moderate hypothermia symptoms include—\n• Uncontrollable shivering.",
    "text": "・「アンブルズ（umbles）」：手元がおぼつかない（fumbles）、つまずく（stumbles）、転ぶ（tumbles）、不平を言う（grumbles）、もごもご話す（mumbles）\n　・まず、細かい動きができなくなります（道具の操作など、手先の器用さが必要な作業でもたつく）。\n　・次に、大きな動きがうまくいかなくなります（ただ歩いているだけでつまずく）。\n　・最後に、知的な面や性格に変化が起こり、不平を言ったり、意味の通らないことをもごもごつぶやいたりします。\n中等度の低体温症の症状は次のとおりです。\n・止められないふるえ",
    "reviewed": false
   },
   "ff8573108e310314": {
+   "source": "• Worsening the umbles.\n• Increased confusion.\n• Increased heart and respiratory rates.\n• Cold and pale skin.\n4-37. Severe hypothermia symptoms include—\n• Cessation of shivering.\n• Muscle rigidity.\n• Stupor progressing to unconsciousness.\n• Slow or nonpalpable pulse and respiration.\n• Cold, bluish skin.\nNotes. Perform first aid for mild and moderate hypothermia.",
    "text": "・「アンブルズ」の悪化\n・混乱の増加\n・心拍数と呼吸数の増加\n・皮膚が冷たく青白い\n重度の低体温症の症状は次のとおりです。\n・ふるえが止まる\n・筋肉のこわばり\n・昏迷から意識不明へ進む\n・脈と呼吸が遅い、または触れてもわからない\n・皮膚が冷たく青紫色\n注：軽度と中等度の低体温症には応急手当を行います。",
    "reviewed": false
   },
   "a31aae59efe4ead2": {
+   "source": "All cases of hypothermia are evacuated to a medical facility for treatment.\nTreating Hypothermia Victims Prior to Evacuation\n4-38. If available, use the Hypothermia Prevention & Management Kit (NSN 6515-01-532-8056). If not, a\nhypothermia wrap can be made with commonly available items. Follow these procedures:\n• Change the environment the casualty is in from cold and wet to warm and dry.",
    "text": "低体温症はすべて、治療のため医療機関へ搬送します。\n搬送前の低体温症の人の手当て\n低体温症予防・管理キットがあれば使います。ない場合は、身近にあるもので保温用の包み（低体温症ラップ）を作ることができます。次の手順に従います。\n・本人のいる環境を、寒くぬれた状態から、暖かく乾いた状態に変えます。",
-   "reviewed": false
+   "reviewed": false,
+   "accept": [
+    {
+     "check": "numbers",
+     "item": "1",
+     "reason": "The US Army stock number NSN 6515-01-532-8056 of the kit is left out: it does not help a user in Japan."
+    },
+    {
+     "check": "numbers",
+     "item": "532",
+     "reason": "The US Army stock number NSN 6515-01-532-8056 of the kit is left out: it does not help a user in Japan."
+    },
+    {
+     "check": "numbers",
+     "item": "6515",
+     "reason": "The US Army stock number NSN 6515-01-532-8056 of the kit is left out: it does not help a user in Japan."
+    },
+    {
+     "check": "numbers",
+     "item": "8056",
+     "reason": "The US Army stock number NSN 6515-01-532-8056 of the kit is left out: it does not help a user in Japan."
+    }
+   ]
   },
   "003a3eec257cfe4e": {
+   "source": "• Replace damp clothing with dry clothing.\n• Add a windproof or waterproof layer and/or place the Soldier in a shelter.\n• Add extra insulation under and around the casualty.\n• Provide food and warm liquids.\n• Exercise mildly hypothermic patients.\n• In the following order, package a moderately hypothermic casualty in a hypothermia wrap:\n Place a poncho flat on the ground.\n Lay an insulating pad on top of the poncho.",
    "text": "・湿った衣服を乾いた衣服に替えます。\n・防風または防水の層を加える、および／または本人を避難場所（シェルター）に入れます。\n・本人の下と周りに、断熱材を追加します。\n・食べ物と温かい飲み物を与えます。\n・軽度の低体温症の人には、体を動かしてもらいます。\n・中等度の低体温症の人は、次の順番で保温用の包みにくるみます。\n　・ポンチョを地面に平らに広げます。\n　・ポンチョの上に断熱マットを敷きます。",
    "reviewed": false
   },
   "4d3cdc64c7080f5d": {
+   "source": " Place a closed sleeping bag on top of the insulating pad.\n Add an open sleeping bag on top of the first one.\n Put the patient inside with a hot water bottle to the chest area (do not place it directly against\nthe skin) and zip the sleeping bag closed.\n Place a third, open sleeping bag on top of the second.\n Fold the poncho around the patient (like a burrito).\n• Perform first aid for severe hypothermia:",
    "text": "　・断熱マットの上に、閉じた寝袋を置きます。\n　・1つ目の寝袋の上に、開いた寝袋を重ねます。\n　・本人を中に入れ、胸のあたりに湯たんぽを置き（皮膚に直接当てないこと）、寝袋のファスナーを閉めます。\n　・2つ目の寝袋の上に、3つ目の開いた寝袋を重ねます。\n　・ポンチョで本人を包みます（ブリトーのように）。\n・重度の低体温症には、次の応急手当を行います。",
    "reviewed": false
   },
   "29454c4c1cabe574": {
+   "source": " Handle with care because rough treatment can cause the casualty’s heart to stop.\n Contact medical personnel immediately.\n Use supplemental oxygen (if available) or begin rescue breathing if breathing has stopped\nor is barely detectable.\n Breathe for the patient for 3 to15 minutes before moving or beginning evacuation.\n Change the environment the Soldier is in from cold and wet to warm and dry.",
    "text": "　・乱暴に扱うと心臓が止まることがあるため、慎重に扱います。\n　・すぐに医療従事者に連絡します。\n　・呼吸が止まっている、またはほとんど感じられない場合は、補助用の酸素を使う（ある場合）か、人工呼吸を始めます。\n　・動かしたり搬送を始めたりする前に、3～15分間人工呼吸を行います。\n　・本人のいる環境を、寒くぬれた状態から、暖かく乾いた状態に変えます。",
    "reviewed": false
   },
   "425d03a4bc8dc319": {
+   "source": " Carefully remove damp and wet clothing.\n Package in a hypothermia wrap.\n Evacuate using the gentlest means available.",
    "text": "　・湿った衣服やぬれた衣服を慎重に脱がせます。\n　・保温用の包みにくるみます。\n　・利用できる中で最も穏やかな方法で搬送します。",
    "reviewed": false
   },
   "e6603465760f96a1": {
+   "source": "of frostbite injury depends upon the wind-chill factor, length of exposure time, and proper protection. Soldiers\nwith a history of cold injury are more prone to frostbite. There may be a tingling, stinging, aching sensation,\nor a cramping pain. The skin first turns red and then becomes pale gray or waxy white. Frostbite classification\nranges from superficial to deep.\nChapter 4\n54 TC 21-3\nPreventing Frostbite",
    "text": "…凍傷によるけがは、風による冷え（風速冷却、ウインドチル）、寒さにさらされた時間の長さ、適切な防護によって左右されます。以前に寒さによるけがをしたことがある人は、凍傷になりやすくなります。ちくちくする、ひりひりする、うずくような感覚や、けいれんするような痛みがあることがあります。皮膚は最初は赤くなり、その後、淡い灰色、またはろうのような白色になります。凍傷は、浅いもの（表在性）から深いもの（深部）まで分類されます。\n凍傷の予防",
    "reviewed": false
   },
   "1597a263c516d2a2": {
+   "source": "4-40. When each Soldier takes care of themselves, it is possible to prevent frostbite. It seldom occurs to\npeople maintaining proper body heat and is commonly associated with overall body heat loss. This is the\nresult of poor equipment, reduced food intake, dehydration (water loss), overtiring, injury, or a combination",
    "text": "一人ひとりが自分の体に気を配れば、凍傷を防ぐことができます。適切な体温を保っている人にはめったに起こらず、多くの場合、全身の体温低下と関係しています。これは、不十分な装備、食事量の減少、脱水（水分の喪失）、疲れすぎ、けが、またはこれらの要因が重なることによって起こります。",
    "reviewed": false
   },
   "b7df1977c1734c0d": {
+   "source": "of factors. Feet, hands, ears, and exposed areas of the face are the most easily hurt by frostbite and need\nconstant care. The following rules help prevent frostbite:\n• Do not wear tight boots and socks.\n• Use the buddy system to check exposed areas, especially when the wind is blowing.\n• Carry extra socks and mitten liners.\n• Do not stay still for long periods of time.\n• Use caution when cold and wind are combined.",
    "text": "足、手、耳、顔の露出した部分は、最も凍傷になりやすく、常に気を配る必要があります。凍傷を防ぐには、次のことが役立ちます。\n・きついブーツや靴下をはいてはいけません。\n・二人一組（バディ）でお互いの露出した部分を確認します。特に風が吹いているときに行います。\n・予備の靴下と、ミトンの内側に着ける手袋（インナー）を持ち歩きます。\n・長い時間じっとしていてはいけません。\n・寒さと風が重なるときは注意します。",
-   "reviewed": false
+   "reviewed": false,
+   "accept": [
+    {
+     "check": "numbers",
+     "item": "2",
+     "reason": "二人一組 is the usual Japanese for \"buddy system\" (pairs of two)."
+    }
+   ]
   },
   "df0b8cd2ff9c3e24": {
+   "source": "• Check feet during halts.\n• Consume good food and hot drinks as often as possible.\nLevels of Frostbite\n4-41. Superficial frostbite appears as white, waxy, and pale in lighter skin types: red and pale in darker skin\ntypes. There is numbness with the skin moving over the underlying tissue. When dented, the skin rebounds.",
    "text": "・休憩で止まったときに足を確認します。\n・できるだけ頻繁に、栄養のある食事と温かい飲み物をとります。\n凍傷の段階\n浅い凍傷（表在性凍傷）は、明るい肌の人では白く、ろうのようで、青白く見えます。暗い肌の人では赤く、青白く見えます。しびれがあり、皮膚はその下の組織の上を動きます。押してへこませると、皮膚は元に戻ります。",
    "reviewed": false
   },
   "c416625ecdbfdaec": {
+   "source": "4-42. Deep frostbite skin discoloration presents in much the same manner as superficial frostbite. There is no\ntactile sensation at all. The Soldier might describe it as feeling wooden. Skin does not move over the\nunderlying tissue and when dented, does not rebound. Skin can also feel hard to the touch. After rewarming,\na layer of dark-colored skin may form over the affected area.\nRecommended Treatment for Frostbite",
    "text": "深い凍傷（深部凍傷）の皮膚の変色は、浅い凍傷とほぼ同じように見えます。触った感覚がまったくありません。本人は「木のような感じ」と表現することがあります。皮膚はその下の組織の上を動かず、押してへこませても元に戻りません。皮膚が触ると硬く感じることもあります。温め直した後、患部に黒っぽい色の皮膚の層ができることがあります。\n凍傷の手当て（推奨される方法）",
    "reviewed": false
   },
   "dfeed4f5e1f1b10e": {
+   "source": "4-43. If the exposure time in the cold is short, the frostbite is probably superficial. If the exposure time is\nlong, the frostbite is probably deep. The following is a recommended treatment for frostbite:\n• Move the casualty to a warm and sheltered area.\n• Do not rub the frostbitten area with snow or apply cold water soaks.\n• Do not rewarm the affected area by massaging or exposing it to open fire.",
    "text": "寒さにさらされた時間が短ければ、凍傷はおそらく浅いものです。さらされた時間が長ければ、凍傷はおそらく深いものです。凍傷にすすめられる手当ては次のとおりです。\n・本人を、暖かく風雨をしのげる場所へ移します。\n・凍傷の部分を雪でこすったり、冷たい水に浸したりしてはいけません。\n・患部をマッサージしたり、直火に当てたりして温めてはいけません。",
    "reviewed": false
   },
   "09c58281bb5be705": {
+   "source": "• Rewarm the face, nose, or ears by placing hands on the frozen area.\n• Rewarm frostbitten hands by placing them under clothing and against the body.\n• Close the clothing to prevent further loss of body heat.\n• Rewarm feet by removing boots and socks, then:\n Place bare feet under clothing and against the abdomen of a buddy.\n Once the feet are warmed, put on dry socks and boots, if available.",
    "text": "・顔、鼻、耳は、凍った部分に手を当てて温めます。\n・凍傷になった手は、衣服の下に入れて体に当てて温めます。\n・体温がさらに失われないよう、衣服を閉じます。\n・足は、ブーツと靴下を脱がせてから、次のように温めます。\n　・素足を仲間の衣服の下に入れ、おなかに当てます。\n　・足が温まったら、あれば乾いた靴下とブーツをはきます。",
    "reviewed": false
   },
   "a3aea831001bf470": {
+   "source": " If the victim must wear wet socks and boots, exercise the feet by wiggling the toes.\n• Loosen tight clothing and remove jewelry.\n• Improve circulation by exercising.\n• Do not allow the victim to use alcohol or tobacco:\n Alcohol increases the loss of body heat.\n Tobacco causes blood vessels to narrow in the arms and legs.\n• Reassure the victim.\n• Protect frozen tissue from further cold or trauma.",
    "text": "　・ぬれた靴下とブーツをはかなければならない場合は、足の指を小刻みに動かして足を動かします。\n・きつい衣服をゆるめ、装身具（アクセサリー）を外します。\n・体を動かして血行をよくします。\n・本人にアルコールやたばこを使わせてはいけません。\n　・アルコールは体温が失われるのを増やします。\n　・たばこは腕や脚の血管を細くします。\n・本人を安心させます。\n・凍った組織を、さらなる寒さやけがから守ります。",
    "reviewed": false
   },
   "eda6f0913a51ba43": {
+   "source": "• Evacuate the casualty to the nearest medical treatment facility.\n4-44. Deep frostbite is most common and harmful to the feet and less common to the hands and ears. When\ndeep frostbite does occur, the Soldier should be moved to a sheltered area and evacuated to a medical\ntreatment facility immediately. If possible, do not allow the victim to walk if the feet are frozen, and avoid",
    "text": "・最寄りの医療機関へ搬送します。\n深い凍傷は足に最も多く、害も最も大きくなります。手や耳ではそれほど多くありません。深い凍傷が起きた場合は、本人を風雨をしのげる場所へ移し、すぐに医療機関へ搬送します。可能であれば、足が凍っている場合は本人を歩かせないようにし、",
    "reviewed": false
   },
   "697d5b4329659e43": {
+   "source": "treating or thawing the affected area. Thawing deep frostbite in the field increases pain and invites infection,\ngreater damage, and possibly gangrene. Do not try to thaw deep frostbite; let the physician do it.",
    "text": "患部の手当てや解凍は避けます。野外で深い凍傷を解かすと、痛みが増し、感染、さらにひどい損傷、場合によっては壊疽（えそ）を招きます。深い凍傷を解かそうとしてはいけません。医師に任せます。",
    "reviewed": false
   },
   "c13e14ab0d76acd9": {
+   "source": "4-45. Dehydration can cause serious physical problems and make Soldiers more susceptible to other\ndifficulties such as frostbite and hypothermia. The following are suggestions to prevent dehydration:\n• The minimum daily liquid requirement for Soldiers performing demanding physical work in the\ncold is approximately 3.75 quarts (3.5 liters) per day.",
    "text": "脱水は深刻な体の問題を引き起こすことがあり、凍傷や低体温症など、ほかの問題にもかかりやすくなります。脱水を防ぐためのポイントは次のとおりです。\n・寒い中で激しい肉体労働をする人が1日に必要とする水分の最低量は、1日あたり約3.75クオート（3.5リットル）です。",
-   "reviewed": false
+   "reviewed": false,
+   "accept": [
+    {
+     "check": "numbers",
+     "item": "1",
+     "reason": "\"daily\" is translated as 1日に (per day); the original says \"daily\" and \"per day\" too."
+    }
+   ]
   },
   "77c69045c3d27a6c": {
+   "source": "• By the time a Soldier feels thirsty, they are already dehydrated and should drink water whenever\npossible, particularly during halts.\n• Ensure that canteens are full before any type of movement and fill with hot water, if possible.\n• During periods when water is scarce, do not eat snow as it can lower body temperature and the air\nit contains can cause stomach aches:",
    "text": "・のどが渇いたと感じたときには、すでに脱水になっています。できるときはいつでも、特に休憩中に、水を飲みます。\n・どのような移動の前にも水筒が満タンであることを確かめ、できればお湯を入れます。\n・水が少ないときでも、雪を食べてはいけません。体温が下がることがあり、雪に含まれる空気が腹痛の原因になることがあります。",
    "reviewed": false
   },
   "7d39643ebd6d879c": {
+   "source": " Diuretics such as coffee should be avoided because it passes through the body very quickly.\n Water should be the first choice.\n• Check urine in the snow for dark yellow or brown spots that indicate dehydration.\n4-46. Common symptoms of dehydration are—\n• Red skin indicating a severe condition needing immediate medical evacuation to the nearest medical\ntreatment facility.\n• Lack of appetite.",
    "text": "　・コーヒーなどの利尿作用のある飲み物は、体からとても早く出ていくため避けます。\n　・水を第一に選びます。\n・雪の上にした尿を確認し、脱水を示す濃い黄色や茶色の跡がないか見ます。\n脱水のよくある症状は次のとおりです。\n・皮膚が赤い：重い状態を示しており、最寄りの医療機関へすぐに搬送する必要があります。\n・食欲がない",
    "reviewed": false
   },
   "6c39cf0033983b61": {
+   "source": "• The mouth, tongue, and throat are dry.\n• Stomach cramps and/or vomiting.\n• Headaches.\n4-47. Recommended treatment for dehydration is—\n• Keeping the victim warm.\n• Giving plenty of liquids.\n• Making the Soldier rest.",
    "text": "・口、舌、のどが乾いている\n・胃のけいれん、および／または嘔吐\n・頭痛\n脱水にすすめられる手当ては次のとおりです。\n・本人を温かく保つ。\n・水分をたくさん与える。\n・本人を休ませる。",
    "reviewed": false
   },
   "7c793abed504b8ac": {
+   "source": "4-48. Whenever a squad stove fire, fuel-fired heater, or internal combustion engine is used indoors, there is\ndanger of carbon monoxide poisoning. Fresh air in living and working quarters is vital. Carbon monoxide is\na deadly, odorless gas that displaces oxygen in the blood stream. To prevent carbon monoxide poisoning—\n• Ensure that stoves and lanterns are functioning properly.",
    "text": "屋内で野外用ストーブ、燃料式ヒーター、エンジン（内燃機関）を使うときは、いつでも一酸化炭素中毒の危険があります。生活や作業をする場所に新鮮な空気を入れることが欠かせません。一酸化炭素は、においのない命にかかわるガスで、血液中の酸素を押しのけます。一酸化炭素中毒を防ぐには、次のことを行います。\n・ストーブやランタンが正しく動いていることを確かめます。",
    "reviewed": false
   },
   "c8316f691bf2a681": {
+   "source": "• Do not let Soldiers warm themselves by engine exhaust.\n• Always crack the windows in vehicles when a heater is in use, and do not allow anyone to sleep in\na running vehicle.\n• Use a tent guard or shut the stove off when sleeping.\n4-49. If a Soldier is found unconscious in an enclosed shelter, carbon monoxide poisoning should\nbe suspected. Common symptoms of carbon monoxide poisoning are—",
    "text": "・エンジンの排気で体を温めさせてはいけません。\n・車内でヒーターを使っているときは、いつも窓を少し開けます。また、エンジンがかかっている車の中で誰も寝かせてはいけません。\n・寝るときは、テントの見張り（火の番）を置くか、ストーブを消します。\n閉め切ったシェルターの中で意識のない人が見つかった場合は、一酸化炭素中毒を疑う必要があります。一酸化炭素中毒のよくある症状は次のとおりです。",
    "reviewed": false
   },
   "69cc72151281969e": {
+   "source": "• Headache, dizziness, confusion, yawning, weariness, nausea, and ringing in the ears.\n• Bright red color on lips and skin.\n• Drowsiness and sudden collapse.\n4-50. Adhere to the following for proper treatment of carbon monoxide poisoning:\n• Move the Soldier to open air.\n• Keep the victim still and warm.\n• If the Soldier is not breathing, administer mouth-to-mouth resuscitation.",
    "text": "・頭痛、めまい、混乱、あくび、だるさ、吐き気、耳鳴り\n・唇と皮膚が鮮やかな赤色になる\n・眠気、突然倒れる\n一酸化炭素中毒の正しい手当てとして、次のことを守ります。\n・本人を屋外の空気のある場所へ移します。\n・本人を動かさず、温かく保ちます。\n・息をしていない場合は、口対口の人工呼吸を行います。",
    "reviewed": false
   },
   "c35d040e97b5311d": {
+   "source": "• Administer cardiopulmonary resuscitation, if necessary.\n• Immediately evacuate the Soldier to the nearest medical treatment facility.\n• Immediately administer oxygen, if available.\nThis page intentionally left blank.\nChapter 5\nOccupy a Patrol Base",
    "text": "・必要であれば、心肺蘇生を行います。\n・すぐに最寄りの医療機関へ搬送します。\n・酸素があれば、すぐに与えます。",
    "reviewed": false
   }
