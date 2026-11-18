@@ -105,7 +105,8 @@ When Lychnion replaces or revokes its key, the statements go into the
 catalog with `catalog … --keys keys.json`; `export` keeps a catalog's
 statements and `verify` applies them, so records of a revoked key then
 fail `verify`. `catalog` and `export` refuse to write a catalog over
-2 MB, as the app refuses to read one.
+2 MB with its key statements, as the app refuses to read one (and
+leaving statements out could leave a stolen key trusted).
 
 **Area.** A package or map area can say which places it is for, as ISO
 3166 codes: `"area": ["JP"]` for Japan, `["JP-30"]` for Wakayama. No area

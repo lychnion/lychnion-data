@@ -73,7 +73,11 @@ Future<void> main(List<String> argv) async {
     case 'keygen':
       await _keygen(args);
     case 'public':
-      final pair = await keyPairFromSeed(await _readKey(args.req('--key')));
+      final keyFrom = args.req('--key');
+      if (args.positional() case [final first, ...]) {
+        _fail('Unexpected $first');
+      }
+      final pair = await keyPairFromSeed(await _readKey(keyFrom));
       stdout.writeln(await publicKeyOf(pair));
     case 'sign':
       await _sign(args);
@@ -132,8 +136,11 @@ Future<String> _readKey(String from) async {
 }
 
 Future<void> _keygen(_Args args) async {
+  // A typo (--1pasword) must not print a bare seed instead of the item.
+  final onePassword = args.flag('--1password');
+  if (args.positional() case [final first, ...]) _fail('Unexpected $first');
   final k = await newKeyPair();
-  if (!args.flag('--1password')) {
+  if (!onePassword) {
     stdout.writeln(k.seed);
     stderr.writeln('public key: ${k.publicKey}');
     return;
@@ -197,7 +204,7 @@ Future<List<KeyStatement>> _keys(
   List<Object?> more = const [],
 ]) async {
   final given = <Object?>[...more];
-  var fromFiles = 0;
+  final perFile = <String, Set<String>>{};
   for (final f in files) {
     final String text;
     try {
@@ -207,21 +214,23 @@ Future<List<KeyStatement>> _keys(
     }
     final s = await KeysFile.parse(text);
     if (s.isEmpty) _fail('$f: no valid key statements');
-    fromFiles += s.length;
+    perFile[f] = {for (final x in s) x.id};
     given.addAll(s);
   }
   final kept = await relevantStatements(trust, given);
   // Given on purpose and none counts: the wrong file, or another
   // publisher's. Better to stop than to publish without the revocation.
-  final fileIds = {
-    for (final g in given.skip(more.length)) (g! as KeyStatement).id,
-  };
-  // By id: one also in the catalog counts once, from there.
-  if (fromFiles > 0 && !kept.any((k) => fileIds.contains(k.id))) {
-    _fail(
-      'None of the key statements in ${files.join(', ')} is made by a '
-      'trusted key (another publisher\'s file, or --public-key wrong?)',
-    );
+  // Each file on its own: one wrong file (another publisher's) must not
+  // pass because another file counts. By id: a statement also in the
+  // catalog counts once, from there.
+  final keptIds = {for (final k in kept) k.id};
+  for (final e in perFile.entries) {
+    if (!e.value.any(keptIds.contains)) {
+      _fail(
+        'None of the key statements in ${e.key} is made by a trusted key '
+        '(another publisher\'s file, or --public-key wrong?)',
+      );
+    }
   }
   // Only worth saying for files given here: a third party's catalog
   // often carries statements about publishers not given.
@@ -237,6 +246,11 @@ Future<List<KeyStatement>> _keys(
 /// [c]'s text, or a clear error when it is over the 2 MB the app reads.
 String _encode(CatalogDocument c, String out) {
   try {
+    // Key statements left out to fit would leave records of a new key
+    // with a bad signature, or a stolen key trusted: stop instead.
+    if (c.fitted().keys.length < c.keys.length) {
+      _fail('$out: with its key statements it would be over 2 MB');
+    }
     return c.encode();
   } on CatalogTooLarge catch (e) {
     _fail('$out: $e (the app refuses larger catalogs)');
