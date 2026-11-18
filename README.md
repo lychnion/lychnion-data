@@ -98,11 +98,13 @@ code shared with the app (`packages/lychnion_format` in
 `CatalogDocument`, `KeysFile`), so the tools write what the app, a base
 and a node read. `pubspec.yaml` names the commit it uses (`ref`), so a
 change on the app's `main` never changes the tools by surprise: to move
-it, set `ref` to a newer commit and run `dart pub upgrade lychnion_format`.
+it, set `ref` to a newer commit on the app's `main` (never a PR branch:
+it may disappear) and run `dart pub upgrade lychnion_format`.
 
 When Lychnion replaces or revokes its key, the statements go into the
 catalog with `catalog … --keys keys.json`; `export` keeps a catalog's
-statements and `verify` applies them.
+statements and `verify` applies them, so records of a revoked key then
+fail `verify`. A catalog over 2 MB is refused, as the app refuses it.
 
 **Area.** A package or map area can say which places it is for, as ISO
 3166 codes: `"area": ["JP"]` for Japan, `["JP-30"]` for Wakayama. No area

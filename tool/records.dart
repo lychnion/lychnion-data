@@ -37,7 +37,8 @@
 //   and its addresses are relative; the catalog's key statements are kept,
 //   and --keys FILE adds more)
 //
-//   # check a catalog's signatures, and local files against it
+//   # check a catalog's signatures, and local files against it (its own
+//   # key statements apply; --keys FILE adds more)
 //   dart run tool/records.dart verify build/catalog.json [FOLDER]
 //
 //   # check every record in the records folder (also run by CI)
@@ -110,6 +111,16 @@ class _Args {
   ];
 
   bool flag(String name) => rest.remove(name);
+
+  /// The arguments left once every option was read; an option this
+  /// command does not know (a typo) is refused instead of being taken
+  /// for a file.
+  List<String> positional() {
+    for (final a in rest) {
+      if (a.startsWith('--')) _fail('Unknown option $a');
+    }
+    return rest;
+  }
 }
 
 Future<String> _readKey(String from) async {
@@ -192,13 +203,24 @@ Future<List<KeyStatement>> _keys(
     given.addAll(s);
   }
   final kept = await relevantStatements(trust, given);
-  if (kept.length < given.length) {
+  // Only worth saying for files given here: a third party's catalog
+  // often carries statements about publishers not given.
+  if (files.isNotEmpty && kept.length < given.length) {
     stderr.writeln(
       '${given.length - kept.length} key statements not made by a trusted '
       'key (or repeated), left out',
     );
   }
   return kept;
+}
+
+/// [c]'s text, or a clear error when it is over the 2 MB the app reads.
+String _encode(CatalogDocument c, String out) {
+  try {
+    return c.encode();
+  } on CatalogTooLarge catch (e) {
+    _fail('$out: $e (the app refuses larger catalogs)');
+  }
 }
 
 CatalogDocument _readCatalog(String path) {
@@ -431,7 +453,7 @@ Future<void> _catalog(_Args args) async {
     mirrors: [for (final m in mirrors) m.endsWith('/') ? m : '$m/'],
     keys: [for (final s in keys) s.json],
   );
-  await File(out).writeAsString(catalog.encode());
+  await File(out).writeAsString(_encode(catalog, out));
   stdout.writeln('$out: ${records.length} records');
 }
 
@@ -445,11 +467,12 @@ Future<void> _export(_Args args) async {
   final sourceUrl = args.opt('--source-url');
   final keyFiles = args.all('--keys');
   final given = _trust(args);
-  if (args.rest.isEmpty) _fail('Usage: export CATALOG --out DIR [FOLDER...]');
-  final j = _readCatalog(args.rest.first);
+  final rest = args.positional();
+  if (rest.isEmpty) _fail('Usage: export CATALOG --out DIR [FOLDER...]');
+  final j = _readCatalog(rest.first);
   final keys = await _keys(keyFiles, given, j.keys);
   final trust = given.withStatements(keys);
-  final folders = args.rest.skip(1).toList();
+  final folders = rest.skip(1).toList();
   // Where the source catalog gets each file, for files not exported.
   final base = j.base != null
       ? Uri.parse(j.base!)
@@ -534,7 +557,9 @@ Future<void> _export(_Args args) async {
     mirrors: mirrors,
     keys: [for (final s in keys) s.json],
   );
-  await File('${out.path}/catalog.json').writeAsString(catalog.encode());
+  await File(
+    '${out.path}/catalog.json',
+  ).writeAsString(_encode(catalog, '${out.path}/catalog.json'));
   stdout.writeln(
     '${out.path}: ${records.length} records'
     '${missing > 0 ? ', $missing files not found (fetched elsewhere)' : ''}',
@@ -542,11 +567,13 @@ Future<void> _export(_Args args) async {
 }
 
 Future<void> _verify(_Args args) async {
+  final keyFiles = args.all('--keys');
   final given = _trust(args);
-  if (args.rest.isEmpty) _fail('Usage: verify CATALOG [FOLDER]');
-  final j = _readCatalog(args.rest.first);
-  final folder = args.rest.length > 1 ? args.rest[1] : null;
-  final keys = await _keys(const [], given, j.keys);
+  final rest = args.positional();
+  if (rest.isEmpty) _fail('Usage: verify CATALOG [FOLDER] [--keys FILE]');
+  final j = _readCatalog(rest.first);
+  final folder = rest.length > 1 ? rest[1] : null;
+  final keys = await _keys(keyFiles, given, j.keys);
   if (keys.isNotEmpty) stdout.writeln('${keys.length} key statements');
   final trust = given.withStatements(keys);
   var bad = 0;
