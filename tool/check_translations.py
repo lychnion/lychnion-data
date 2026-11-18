@@ -158,12 +158,14 @@ def _normalize(text, lang):
                     if re.search(r"ratio|proportion|mix|dilut", part, re.I) else part
                     for part in re.split(r"((?<=[.!?])\s+)", t))
         # 3 parts to 1 part = 3:1 (= 3対1)
-        t = re.sub(r"(?<![\d.])(\d+(?:\.\d+)?) parts? to (\d+(?:\.\d+)?) parts?\b", r"\1:\2", t, flags=re.I)
+        t = re.sub(r"(?<![\d.])(\d+(?:\.\d+)?) parts? (?:to|with) (\d+(?:\.\d+)?) parts?\b", r"\1:\2", t, flags=re.I)
         # bleach and water 1:10 = 1 part bleach, 10 parts water (as in Japanese 漂白剤と水を1：10)
         t = re.sub(r"\b(bleach|water|salt|sugar),? (?:and|to|with) (bleach|water|salt|sugar)\b(\D{0,16}?)"
                    r"(\d+(?:\.\d+)?)\s?(?::|to)\s?(\d+(?:\.\d+)?)",
                    lambda m: f"{m[1]} and {m[2]}{m[3]} {m[4]} parts {m[1].lower()} {m[5]} parts {m[2].lower()}",
                    t, flags=re.I)
+        t = re.sub(r"\bbetween (\d+(?:\.\d+)?) and (?=\d)", r"between \1 to ", t, flags=re.I)  # = 36〜37
+        t = re.sub(r"(?<![\d.])(\d+) and a half\b", lambda m: f"{m[1]}.5", t, flags=re.I)
         t = re.sub(r"\btwice\b", "2 times", t, flags=re.I)
         # compress 30 times = 30 compressions; breathe 2 times = 2 breaths
         t = re.sub(r"\b((?:compress|press|push)\w*\b[^.;:\d]{0,30}?)(\d+) times\b", r"\1\2 compressions", t, flags=re.I)
@@ -232,11 +234,14 @@ def _normalize(text, lang):
                    _kanji, t)
         t = re.sub(r"三が日", "3日間", t)
         # 大さじ2 = 2 tbsp; /日 = 1日; 毎日5mg = 1日5mg
+        # 大さじ1杯半, 2錠半, 1時間半 = 1.5
+        t = re.sub(r"(?<![\d.])(\d+)(杯|錠|時間|日|年|か月|個|本)半", r"\1.5\2", t)
         # (大さじ1〜2杯: both numbers are tablespoons)
         t = re.sub(r"([大小])さじ\s?(\d+(?:\.\d+)?|[一二三四五六七八九十])"
                    r"(?:\s?(?:[~〜-]|から)\s?(\d+(?:\.\d+)?|[一二三四五六七八九十]))?杯?",
                    lambda m: f"{KANJI.get(m[2], m[2])} {'tbsp' if m[1] == '大' else 'tsp'}"
                              + (f"〜{KANJI.get(m[3], m[3])} {'tbsp' if m[1] == '大' else 'tsp'}" if m[3] else ""), t)
+        t = re.sub(r"毎日(?=[^。\n]*?(?<![\d.])1\s?日)", "", t)  # 毎日、1日2回 = one rate
         # Frequencies and rates: /日, 毎日, 1日3回, 1日あたり, 1分間に = 1 per-…;
         # 隔日 = every other day
         t = re.sub(r"隔日|(?<![\d.])1日おき", " 2 per-day ", t)
@@ -282,7 +287,7 @@ def _normalize(text, lang):
         t = re.sub(r"(" + subst + r")(?:と|[:：・])(" + subst + r")(?:を|は|[=＝])?\s?(\d+(?:\.\d+)?)\s?(?:対|[:：])\s?(\d+(?:\.\d+)?)",
                    lambda m: f"{m[1]}・{m[2]} {m[3]}part-{names[m[1]]} {m[4]}part-{names[m[2]]} ", t)
         # 漂白剤1に水9, 水9と漂白剤1, 漂白剤を1、水を9
-        t = re.sub(r"(塩素系漂白剤|漂白剤|水|塩|砂糖)(?:を|は)?\s?(\d+(?:\.\d+)?)(?![\d.]|\s?[:：]\s?\d|\s?[a-zA-Z%℃度分時日回錠杯]|\s?(?:リットル|ミリ|グラム|cc|倍|さじ|スプーン|カップ|つまみ|個|粒|包))",
+        t = re.sub(r"(塩素系漂白剤|漂白剤|水|塩|砂糖)(?:を|は)?\s?(\d+(?:\.\d+)?)(?![\d.]|\s?[:：]\s?\d|\s?(?:[~〜-]|から)\s?\d|\s?[a-zA-Z%℃度分時日回錠杯]|\s?(?:リットル|ミリ|グラム|cc|倍|さじ|スプーン|カップ|つまみ|個|粒|包))",
                    lambda m: f"{m[1]}{m[2]}part-{names[m[1]]} ", t)
         t = re.sub(r"(?<![\d.])(\d+(?:\.\d+)?)(?=\s?に対し)", r"\1part ", t)
         # 1対1 = 1:1
