@@ -123,8 +123,12 @@ reviewer:
 
 A flag a person has checked and found fine gets an exception in the
 passage, with a reason: `"accept": [{"check": "numbers", "item": "2",
-"reason": "..."}]`. When a source changes, the build lists the passages that
-need a new translation and the stored ones no longer used.
+"for": "<hash>", "reason": "..."}]`. `"for"` is the hash of the
+translation text that was checked (the error message gives it), so editing
+the translation brings the flag back. Headings take the same list in
+`"accept_headings": {"<original heading>": [...]}`. When a source changes,
+the build lists the passages that need a new translation and the stored
+ones no longer used.
 
 ```sh
 python3 -I tool/check_translations.py          # all translation files
