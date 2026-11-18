@@ -81,9 +81,9 @@ UNITS = {
            (r"%|percent\b|per cent\b", "%"), (r"people\b|persons?\b", "person"),
            (r"times\b", "times")],
     # 度 alone is Celsius in Japanese (or an angle, which English writes as degrees)
-    "ja": [(r"℃|°C", "°C"), (r"°F", "°F"), (r"°|度(?!目|に分け|(?:(?:と|および|または|もしくは|か|、|~|〜|-)\d+度)?の?(?:熱傷|火傷|やけど))", "°C"), (r"tsp", "tsp"), (r"tbsp", "tbsp"),
+    "ja": [(r"dayish", "dayish"), (r"℃|°C", "°C"), (r"°F", "°F"), (r"°|度(?!目|に分け|(?:(?:と|および|または|もしくは|か|、|~|〜|-)\d+度)?の?(?:熱傷|火傷|やけど))", "°C"), (r"tsp", "tsp"), (r"tbsp", "tbsp"),
            (r"カップ|cup", "cup"), (r"mcg|µg|μg|ug|マイクログラム", "mcg"),
-           (r"mmHg", "mmHg"), (r"IU|単位", "IU"), (r"cc", "ml"), (r"錠|カプセル", "tablet"), (r"滴", "drop"),
+           (r"mmHg", "mmHg"), (r"IU|単位", "IU"), (r"cc", "ml"), (r"錠|カプセル", "tablet"), (r"杯", "cup"), (r"滴", "drop"),
            (r"分(?!の)", "min"), (r"時間", "h"), (r"秒", "s"),
            (r"日", "day"), (r"週間?", "week"), (r"[かカヶケ]月", "month"), (r"年", "year"),
            (r"cm|センチ", "cm"), (r"mm|ミリ(?!リットル|グラム)", "mm"), (r"km|キロメートル", "km"), (r"キロ(?!グラム)", "kilo"),
@@ -132,8 +132,11 @@ def _normalize(text, lang):
         t = re.sub(r"(?m)^\s*\d+-\d+\.\s", " ", t)
         t = re.sub(r"(?m)^(?:Chapter \d+|\d+ (?:TC|ATP) [\d.-]+|(?:TC|ATP) [\d.-]+ \d+|Figure \d+-\d+\..*)$",
                    " ", t)
+        t = re.sub(r"(?<=\d)-(?=(?:second|minute|hour|day|week|month|year|meter|metre|liter|litre|mile|kilometer|km|kg)s?\b)",
+                   " ", t, flags=re.I)  # a 10-minute walk
         t = re.sub(r"\btwice\b", "2 times", t, flags=re.I)
-        t = re.sub(r"\bonce(?= (?:an?|per) (?:day|week|month|year|hour|minute)\b| daily\b)", "1 times", t, flags=re.I)
+        t = re.sub(r"\bonce(?= (?:an?|per|every) (?:\d+ )?(?:days?|weeks?|months?|years?|hours?|minutes?)\b| daily\b)",
+                   "1 times", t, flags=re.I)
         # Frequencies and rates are "1 per-day" (not a duration "1 day"):
         # per day, a day (after a dose), every day, daily = 1日あたり, 毎日;
         # every other day = 隔日
@@ -205,6 +208,10 @@ def _normalize(text, lang):
         t = re.sub(r"(?<![A-Za-z])(IV|III|II|I)(?=度)", lambda m: str(["I", "II", "III", "IV"].index(m[1]) + 1), t)
         t = re.sub(r"\s*/\s*(日|分|時間|秒|週|人|月|min|h|s|day)(?![a-zA-Z])|\s*/\s*(日|分|時間|時|秒|週|人|月)"
                    r"|毎(日|週|月|時|分|秒|年|朝|晩|夜)", lambda m: f" 1 per-{_per(m[1] or m[2] or m[3])} ", t)
+        # 1日30分 is "30 minutes a day" or "1 day 30 minutes": either, by the other side
+        t = re.sub(r"(?<![\d.月])1日(?=\s?\d+(?:\.\d+)?\s?(?:秒|分|時間))", " 1 dayish ", t)
+        # 1対1 = 1:1
+        t = re.sub(r"(\d+(?:\.\d+)?)対(\d+(?:\.\d+)?)", r"\1:\2", t)
         # 週3回, 月に1回 = per week 3 times; 1回2錠 = 2 tablets per time
         t = re.sub(r"(?<![\d.毎一-鿿])(週|月|年)に?(?=\d+(?:\.\d+)?\s?(?:回|日))", lambda m: f" 1 per-{_per(m[1])} ", t)
         t = re.sub(r"(?<![\d.第一])1回(?:に|あたり|につき)?(?=\d)|毎回", " ", t)
@@ -303,7 +310,7 @@ def numbers(text, lang):
         rest = t[m.end():m.end() + 40].lstrip()
         flags = re.I
         # 15 to 30 minutes, 3〜5分: the unit after the range is for both numbers
-        span = re.match(r"(?:to|-|–|~|〜|から)\s*\d+(?:\.\d+)?\s*", rest, flags)
+        span = re.match(r"(?:to|or|-|–|~|〜|から)\s*\d+(?:\.\d+)?\s*", rest, flags)
         if span:
             rest = rest[span.end():]
         unit = ""
@@ -331,12 +338,14 @@ def numbers(text, lang):
 def check_numbers(src, src_lang, dst, dst_lang):
     a, au, _ = numbers(src, src_lang)
     b, bu, _ = numbers(dst, dst_lang)
-    # キロ alone is kg or km: take the one the other side uses
+    # キロ alone is kg or km, 1日30分 a day or per day: take what the other side uses
     for x, y in ((au, bu), (bu, au)):
         for n, units in x.items():
+            other = y.get(n, Counter())
             if units["kilo"]:
-                other = y.get(n, Counter())
                 units["kg" if other["kg"] else "km"] += units.pop("kilo")
+            if units["dayish"]:
+                units["per-day" if other["per-day"] else "day"] += units.pop("dayish")
     flags = []
     for n in sorted(set(a) | set(b), key=lambda x: (float(x.split(":")[0]), x)):
         if a[n] > b[n]:
