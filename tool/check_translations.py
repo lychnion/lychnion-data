@@ -232,8 +232,11 @@ def _normalize(text, lang):
                    _kanji, t)
         t = re.sub(r"三が日", "3日間", t)
         # 大さじ2 = 2 tbsp; /日 = 1日; 毎日5mg = 1日5mg
-        t = re.sub(r"([大小])さじ\s?(\d+(?:\.\d+)?|[一二三四五六七八九十])",
-                   lambda m: f"{KANJI.get(m[2], m[2])} {'tbsp' if m[1] == '大' else 'tsp'}", t)
+        # (大さじ1〜2杯: both numbers are tablespoons)
+        t = re.sub(r"([大小])さじ\s?(\d+(?:\.\d+)?|[一二三四五六七八九十])"
+                   r"(?:\s?(?:[~〜-]|から)\s?(\d+(?:\.\d+)?|[一二三四五六七八九十]))?杯?",
+                   lambda m: f"{KANJI.get(m[2], m[2])} {'tbsp' if m[1] == '大' else 'tsp'}"
+                             + (f"〜{KANJI.get(m[3], m[3])} {'tbsp' if m[1] == '大' else 'tsp'}" if m[3] else ""), t)
         # Frequencies and rates: /日, 毎日, 1日3回, 1日あたり, 1分間に = 1 per-…;
         # 隔日 = every other day
         t = re.sub(r"隔日|(?<![\d.])1日おき", " 2 per-day ", t)
