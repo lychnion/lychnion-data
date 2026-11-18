@@ -56,12 +56,15 @@ MONTHS = ["january", "february", "march", "april", "may", "june", "july", "augus
           "september", "october", "november", "december"]
 WORDS = {"two": 2, "three": 3, "four": 4, "five": 5, "six": 6, "seven": 7, "eight": 8,
          "nine": 9, "ten": 10, "eleven": 11, "twelve": 12, "fifteen": 15, "twenty": 20,
-         "thirty": 30, "forty": 40, "fifty": 50, "hundred": 100}
+         "thirteen": 13, "fourteen": 14, "sixteen": 16, "seventeen": 17, "eighteen": 18,
+         "nineteen": 19, "thirty": 30, "forty": 40, "fifty": 50, "sixty": 60, "seventy": 70,
+         "eighty": 80, "ninety": 90, "hundred": 100}
 KANJI = {"一": 1, "二": 2, "三": 3, "四": 4, "五": 5, "六": 6, "七": 7, "八": 8, "九": 9, "十": 10}
 # What follows a number, by language: canonical unit names.
 UNITS = {
     "en": [(r"°\s?c\b|degrees? (?:celsius|c\b)|℃", "°C"), (r"°\s?f\b|degrees? (?:fahrenheit|f\b)", "°F"),
-           (r"min(?:ute)?s?\b", "min"), (r"h(?:ou)?rs?\b|hours?\b", "h"), (r"sec(?:ond)?s?\b", "s"),
+           (r"°|degrees?\b", "deg"), (r"mcg\b|µg\b|μg\b|micrograms?\b", "mcg"),
+           (r"min(?:ute)?s?\b", "min"), (r"h(?:ou)?rs?\b|hours?\b|h\b", "h"), (r"sec(?:ond)?s?\b", "s"),
            (r"days?\b", "day"), (r"weeks?\b", "week"), (r"months?\b", "month"), (r"years?\b", "year"),
            (r"cm\b|centimet(?:er|re)s?\b", "cm"), (r"mm\b|millimet(?:er|re)s?\b", "mm"),
            (r"km\b|kilomet(?:er|re)s?\b", "km"), (r"m\b|met(?:er|re)s?\b", "m"),
@@ -69,13 +72,18 @@ UNITS = {
            (r"ml\b|millilit(?:er|re)s?\b", "ml"), (r"l\b|lit(?:er|re)s?\b", "l"),
            (r"%|percent\b|per cent\b", "%"), (r"people\b|persons?\b", "person"),
            (r"times\b", "times")],
-    "ja": [(r"℃|°C|度", "°C"), (r"°F", "°F"), (r"分(?!の)", "min"), (r"時間", "h"), (r"秒", "s"),
+    "ja": [(r"℃|°C", "°C"), (r"°F", "°F"), (r"°|度(?!と)", "deg"), (r"mcg|µg|μg|マイクログラム", "mcg"), (r"分(?!の)", "min"), (r"時間", "h"), (r"秒", "s"),
            (r"日", "day"), (r"週間?", "week"), (r"[かカヶケ]月", "month"), (r"年", "year"),
            (r"cm|センチ", "cm"), (r"mm|ミリ(?!リットル|グラム)", "mm"), (r"km|キロ(?!グラム)", "km"),
            (r"m(?![lgL])|メートル", "m"), (r"kg|キログラム", "kg"), (r"mg|ミリグラム", "mg"),
            (r"g|グラム", "g"), (r"ml|mL|ミリリットル", "ml"), (r"[lL]|リットル", "l"),
            (r"%", "%"), (r"人", "person"), (r"回", "times")],
 }
+# Units where a number on one side only with the unit is an error (doses,
+# temperatures): "5 mg" and 「5」 is not the same instruction.
+CRITICAL = {"°C", "°F", "mcg", "mg", "g", "kg", "ml", "l", "%"}
+# 度 (degree) is the unit of either scale.
+SAME = {frozenset({"deg", "°C"}), frozenset({"deg", "°F"})}
 JA_COUNTERS = "つ|回|分|時間|日|人|度|週間|か月|ヶ月|カ月|年|歳|倍|枚|本|個|件|段階|か所|箇所"
 
 
@@ -86,6 +94,8 @@ def _canon(n):
 def _normalize(text, lang):
     t = unicodedata.normalize("NFKC", text.replace("º", "°"))  # NFKC makes º an "o"
     t = re.sub(r"(?<=\d),(?=\d{3}(?!\d))", "", t)  # 3,122
+    # Minus: −5℃, minus 5, マイナス5, 氷点下5度
+    t = re.sub(r"−|\bminus\s+(?=\d)|マイナス\s?(?=\d)|氷点下\s?(?=\d)", "-", t, flags=re.I)
     # Figure references, which translations may leave out.
     t = re.sub(r"\((?:see )?(?:figure|table) [\d-]+(?: on page \d+)?\.?\)|[(]図\s?[\d-]+[)]", " ", t, flags=re.I)
     if lang == "en":
@@ -109,17 +119,18 @@ def _normalize(text, lang):
         t = re.sub(r"(?<!than )\b(?:one|a single)(?= (?:hour|minute|second|day|week|month|year|person|time)s?\b)",
                    "1", t, flags=re.I)
         t = re.sub(r"\bthe first one\b", "1", t, flags=re.I)
-        t = re.sub(r"(?<!every )\b(second|third|fourth|fifth)\b(?! of)",
-                   lambda m: str(["second", "third", "fourth", "fifth"].index(m[1].lower()) + 2), t)
+        # the second (2), not "a second" (time) or "every second"
+        t = re.sub(r"(?<!every )(?<!\ba )\bsecond\b(?! of)|\b(?:third|fourth|fifth)\b(?! of)",
+                   lambda m: str(["second", "third", "fourth", "fifth"].index(m[0].lower()) + 2), t)
         t = re.sub(r"\b(" + "|".join(WORDS) + r")\b", lambda m: str(WORDS[m[1].lower()]), t, flags=re.I)
     else:
         t = re.sub(r"(令和|平成|昭和)(元|\d+)年",
                    lambda m: f"{ERAS[m[1]] + (1 if m[2] == '元' else int(m[2]))}年", t)
         # 令和6年（2024年）: one year
         t = re.sub(r"(\d{4})年(度|中)?\(\1年?(?:度|中)?\)", r"\1年\2", t)
-        # 二つ, 三日, 四輪 (not 十分, "enough")
-        t = re.sub(r"(?<![一-鿿])([二三四五六七八九十])(?!分)(?=" + JA_COUNTERS + "|輪)",
-                   lambda m: str(KANJI[m[1]]), t)
+        # 二つ, 五分, 二十分, 四輪 (not 十分 "enough", not 二度と "never again")
+        t = re.sub(r"(?<![一-鿿])([二三四五六七八九]?十[一二三四五六七八九]?|[二三四五六七八九])(?=" + JA_COUNTERS + "|輪)",
+                   _kanji, t)
         t = re.sub(r"三が日", "3日間", t)
         # 10万, 19万9千, 8割 (= 80 %)
         t = re.sub(r"(\d+(?:\.\d+)?)万(?:(\d+)千)?",
@@ -129,15 +140,26 @@ def _normalize(text, lang):
     return t
 
 
+def _kanji(m):
+    k, after = m[1], m.string[m.end():m.end() + 2]
+    if (k == "十" and after.startswith("分") and after != "分間") or after == "度と":
+        return k
+    if "十" in k:
+        tens, _, ones = k.partition("十")
+        return str(KANJI.get(tens, 1) * 10 + KANJI.get(ones, 0))
+    return str(KANJI[k])
+
+
 def numbers(text, lang):
     """Counter of numbers, and for each number the units found after it."""
     t = _normalize(text, lang)
     found, units = Counter(), {}
-    for m in re.finditer(r"(?<![\d.])\d+(?:\.\d+)?", t):
-        n = _canon(m[0])
+    for m in re.finditer(r"(?<![\d.])(-?)(\d+(?:\.\d+)?|\.\d+)", t):
+        # A minus sign, not a hyphen between words or a range (3-5, TC 4-02).
+        sign = "-" if m[1] and (m.start() == 0 or not t[m.start() - 1].isalnum()) else ""
+        n = sign + _canon(m[2])
         found[n] += 1
-        rest = t[m.end():m.end() + 24]
-        rest = rest.lstrip() if lang == "en" else rest
+        rest = t[m.end():m.end() + 24].lstrip()
         for pattern, unit in UNITS["ja" if lang == "ja" else "en"]:
             if re.match(pattern, rest, flags=re.I if lang == "en" else 0):
                 units.setdefault(n, Counter())[unit] += 1
@@ -154,10 +176,18 @@ def check_numbers(src, src_lang, dst, dst_lang):
             flags.append((n, f"{n} in the original{_times(a[n] - b[n])}, missing in the translation"))
         elif b[n] > a[n]:
             flags.append((n, f"{n} in the translation{_times(b[n] - a[n])}, not in the original"))
-        elif n in au and n in bu and not set(au[n]) & set(bu[n]):
+        elif n in au and n in bu and not _same_unit(au[n], bu[n]):
             flags.append((n, f"{n} has unit {'/'.join(sorted(au[n]))} in the original, "
                              f"{'/'.join(sorted(bu[n]))} in the translation"))
+        elif (n in au) != (n in bu) and set(au.get(n) or bu.get(n)) & CRITICAL:
+            side = "original" if n in au else "translation"
+            flags.append((n, f"{n} has unit {'/'.join(sorted(au.get(n) or bu.get(n)))} "
+                             f"in the {side} only"))
     return flags
+
+
+def _same_unit(x, y):
+    return bool(set(x) & set(y)) or any(frozenset({u, v}) in SAME for u in x for v in y)
 
 
 def _times(k):
@@ -224,8 +254,15 @@ def langs(path):
 def check_entry(key, e, src_lang, dst_lang, terms):
     """Flags of one passage: [(check, item, message, level)], and the exceptions not used."""
     flags = []
-    src, text = e.get("source"), e.get("text", "")
-    if not src:
+    if not isinstance(e, dict):
+        return [("integrity", "entry", "entry is not an object", "error")], []
+    src, text = e.get("source"), e.get("text")
+    if not isinstance(text, str):
+        text = ""
+    accept = e.get("accept", [])
+    if not isinstance(accept, list) or not all(isinstance(a, dict) for a in accept):
+        return [("integrity", "accept", "\"accept\" must be a list of {check, item, reason}", "error")], []
+    if not isinstance(src, str) or not src:
         return [("integrity", "source", "no original (\"source\") stored next to the translation", "error")], []
     if passage_key(src) != key:
         flags.append(("integrity", "key", f"key {key} is not the hash of the stored original "
@@ -234,7 +271,7 @@ def check_entry(key, e, src_lang, dst_lang, terms):
         flags.append(("integrity", "text", "translation is empty", "error"))
     flags += [("numbers", n, msg, "error") for n, msg in check_numbers(src, src_lang, text, dst_lang)]
     flags += [("words", g, msg, "warning") for g, msg in check_words(src, src_lang, text, dst_lang, terms)]
-    accepted = {(a.get("check"), str(a.get("item"))): a.get("reason", "") for a in e.get("accept", [])}
+    accepted = {(a.get("check"), str(a.get("item"))): str(a.get("reason") or "") for a in accept}
     out = []
     for check, item, msg, level in flags:
         reason = accepted.get((check, item))
@@ -252,6 +289,8 @@ def check_file(path, report_dir=REPORTS, quiet=False):
     path = Path(path)
     pid, src_lang, dst_lang = langs(path)
     data = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(data.get("passages"), dict) or not isinstance(data.get("headings", {}), dict):
+        sys.exit(f"{path}: needs \"passages\" and \"headings\" objects")
     terms = load_terms(src_lang, dst_lang)
     results = []
     for key, e in data["passages"].items():
@@ -263,7 +302,7 @@ def check_file(path, report_dir=REPORTS, quiet=False):
         heading_flags += [(orig, tr, msg) for _, msg in check_numbers(orig, src_lang, tr, dst_lang)]
     errors = sum(1 for _, _, f, _ in results for x in f if x[3] == "error") + len(heading_flags)
     warnings = sum(1 for _, _, f, _ in results for x in f if x[3] == "warning")
-    reviewed = sum(1 for e in data["passages"].values() if e.get("reviewed"))
+    reviewed = sum(1 for e in data["passages"].values() if isinstance(e, dict) and e.get("reviewed"))
     report = _report(path, pid, src_lang, dst_lang, data, results, heading_flags, errors, warnings, reviewed)
     report_dir.mkdir(parents=True, exist_ok=True)
     out = report_dir / f"{pid}.{dst_lang}.md"
