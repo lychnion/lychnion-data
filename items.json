@@ -120,7 +120,7 @@
     {
       "id": "jp.map.nishinomiya",
       "kind": "map",
-      "version": "2026.11.2",
+      "version": "2026.11.3",
       "title": {
         "ja": "地図：西宮周辺",
         "en": "Map: Nishinomiya area"
@@ -139,7 +139,7 @@
         },
         {
           "name": "jp.map.nishinomiya.sites.sqlite",
-          "url": "https://github.com/lychnion/lychnion-data/releases/download/2026.11.5/jp.map.nishinomiya.sites.sqlite",
+          "url": "https://github.com/lychnion/lychnion-data/releases/download/2026.11.7/jp.map.nishinomiya.sites.sqlite",
           "path": "build/maps/jp.map.nishinomiya.sites.sqlite"
         },
         {
