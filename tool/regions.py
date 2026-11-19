@@ -9,7 +9,7 @@ Codes are checked against the region file the app ships with:
 assets/regions/regions.sqlite in lychnion/lychnion (built by its
 tool/build_regions.py from Natural Earth). It is found by
 LYCHNION_REGIONS, else in an app checkout next to this repository
-(../lychnion or ../fieldkit).
+(../lychnion).
 
 Used by build_package.py, build_map.py and check_areas.py; import with
 importlib (the tools run with python -I).
@@ -27,8 +27,7 @@ CODE = re.compile(r"^[A-Z]{2}(-[A-Z0-9]{1,3})?$")
 def regions_file():
     env = os.environ.get("LYCHNION_REGIONS")
     candidates = [Path(env)] if env else [
-        ROOT.parent / name / "assets" / "regions" / "regions.sqlite"
-        for name in ("lychnion", "fieldkit")
+        ROOT.parent / "lychnion" / "assets" / "regions" / "regions.sqlite"
     ]
     for p in candidates:
         if p.is_file():

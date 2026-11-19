@@ -2,7 +2,7 @@
 """Builds the offline map data for one area from a JSON manifest.
 
     python3 -I tool/build_map.py maps/nishinomiya.json
-    python3 -I tool/build_map.py --meta-only maps/nishinomiya.json   # area only
+    python3 -I tool/build_map.py --meta-only maps/nishinomiya.json   # area, titles, credits
 
 Writes:
   build/maps/<id>.sites.sqlite    evacuation sites in the area (GSI data);
@@ -79,7 +79,8 @@ def area_of(m, points, where):
 
 
 def meta_only(manifest_path):
-    """Sets the area of an already built sites file, keeping its sites."""
+    """Sets the area, titles and credits of an already built sites file from
+    the manifest, keeping its sites and the GSI notice."""
     m = json.loads(Path(manifest_path).read_text(encoding="utf-8"))
     out = ROOT / "build" / "maps" / f"{m['id']}.sites.sqlite"
     if not out.exists():
@@ -87,11 +88,19 @@ def meta_only(manifest_path):
     db = sqlite3.connect(out)
     points = db.execute("SELECT lat, lon FROM sites").fetchall()
     area = area_of(m, points, manifest_path)
-    db.execute("INSERT OR REPLACE INTO meta VALUES('area',?)", (json.dumps(area),))
+    sites = m["sites"]
+    meta = {
+        "title": m["title"], "title_en": m["title_en"],
+        "sites_licence": sites["licence"], "sites_licence_url": sites["licence_url"],
+        "sites_attribution": sites["attribution"],
+        "basemap_attribution": m["basemap"]["attribution"],
+        "area": json.dumps(area),
+    }
+    db.executemany("INSERT OR REPLACE INTO meta VALUES(?,?)", meta.items())
     db.commit()
     db.execute("VACUUM")
     db.close()
-    print(f"{out.relative_to(ROOT)}: area {', '.join(area)}")
+    print(f"{out.relative_to(ROOT)}: titles, credits, area {', '.join(area)}")
 
 
 def main(manifest_path):
