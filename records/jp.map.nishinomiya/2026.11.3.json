@@ -36,10 +36,10 @@
     {
       "name": "jp.map.nishinomiya.inundation.mbtiles",
       "size": 1462272,
-      "sha256": "2cb40ab4b55116b0b20cae4bc222295cd55d98704a6ff2d9069ccb376a25d5e8"
+      "sha256": "9faefaba90fb38a062a03d6eba829ae2ff2bebc47f63bd2a8ab32c2a3070620d"
     }
   ],
-  "signed": "2026-11-20T07:45:38+09:00",
+  "signed": "2026-11-20T07:49:06+09:00",
   "key": "vRIbo4Gi",
-  "signature": "9_265Msgs1CAr-d_W5dxiH0sSsrCyg_FQ265U-XAiA3S29qlNtQrKKPGSJ1y6pgO2PCRxUdIToxqT7KXK66VBg"
+  "signature": "hrd4gpK5NaukR96P1JWuBY-ZLlMvaohO8ImxBmqVNaY1yn1gKC8WGcv2Bu_e9xLoqrn67E4aCiVt9QH5XteFBw"
 }
