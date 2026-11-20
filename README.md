@@ -79,8 +79,9 @@ python3 -I tool/add_translations.py build/packages/jp.bousai.core.sqlite en
 # optional: vectors made once by the app (phones then skip indexing)
 python3 -I tool/add_vectors.py build/packages/jp.bousai.core.sqlite <cache>.vectors.json embeddinggemma-2-Q8_0.gguf
 
-# a map area → build/maps/ (sites, base map, walking routes, inundation tiles)
+# a map area → build/maps/ (sites, base map, contour lines, walking routes, inundation tiles)
 python3 -I tool/build_map.py maps/kushimoto.json
+# (contour lines alone: python3 -I tool/contours.py maps/kushimoto.json)
 python3 -m venv build/route-venv
 build/route-venv/bin/pip install osmium pillow pyshp shapely
 build/route-venv/bin/python -I tool/build_routes.py maps/kushimoto.json
@@ -195,6 +196,11 @@ sites, walking routes (roads and paths with ground height and expected
 tsunami inundation for every point), and tsunami inundation areas as map
 tiles.
 
+The build also makes `<id>.contours.pmtiles` (contour lines and
+coastline). It is **not in the catalog yet**: the app that draws it is
+in review (lychnion/lychnion#84), and contours will become their own
+download per area, so people can skip them (lychnion/lychnion#57).
+
 ## Sources and licences
 
 Every package also lists its sources and licences inside the file, and
@@ -251,6 +257,18 @@ not yet been checked by a medical expert.
 © OpenStreetMap contributors, under the
 [Open Database License (ODbL)](https://opendatacommons.org/licenses/odbl/).
 Built with [Protomaps](https://protomaps.com/).
+
+### Contour lines
+
+出典：国土地理院最適化ベクトルタイルを加工して作成 (only the contour and
+coastline layers, cut to each map area). Used under the
+[国土地理院コンテンツ利用規約](https://www.gsi.go.jp/kikakuchousei/kikakuchousei40182.html).
+The credit is also in each file's metadata (`attribution`).
+
+GSI marks the file as 検証中 (being tested), so its address or layers may
+change. Each map manifest records the date of the GSI file it was built
+from (`contours.file_date`), and the build stops when the server has a
+file of another date.
 
 ### Walking routes
 
