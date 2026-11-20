@@ -25,6 +25,7 @@ import shutil
 import sqlite3
 import subprocess
 import sys
+import urllib.error
 import urllib.request
 from pathlib import Path
 
@@ -51,6 +52,30 @@ def fetch(url, name):
         with urllib.request.urlopen(req, timeout=120) as r:
             path.write_bytes(r.read())
     return path
+
+
+def check_basemap_build(url):
+    """Protomaps keeps its daily builds for about a week (and the last build
+    of each version longer). Stops with the builds on offer when the
+    manifest's build is gone, instead of a bare pmtiles error."""
+    req = urllib.request.Request(url, method="HEAD", headers={"User-Agent": "lychnion-map-builder"})
+    try:
+        urllib.request.urlopen(req, timeout=60).close()
+        return
+    except urllib.error.HTTPError as e:
+        if e.code != 404:
+            raise
+    offer = ""
+    try:
+        meta = "https://build-metadata.protomaps.dev/builds.json"
+        with urllib.request.urlopen(urllib.request.Request(meta, headers={"User-Agent": "lychnion-map-builder"}),
+                                    timeout=60) as r:
+            builds = [b["key"] for b in json.load(r)]
+        offer = f" Builds on offer now: newest {builds[-1]}; all: {meta}"
+    except Exception as e:  # the list is only a hint
+        offer = f" (could not list the builds: {e})"
+    sys.exit(f"{url} is gone (Protomaps removes daily builds after about a week): "
+             f"set \"basemap\".\"source\" in the manifest to a current build.{offer}")
 
 
 def read_csv(path):
@@ -164,6 +189,7 @@ def main(manifest_path):
     if not tiles.exists():
         if not shutil.which("pmtiles"):
             sys.exit("pmtiles not found: brew install pmtiles")
+        check_basemap_build(m["basemap"]["source"])
         tiles.parent.mkdir(parents=True, exist_ok=True)
         subprocess.run(["pmtiles", "extract", m["basemap"]["source"], str(tiles),
                         "--bbox=" + ",".join(str(v) for v in bbox), f"--maxzoom={m['maxzoom']}"], check=True)

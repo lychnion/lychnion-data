@@ -7,7 +7,7 @@
   "maxzoom": 15,
   "bundle": false,
   "basemap": {
-    "source": "https://build.protomaps.com/20261104.pmtiles",
+    "source": "https://build.protomaps.com/20261118.pmtiles",
     "licence": "ODbL 1.0",
     "attribution": "© OpenStreetMap contributors (ODbL), Protomaps"
   },

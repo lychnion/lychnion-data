@@ -252,6 +252,12 @@ not yet been checked by a medical expert.
 [Open Database License (ODbL)](https://opendatacommons.org/licenses/odbl/).
 Built with [Protomaps](https://protomaps.com/).
 
+Each map manifest names the Protomaps daily build it is cut from
+(`basemap.source`). Protomaps keeps daily builds for about a week, so a
+new base map usually needs a newer build in the manifest; `build_map.py`
+says so and names the newest one. A base map that is already released
+keeps the build it was made from (the manifest may name a newer one).
+
 ### Walking routes
 
 Roads and paths: © OpenStreetMap contributors, under the
