@@ -12,6 +12,9 @@ Writes:
                                   meta "area": the regions its sites are
                                   in (or the manifest's "area")
   build/maps/<id>.pmtiles         base map (OpenStreetMap via Protomaps; not in git)
+  build/maps/<id>.contours.pmtiles  contour lines and coastline (GSI optimal
+                                  vector tiles), if the manifest has
+                                  "contours"; see tool/contours.py
 
 Needs the `pmtiles` command (brew install pmtiles). The GSI data comes with
 usage notes that must reach the user; they are stored in the SQLite file and
@@ -197,6 +200,12 @@ def main(manifest_path):
         subprocess.run(["pmtiles", "extract", m["basemap"]["source"], str(tiles),
                         "--bbox=" + ",".join(str(v) for v in bbox), f"--maxzoom={m['maxzoom']}"], check=True)
     print(f"base map: {tiles.relative_to(ROOT)} ({tiles.stat().st_size // (1024 * 1024)} MB)")
+
+    if "contours" in m:
+        spec = importlib.util.spec_from_file_location("contours", ROOT / "tool" / "contours.py")
+        contours = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(contours)
+        contours.build(m)
 
 
 def _decodes(raw, enc):

@@ -10,6 +10,14 @@
     "licence": "ODbL 1.0",
     "attribution": "© OpenStreetMap contributors (ODbL), Protomaps"
   },
+  "contours": {
+    "source": "https://cyberjapandata.gsi.go.jp/xyz/optimal_bvmap-v1/optimal_bvmap-v1.pmtiles",
+    "file_date": "2026-09-17",
+    "layers": ["Cntr", "Cstline"],
+    "licence": "国土地理院コンテンツ利用規約",
+    "licence_url": "https://www.gsi.go.jp/kikakuchousei/kikakuchousei40182.html",
+    "attribution": "国土地理院最適化ベクトルタイルを加工して作成"
+  },
   "routes": {
     "source": "https://download.geofabrik.de/asia/japan/kansai-latest.osm.pbf",
     "licence": "ODbL 1.0",
