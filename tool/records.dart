@@ -304,6 +304,24 @@ String _now() {
 }
 
 /// The newest record of [id] in [dir]/[id]/, verified with [trust].
+/// Contours (`<map id>.contours`) have no sites file to take their area
+/// from, so the items file sets it by hand: it must match the newest
+/// signed record of their map, or the app ranks them for other places.
+Future<void> _checkContoursArea(
+  Directory dir,
+  String id,
+  Object? area,
+  TrustedKeys trust,
+) async {
+  final mapId = id.substring(0, id.length - '.contours'.length);
+  final map = await _newest(dir, mapId, trust);
+  if (map == null) _fail('$id: sign its map $mapId first');
+  final want = map.json['area'];
+  if (jsonEncode(area) != jsonEncode(want)) {
+    _fail('$id: area $area, but $mapId ${map.version} has $want');
+  }
+}
+
 Future<PackageRecord?> _newest(
   Directory dir,
   String id,
@@ -346,6 +364,9 @@ Future<void> _sign(_Args args) async {
     final item = byId[id] ?? _fail('$id: not in the items file');
     final unsigned = await _recordFor(publisher, item.cast());
     final version = unsigned['version']! as String;
+    if (id.endsWith('.contours')) {
+      await _checkContoursArea(dir, id, unsigned['area'], trust);
+    }
     final last = await _newest(dir, id, trust);
     if (last != null) {
       final c = compareVersions(version, last.version);

@@ -201,10 +201,16 @@ tiles.
 The build also makes a fifth file, `<id>.contours.pmtiles` (contour
 lines and coastline). It is its own item, `<id>.contours`, so people can
 skip it (lychnion/lychnion#57). Its kind is `map`, so every app version
-reads it, but it is never used as a base map (it has no `.pmtiles` and
-`.sites.sqlite` of its own id). It lands in the same folder as the map,
-where the app (since lychnion/lychnion#84) finds the file next to the
-base map and draws it.
+reads it, but no app version takes it as a base map: it has no
+`.sites.sqlite`, and its only `.pmtiles` ends in `.contours.pmtiles`. It
+lands in the same folder as the map, where the app (since
+lychnion/lychnion#84) finds the file next to the base map and draws it;
+older versions install it but never open it. Deleting the map leaves the
+contours installed until they are deleted too.
+
+Its `area` is set in `items.json` (there is no sites file to take it
+from); `records.dart sign` refuses it unless it matches the newest
+signed record of its map.
 
 ## Sources and licences
 
