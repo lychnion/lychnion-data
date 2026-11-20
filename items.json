@@ -175,7 +175,9 @@
       "files": [
         {
           "name": "jp.map.nishinomiya.contours.pmtiles",
-          "path": "build/maps/jp.map.nishinomiya.contours.pmtiles"
+          "sha256": "a350d5135f8d31a3090e0506db3bcbe834c55916318fdd88b75f1a56a4f10968",
+          "size": 5104362,
+          "url": "https://github.com/lychnion/lychnion-data/releases/download/2026.11.8/jp.map.nishinomiya.contours.pmtiles"
         }
       ]
     },
@@ -274,7 +276,9 @@
       "files": [
         {
           "name": "jp.map.kushimoto.contours.pmtiles",
-          "path": "build/maps/jp.map.kushimoto.contours.pmtiles"
+          "sha256": "644fdab2d8ec3851f675e6df47ec7d56c4b763ffb0fcc6e7588d42edc466a45f",
+          "size": 4519387,
+          "url": "https://github.com/lychnion/lychnion-data/releases/download/2026.11.8/jp.map.kushimoto.contours.pmtiles"
         }
       ]
     }
