@@ -196,8 +196,8 @@ sites, walking routes (roads and paths with ground height and expected
 tsunami inundation for every point), and tsunami inundation areas as map
 tiles.
 
-The build also makes `<id>.contours.pmtiles` (contour lines and
-coastline). It is **not in the catalog yet**: the app that draws it is
+The build also makes a fifth file, `<id>.contours.pmtiles` (contour
+lines and coastline). It is **not in the catalog yet**: the app that draws it is
 in review (lychnion/lychnion#84), and contours will become their own
 download per area, so people can skip them (lychnion/lychnion#57).
 
@@ -263,12 +263,13 @@ Built with [Protomaps](https://protomaps.com/).
 出典：国土地理院最適化ベクトルタイルを加工して作成 (only the contour and
 coastline layers, cut to each map area). Used under the
 [国土地理院コンテンツ利用規約](https://www.gsi.go.jp/kikakuchousei/kikakuchousei40182.html).
-The credit is also in each file's metadata (`attribution`).
+The same credit (without 出典：) is in each file's metadata
+(`attribution`).
 
 GSI marks the file as 検証中 (being tested), so its address or layers may
 change. Each map manifest records the date of the GSI file it was built
-from (`contours.file_date`), and the build stops when the server has a
-file of another date.
+from (`contours.file_date`, the UTC date of the server's Last-Modified),
+and the build stops when the server has a file of another date.
 
 ### Walking routes
 

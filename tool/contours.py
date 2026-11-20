@@ -8,17 +8,20 @@ Writes build/maps/<id>.contours.pmtiles with only the layers the manifest's
 Cstline: coastline), cut to the area. build_map.py calls this too.
 
 The GSI file is marked 検証中 (being tested): its address or layers may
-change. The manifest records the file's date ("file_date", from the
-server's Last-Modified); the build stops when the server has another date,
-so a changed file is looked at before it ships.
+change. The manifest records the file's date ("file_date", the UTC date of
+the server's Last-Modified); the build stops when the server has another
+date, so a changed file is looked at before it ships. An area without any
+contour data gets no contours file (a warning, not an error).
 
-Needs the `pmtiles` command (brew install pmtiles). The tile filter is
+Needs a recent `pmtiles` command (brew install pmtiles; it uses `verify`). The tile filter is
 plain Python: it copies the wanted layers of each vector tile byte for
 byte, so their features and attributes stay exactly as GSI made them.
 """
 import email.utils
 import gzip
+import hashlib
 import json
+import shutil
 import sqlite3
 import struct
 import subprocess
@@ -38,6 +41,8 @@ def varint(buf, i):
     while True:
         if i >= len(buf):
             raise ValueError("truncated varint")
+        if shift > 63:
+            raise ValueError("varint longer than 64 bits")
         b = buf[i]
         i += 1
         value |= (b & 0x7F) << shift
@@ -143,7 +148,9 @@ def _directory(buf):
         lengths.append(v)
     for k in range(n):
         v, i = varint(buf, i)
-        offsets.append(offsets[-1] + lengths[k - 1] if v == 0 and k > 0 else v - 1)
+        if v == 0 and k == 0:
+            raise ValueError("bad PMTiles directory: first offset is 0")
+        offsets.append(offsets[-1] + lengths[k - 1] if v == 0 else v - 1)
     return list(zip(ids, run_lengths, offsets, lengths))
 
 
@@ -190,7 +197,8 @@ def server_date(url):
 
 def filter_to_mbtiles(src, out, keep, bbox, center, attribution):
     """Writes an MBTiles file with only the kept layers of src. Tiles left
-    empty are dropped. Returns (tile count, min zoom, max zoom)."""
+    empty are dropped. Returns (tile count, min zoom, max zoom), or None
+    (and writes nothing) when no tile has any of the layers."""
     out.unlink(missing_ok=True)
     db = sqlite3.connect(out)
     db.executescript("""
@@ -210,7 +218,8 @@ def filter_to_mbtiles(src, out, keep, bbox, center, attribution):
         zooms.add(z)
     if not count:
         db.close()
-        sys.exit(f"no {', '.join(sorted(keep))} data in the area")
+        out.unlink()
+        return None
     layers = [l for l in read_metadata(src).get("vector_layers", []) if l.get("id") in keep]
     meta = {
         "name": "contours", "format": "pbf", "type": "overlay",
@@ -228,7 +237,10 @@ def filter_to_mbtiles(src, out, keep, bbox, center, attribution):
 
 
 def build(m):
-    """Builds build/maps/<id>.contours.pmtiles for manifest m. Returns its path."""
+    """Builds build/maps/<id>.contours.pmtiles for manifest m. Returns its
+    path, or None when the area has no contour data."""
+    if not shutil.which("pmtiles"):
+        sys.exit("pmtiles not found: brew install pmtiles")
     c = m["contours"]
     date = server_date(c["source"])
     if date != c["file_date"]:
@@ -237,7 +249,9 @@ def build(m):
     CACHE.mkdir(parents=True, exist_ok=True)
     out = ROOT / "build" / "maps" / f"{m['id']}.contours.pmtiles"
     out.parent.mkdir(parents=True, exist_ok=True)
-    full = CACHE / f"{m['id']}.gsi-bvmap-{date}.pmtiles"
+    # The cached extract is only reused for the same file, area and zoom.
+    key = hashlib.sha256(json.dumps([c["source"], m["bbox"], m["maxzoom"]]).encode()).hexdigest()[:10]
+    full = CACHE / f"{m['id']}.gsi-bvmap-{date}-{key}.pmtiles"
     if not full.exists():
         part = full.with_suffix(".part")
         part.unlink(missing_ok=True)
@@ -246,12 +260,21 @@ def build(m):
                         f"--maxzoom={m['maxzoom']}"], check=True)
         part.rename(full)
     mbtiles = CACHE / f"{m['id']}.contours.mbtiles"
-    count, zmin, zmax = filter_to_mbtiles(full, mbtiles, set(c["layers"]), m["bbox"],
-                                          m["center"], c["attribution"])
-    out.unlink(missing_ok=True)
-    subprocess.run(["pmtiles", "convert", str(mbtiles), str(out)], check=True,
+    result = filter_to_mbtiles(full, mbtiles, set(c["layers"]), m["bbox"],
+                               m["center"], c["attribution"])
+    if result is None:
+        out.unlink(missing_ok=True)
+        print(f"contours: no {', '.join(c['layers'])} data in {m['id']}, no contours file")
+        return None
+    count, zmin, zmax = result
+    # Convert and check next to the result, then replace it: a failed step
+    # never leaves a half-written or stale-looking file in build/maps/.
+    part = out.with_name(out.name + ".part")
+    part.unlink(missing_ok=True)
+    subprocess.run(["pmtiles", "convert", str(mbtiles), str(part)], check=True,
                    stdout=subprocess.DEVNULL)
-    subprocess.run(["pmtiles", "verify", str(out)], check=True, stdout=subprocess.DEVNULL)
+    subprocess.run(["pmtiles", "verify", str(part)], check=True, stdout=subprocess.DEVNULL)
+    part.replace(out)
     mbtiles.unlink()
     print(f"contours: {out.relative_to(ROOT)} ({out.stat().st_size / 1e6:.1f} MB, "
           f"{count} tiles, z{zmin}-{zmax}, GSI file of {date})")
