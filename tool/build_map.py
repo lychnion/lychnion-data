@@ -28,6 +28,7 @@ import shutil
 import sqlite3
 import subprocess
 import sys
+import urllib.error
 import urllib.request
 from pathlib import Path
 
@@ -54,6 +55,33 @@ def fetch(url, name):
         with urllib.request.urlopen(req, timeout=120) as r:
             path.write_bytes(r.read())
     return path
+
+
+def check_basemap_build(url):
+    """Protomaps keeps its daily builds for about a week (and the last build
+    of each version longer). Stops with the newest build on offer when the
+    manifest's build is gone (404/410). Any other problem only warns:
+    `pmtiles extract` then tries and reports its own error."""
+    agent = {"User-Agent": "lychnion-map-builder"}
+    try:
+        urllib.request.urlopen(urllib.request.Request(url, method="HEAD", headers=agent), timeout=60).close()
+        return
+    except urllib.error.HTTPError as e:
+        if e.code not in (404, 410):
+            print(f"warning: could not check {url} ({e}); trying anyway", file=sys.stderr)
+            return
+    except OSError as e:  # network errors, timeouts
+        print(f"warning: could not check {url} ({e}); trying anyway", file=sys.stderr)
+        return
+    meta = "https://build-metadata.protomaps.dev/builds.json"
+    try:
+        with urllib.request.urlopen(urllib.request.Request(meta, headers=agent), timeout=60) as r:
+            newest = max(json.load(r), key=lambda b: b["uploaded"])["key"]
+        offer = f" The newest build now is https://build.protomaps.com/{newest} (all: {meta})."
+    except Exception as e:  # the list is only a hint
+        offer = f" (Could not list the builds: {e!r}; see {meta}.)"
+    sys.exit(f"{url} is gone (Protomaps removes daily builds after about a week): "
+             f"set \"basemap\".\"source\" in the manifest to a current build.{offer}")
 
 
 def read_csv(path):
@@ -167,6 +195,7 @@ def main(manifest_path):
     if not tiles.exists():
         if not shutil.which("pmtiles"):
             sys.exit("pmtiles not found: brew install pmtiles")
+        check_basemap_build(m["basemap"]["source"])
         tiles.parent.mkdir(parents=True, exist_ok=True)
         subprocess.run(["pmtiles", "extract", m["basemap"]["source"], str(tiles),
                         "--bbox=" + ",".join(str(v) for v in bbox), f"--maxzoom={m['maxzoom']}"], check=True)

@@ -258,6 +258,14 @@ not yet been checked by a medical expert.
 [Open Database License (ODbL)](https://opendatacommons.org/licenses/odbl/).
 Built with [Protomaps](https://protomaps.com/).
 
+Each map manifest names the Protomaps daily build it is cut from
+(`basemap.source`). Protomaps keeps daily builds for about a week (only
+the last build of each Protomaps version stays longer), so a new base map
+usually needs a newer build in the manifest; `build_map.py` says so and
+names the newest one. Changing the build in the manifest does not change
+released base maps: only a rebuild uses it, and a rebuilt file ships as a
+new version.
+
 ### Contour lines
 
 出典：国土地理院最適化ベクトルタイルを加工して作成 (only the contour and
