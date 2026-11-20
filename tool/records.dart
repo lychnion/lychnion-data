@@ -303,7 +303,6 @@ String _now() {
   return '$date${o.isNegative ? '-' : '+'}${two(o.inHours)}:${two(o.inMinutes % 60)}';
 }
 
-/// The newest record of [id] in [dir]/[id]/, verified with [trust].
 /// Contours (`<map id>.contours`) have no sites file to take their area
 /// from, so the items file sets it by hand: it must match the newest
 /// signed record of their map, or the app ranks them for other places.
@@ -318,10 +317,14 @@ Future<void> _checkContoursArea(
   if (map == null) _fail('$id: sign its map $mapId first');
   final want = map.json['area'];
   if (jsonEncode(area) != jsonEncode(want)) {
-    _fail('$id: area $area, but $mapId ${map.version} has $want');
+    _fail(
+      '$id: area ${jsonEncode(area)}, but $mapId ${map.version} has '
+      '${jsonEncode(want)} (same codes in the same order)',
+    );
   }
 }
 
+/// The newest record of [id] in [dir]/[id]/, verified with [trust].
 Future<PackageRecord?> _newest(
   Directory dir,
   String id,
@@ -350,7 +353,12 @@ Future<void> _sign(_Args args) async {
   final keyFrom = args.req('--key');
   final items = _readJson(args.req('--items'));
   final dir = Directory(args.req('--records'));
-  final ids = args.positional();
+  // Contours after their maps: a map signed in the same call is the one
+  // their area is checked against.
+  final ids = [
+    ...args.positional().where((i) => !i.endsWith('.contours')),
+    ...args.positional().where((i) => i.endsWith('.contours')),
+  ];
   if (ids.isEmpty) _fail('Name the items to sign.');
   final pair = await keyPairFromSeed(await _readKey(keyFrom));
   final publisher = items['publisher']! as String;
