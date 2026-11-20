@@ -56,24 +56,27 @@ def fetch(url, name):
 
 def check_basemap_build(url):
     """Protomaps keeps its daily builds for about a week (and the last build
-    of each version longer). Stops with the builds on offer when the
-    manifest's build is gone, instead of a bare pmtiles error."""
-    req = urllib.request.Request(url, method="HEAD", headers={"User-Agent": "lychnion-map-builder"})
+    of each version longer). Stops with the newest build on offer when the
+    manifest's build is gone (404/410). Any other problem only warns:
+    `pmtiles extract` then tries and reports its own error."""
+    agent = {"User-Agent": "lychnion-map-builder"}
     try:
-        urllib.request.urlopen(req, timeout=60).close()
+        urllib.request.urlopen(urllib.request.Request(url, method="HEAD", headers=agent), timeout=60).close()
         return
     except urllib.error.HTTPError as e:
-        if e.code != 404:
-            raise
-    offer = ""
+        if e.code not in (404, 410):
+            print(f"warning: could not check {url} ({e}); trying anyway", file=sys.stderr)
+            return
+    except OSError as e:  # network errors, timeouts
+        print(f"warning: could not check {url} ({e}); trying anyway", file=sys.stderr)
+        return
+    meta = "https://build-metadata.protomaps.dev/builds.json"
     try:
-        meta = "https://build-metadata.protomaps.dev/builds.json"
-        with urllib.request.urlopen(urllib.request.Request(meta, headers={"User-Agent": "lychnion-map-builder"}),
-                                    timeout=60) as r:
-            builds = [b["key"] for b in json.load(r)]
-        offer = f" Builds on offer now: newest {builds[-1]}; all: {meta}"
+        with urllib.request.urlopen(urllib.request.Request(meta, headers=agent), timeout=60) as r:
+            newest = max(json.load(r), key=lambda b: b["uploaded"])["key"]
+        offer = f" The newest build now is https://build.protomaps.com/{newest} (all: {meta})."
     except Exception as e:  # the list is only a hint
-        offer = f" (could not list the builds: {e})"
+        offer = f" (Could not list the builds: {e!r}; see {meta}.)"
     sys.exit(f"{url} is gone (Protomaps removes daily builds after about a week): "
              f"set \"basemap\".\"source\" in the manifest to a current build.{offer}")
 
