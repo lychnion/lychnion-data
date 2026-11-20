@@ -156,6 +156,30 @@
       ]
     },
     {
+      "id": "jp.map.nishinomiya.contours",
+      "kind": "map",
+      "version": "2026.11.8",
+      "title": {
+        "ja": "等高線：西宮周辺",
+        "en": "Contour lines: Nishinomiya area"
+      },
+      "note": {
+        "ja": "「地図：西宮周辺」に重ねる等高線（任意）。その地図と新しいアプリが必要です",
+        "en": "Optional contour lines over \"Map: Nishinomiya area\". Needs that map and a recent app"
+      },
+      "licence": "出典：国土地理院最適化ベクトルタイルを加工して作成（国土地理院コンテンツ利用規約）",
+      "area": [
+        "JP-27",
+        "JP-28"
+      ],
+      "files": [
+        {
+          "name": "jp.map.nishinomiya.contours.pmtiles",
+          "path": "build/maps/jp.map.nishinomiya.contours.pmtiles"
+        }
+      ]
+    },
+    {
       "id": "jp.outdoor.hiking",
       "kind": "package",
       "version": "2026.11.3",
@@ -228,6 +252,29 @@
           "name": "jp.map.kushimoto.inundation.mbtiles",
           "path": "build/maps/jp.map.kushimoto.inundation.mbtiles",
           "url": "https://github.com/lychnion/lychnion-data/releases/download/2026.11.2/jp.map.kushimoto.inundation.mbtiles"
+        }
+      ]
+    },
+    {
+      "id": "jp.map.kushimoto.contours",
+      "kind": "map",
+      "version": "2026.11.8",
+      "title": {
+        "ja": "等高線：串本町（和歌山県）",
+        "en": "Contour lines: Kushimoto (Wakayama)"
+      },
+      "note": {
+        "ja": "「地図：串本町（和歌山県）」に重ねる等高線（任意）。その地図と新しいアプリが必要です",
+        "en": "Optional contour lines over \"Map: Kushimoto (Wakayama)\". Needs that map and a recent app"
+      },
+      "licence": "出典：国土地理院最適化ベクトルタイルを加工して作成（国土地理院コンテンツ利用規約）",
+      "area": [
+        "JP-30"
+      ],
+      "files": [
+        {
+          "name": "jp.map.kushimoto.contours.pmtiles",
+          "path": "build/maps/jp.map.kushimoto.contours.pmtiles"
         }
       ]
     }

@@ -190,6 +190,8 @@ record) and writes a `catalog.json` that points to them.
 | `intl.firstaid.basics` | `intl.firstaid.basics.sqlite` | Knowledge package "応急手当" (first aid): bites, cold injuries, heat illness, from US government manuals, with a Japanese translation |
 | `jp.map.nishinomiya` | `.pmtiles`, `.sites.sqlite`, `.routes.bin`, `.inundation.mbtiles` | Offline map of the Nishinomiya area (eastern Kobe to western Osaka) |
 | `jp.map.kushimoto` | `.pmtiles`, `.sites.sqlite`, `.routes.bin`, `.inundation.mbtiles` | Offline map of Kushimoto (Wakayama) and around |
+| `jp.map.nishinomiya.contours` | `jp.map.nishinomiya.contours.pmtiles` | Contour lines for the Nishinomiya map (optional) |
+| `jp.map.kushimoto.contours` | `jp.map.kushimoto.contours.pmtiles` | Contour lines for the Kushimoto map (optional) |
 
 Each map area has four files: the base map (vector tiles), evacuation
 sites, walking routes (roads and paths with ground height and expected
@@ -197,9 +199,18 @@ tsunami inundation for every point), and tsunami inundation areas as map
 tiles.
 
 The build also makes a fifth file, `<id>.contours.pmtiles` (contour
-lines and coastline). It is **not in the catalog yet**: the app that draws it is
-in review (lychnion/lychnion#84), and contours will become their own
-download per area, so people can skip them (lychnion/lychnion#57).
+lines and coastline). It is its own item, `<id>.contours`, so people can
+skip it (lychnion/lychnion#57). Its kind is `map`, so every app version
+reads it, but no app version takes it as a base map: it has no
+`.sites.sqlite`, and its only `.pmtiles` ends in `.contours.pmtiles`. It
+lands in the same folder as the map, where the app (since
+lychnion/lychnion#84) finds the file next to the base map and draws it;
+older versions install it but never open it. Deleting the map leaves the
+contours installed until they are deleted too.
+
+Its `area` is set in `items.json` (there is no sites file to take it
+from); `records.dart sign` refuses it unless it matches the newest
+signed record of its map.
 
 ## Sources and licences
 
