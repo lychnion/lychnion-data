@@ -1,0 +1,77 @@
+name: Ask Lychnion to check your publisher key
+description: For public bodies in Japan that publish guides or maps. Lychnion checks the key on your official website and signs an attestation, so the app shows your publisher as "Checked by Lychnion".
+title: "Check publisher key: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please read [how Lychnion checks a publisher](https://github.com/lychnion/lychnion/blob/main/docs/attestations.md) first.
+
+        **This form is public.** Do not write personal names, phone numbers or e-mail addresses. If Lychnion needs to ask something, it uses the contact details on your official website.
+
+        You never need this to publish: phones can add your publisher from its link or QR code without it. It only changes the label people see.
+  - type: input
+    id: publisher
+    attributes:
+      label: Publisher name
+      description: The name you created in "Publish your own", for example jp.city.sendai.
+    validations:
+      required: true
+  - type: input
+    id: title-ja
+    attributes:
+      label: Official name in Japanese
+      placeholder: 仙台市
+    validations:
+      required: true
+  - type: input
+    id: title-en
+    attributes:
+      label: Official name in English
+      placeholder: Sendai City
+    validations:
+      required: true
+  - type: textarea
+    id: link
+    attributes:
+      label: Publisher link
+      description: The lychnion://publisher link shown in "Publish your own". It holds your public key only (never send the key file or a key backup).
+      render: text
+    validations:
+      required: true
+  - type: input
+    id: code
+    attributes:
+      label: Key code
+      description: The key's short code shown in "Publish your own" (8 characters), the same as on your page.
+    validations:
+      required: true
+  - type: input
+    id: page
+    attributes:
+      label: Page on your official website
+      description: The https page (a *.lg.jp or *.go.jp address, or your long-used official address) that shows the publisher name and the key's code, with a sentence saying it is your Lychnion key.
+      placeholder: https://www.city.example.lg.jp/…
+    validations:
+      required: true
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What kind of body
+      options:
+        - Prefecture
+        - City, town, village or ward
+        - Fire department
+        - Ministry or national agency
+        - Other public body
+    validations:
+      required: true
+  - type: checkboxes
+    id: confirm
+    attributes:
+      label: Before you send
+      options:
+        - label: The page above shows the publisher name and the same key code as "Publish your own".
+          required: true
+        - label: I have not put personal names, phone numbers or e-mail addresses in this form.
+          required: true

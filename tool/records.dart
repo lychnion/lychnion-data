@@ -45,6 +45,29 @@
 //   # key replacement add --keys keys.json)
 //   dart run tool/records.dart check-records records
 //
+//   # attest that a publisher's key belongs to an official body, after
+//   # checking it (docs/attestations.md in lychnion/lychnion); writes
+//   # attestations/<publisher>/<time>.json for a pull request. The values
+//   # come from a public issue: put them in a JSON file, never on the
+//   # command line, where a pasted `$(...)` would run next to the key:
+//   #   {"publisher": "jp.city.sendai", "key": "<from the publisher link>",
+//   #    "title": {"ja": "仙台市", "en": "Sendai City"},
+//   #    "url": "https://www.city.sendai.jp/…"}
+//   op read op://Private/lychnion-package-signing-key/credential \
+//     | dart run tool/records.dart attest --key - --from build/sendai.json
+//         [--checked 2026-11-23]
+//   (take it back: --withdraw --publisher NAME; it names the key of the
+//   newest attestation for that publisher)
+//
+//   # check every attestation in the attestations folder (also run by CI)
+//   dart run tool/records.dart check-attestations attestations
+//
+// `catalog` carries every attestation in `attestations/` (or
+// --attestations DIR; --no-attestations for a catalog without any), and
+// stops when one is bad, a file there is not an attestation at its own
+// path, or they would not fit: a withdrawal left out would leave a
+// publisher shown as checked.
+//
 // Mirrors (`--mirror`, repeatable) are nodes that keep files by hash under
 // `blobs/sha256/`. The app tries a file's own address first, then each
 // mirror. They are not signed: the hash in the signed record decides.
@@ -75,9 +98,7 @@ Future<void> main(List<String> argv) async {
       await _keygen(args);
     case 'public':
       final keyFrom = args.req('--key');
-      if (args.positional() case [final first, ...]) {
-        _fail('Unexpected $first');
-      }
+      if (args.positional().isNotEmpty) _strayArgument();
       final pair = await keyPairFromSeed(await _readKey(keyFrom));
       stdout.writeln(await publicKeyOf(pair));
     case 'sign':
@@ -90,10 +111,19 @@ Future<void> main(List<String> argv) async {
       await _verify(args);
     case 'check-records':
       await _checkRecords(args);
+    case 'attest':
+      await _attest(args);
+    case 'check-attestations':
+      await _checkAttestations(args);
     default:
       _fail('Unknown command ${argv.first}');
   }
 }
+
+/// A stray argument to a command that reads the key: not shown, it may
+/// be the key itself.
+Never _strayArgument() =>
+    _fail('Unexpected argument (not shown: it may be the key)');
 
 class _Args {
   _Args(this.rest);
@@ -122,17 +152,41 @@ class _Args {
   /// for a file.
   List<String> positional() {
     for (final a in rest) {
-      if (a.startsWith('--')) _fail('Unknown option $a');
+      if (a.startsWith('--')) _fail('Unknown option ${a.split('=').first}');
     }
     return rest;
   }
 }
 
+/// The private seed from [from] (`-`: stdin, from `op read`; else a
+/// file), checked for its form. Nothing about it reaches the output: a
+/// wrong text could be the key with a stray character, and terminals,
+/// shell logs and session transcripts keep what is printed.
 Future<String> _readKey(String from) async {
-  final k = from == '-'
-      ? (await stdin.transform(utf8.decoder).join()).trim()
-      : (await File(from).readAsString()).trim();
+  final String k;
+  try {
+    k = from == '-'
+        ? (await stdin.transform(utf8.decoder).join()).trim()
+        : (await File(from).readAsString()).trim();
+  } on Object {
+    _fail(
+      from == '-'
+          ? 'Could not read the key from stdin'
+          // The "path" may be the seed itself, given by mistake.
+          : 'Could not read the --key file (name not shown)',
+    );
+  }
   if (k.isEmpty) _fail('No key received (did `op read` fail?)');
+  // An Ed25519 seed: 32 bytes, base64url (43 characters, maybe padded).
+  var ok = RegExp(r'^[A-Za-z0-9_-]{43}=?$').hasMatch(k);
+  if (ok) {
+    try {
+      ok = base64Url.decode(base64Url.normalize(k)).length == 32;
+    } on Object {
+      ok = false;
+    }
+  }
+  if (!ok) _fail('Not a valid key (not shown). Check the 1Password item.');
   return k;
 }
 
@@ -249,8 +303,14 @@ String _encode(CatalogDocument c, String out) {
   try {
     // Key statements left out to fit would leave records of a new key
     // with a bad signature, or a stolen key trusted: stop instead.
-    if (c.fitted().keys.length < c.keys.length) {
+    final fitted = c.fitted();
+    if (fitted.keys.length < c.keys.length) {
       _fail('$out: with its key statements it would be over 2 MB');
+    }
+    // Left out to fit, a withdrawal would leave a publisher shown as
+    // checked by Lychnion.
+    if (fitted.attestations.length < c.attestations.length) {
+      _fail('$out: with its attestations it would be over 2 MB');
     }
     return c.encode();
   } on CatalogTooLarge catch (e) {
@@ -468,6 +528,8 @@ Future<Map<String, Object?>> _recordFor(
 }
 
 Future<void> _catalog(_Args args) async {
+  // Before the options are read: another publisher's catalog.
+  final ownKey = args.rest.contains('--public-key');
   final items = _readJson(args.req('--items'));
   final dir = Directory(args.req('--records'));
   final base = args.req('--base');
@@ -484,12 +546,26 @@ Future<void> _catalog(_Args args) async {
   }
   final given = _trust(args);
   final keyFiles = args.all('--keys');
+  final givenDir = args.opt('--attestations');
+  final noAttestations = args.flag('--no-attestations');
+  if (noAttestations && givenDir != null) {
+    _fail('--attestations and --no-attestations: give one');
+  }
+  // Lychnion's catalog: the attestations next to this tool, wherever it
+  // runs from. Another publisher's (--public-key): none unless given,
+  // since Lychnion's would not verify with its key.
+  final attestationDir = givenDir ?? (ownKey ? null : _defaultAttestations);
   // A mistyped option (--key, --keys=FILE) must not leave a revocation
   // out of the catalog unnoticed.
   if (args.positional() case [final first, ...]) _fail('Unexpected $first');
   final keys = await _keys(keyFiles, given);
   // Records of a successor key count when a statement names it.
   final trust = given.withStatements(keys);
+  // Every attestation (#119); a bad one stops the catalog: better than a
+  // withdrawal silently missing.
+  final attestations = noAttestations || attestationDir == null
+      ? const <Attestation>[]
+      : await _attestationsIn(attestationDir, trust);
   final records = <Map<String, Object?>>[];
   final urls = <String, String>{};
   for (final i in (items['items']! as List).cast<Map>()) {
@@ -523,9 +599,13 @@ Future<void> _catalog(_Args args) async {
     urls: urls,
     mirrors: [for (final m in mirrors) m.endsWith('/') ? m : '$m/'],
     keys: [for (final s in keys) s.json],
+    attestations: [for (final a in attestations) a.json],
   );
   await File(out).writeAsString(_encode(catalog, out));
-  stdout.writeln('$out: ${records.length} records');
+  stdout.writeln(
+    '$out: ${records.length} records, ${attestations.length} attestations'
+    '${attestationDir == null || noAttestations ? ' (none given)' : ' from ${Directory(attestationDir).absolute.path}'}',
+  );
 }
 
 /// Writes a static node: the catalog (records verified and unchanged) and
@@ -621,12 +701,24 @@ Future<void> _export(_Args args) async {
       stdout.writeln('copied ${f.name}');
     }
   }
+  // The source catalog's attestations that a key trusted here for
+  // Lychnion signed, as the app passes them on.
+  final attestations = await Attestation.checkAll(j.attestations, trust);
+  if (attestations.length < j.attestations.length) {
+    stderr.writeln(
+      '${j.attestations.length - attestations.length} attestations left '
+      'out: not signed by a trusted key, repeated, or past the limits '
+      '(${Attestation.maxPerSource}, or ${Attestation.maxBadSignatures} '
+      'bad signatures)',
+    );
+  }
   final catalog = CatalogDocument(
     refresh: j.refresh,
     records: records,
     urls: urls,
     mirrors: mirrors,
     keys: [for (final s in keys) s.json],
+    attestations: [for (final a in attestations) a.json],
   );
   await File(
     '${out.path}/catalog.json',
@@ -648,6 +740,23 @@ Future<void> _verify(_Args args) async {
   if (keys.isNotEmpty) stdout.writeln('${keys.length} key statements');
   final trust = given.withStatements(keys);
   var bad = 0;
+  if (j.attestations.isNotEmpty) {
+    final ok = await Attestation.checkAll(j.attestations, trust);
+    stdout.writeln('${ok.length} attestations');
+    for (final a in ok) {
+      stdout.writeln(
+        'ok   attestation ${a.publisher}'
+        '${a.withdrawn ? ' (withdrawn)' : ''} ${a.signed}',
+      );
+    }
+    if (ok.length < j.attestations.length) {
+      bad += j.attestations.length - ok.length;
+      stdout.writeln(
+        'BAD  ${j.attestations.length - ok.length} attestations: signature, '
+        'form or repeated',
+      );
+    }
+  }
   for (final raw in j.records) {
     final r = await trust.check(raw);
     if (r == null) {
@@ -697,4 +806,279 @@ Future<void> _checkRecords(_Args args) async {
     stdout.writeln('${ok ? 'ok ' : 'BAD'}  $id $version');
   }
   if (bad > 0) _fail('$bad bad records');
+}
+
+/// Attestation files: `attestations/<publisher>/<signed>.json`, where
+/// `<signed>` is the signed time without colons (`20261123T140000+0900`).
+String _attestationPath(String dir, Attestation a) =>
+    '${dir.replaceFirst(RegExp(r'/+$'), '')}/${a.publisher}/${a.signed.replaceAll(RegExp('[-:]'), '')}.json';
+
+/// Every attestation in [dir], checked with [trust]. The folder must
+/// exist, and hold only `<publisher>/<signed time>.json` files (plain
+/// files, not links), each signed by a key trusted for Lychnion and at its
+/// own path, and a `README.md`: anything else (a renamed `.bak`, `.JSON`)
+/// stops the tool, so a withdrawal can never be left out by a name.
+Future<List<Attestation>> _attestationsIn(String dir, TrustedKeys trust) async {
+  dir = dir.replaceFirst(RegExp(r'/+$'), '');
+  final d = Directory(dir);
+  if (!d.existsSync()) {
+    _fail(
+      '$dir: no such folder (${d.absolute.path}); --no-attestations '
+      'for a catalog without any',
+    );
+  }
+  final entries = d.listSync(recursive: true, followLinks: false)
+    ..sort((a, b) => a.path.compareTo(b.path));
+  final out = <Attestation>[];
+  var bad = 0;
+  void wrong(String path, String why) {
+    bad++;
+    stderr.writeln('BAD  $path: $why');
+  }
+
+  for (final e in entries) {
+    final rel = e.path.substring(dir.length + 1).split('/');
+    if (e is Link) {
+      wrong(e.path, 'a link (only plain files)');
+      continue;
+    }
+    if (e is Directory) {
+      if (rel.length != 1 || !_publisherName.hasMatch(rel.first)) {
+        wrong(e.path, 'not a publisher folder');
+      }
+      continue;
+    }
+    if (rel.length == 1 && rel.first == 'README.md') continue;
+    // Finder's folder settings on macOS: never an attestation (only
+    // parsed .json files are), so skipped rather than stopping the tool.
+    // Anything else (.bak, ._x, x~) may hide a renamed withdrawal.
+    if (rel.length <= 2 && rel.last == '.DS_Store') {
+      stderr.writeln('note: skipped ${e.path}');
+      continue;
+    }
+    if (rel.length != 2 || !rel.last.endsWith('.json')) {
+      wrong(e.path, 'not <publisher>/<signed time>.json');
+      continue;
+    }
+    final Object? json;
+    try {
+      json = jsonDecode((e as File).readAsStringSync());
+    } on FormatException {
+      wrong(e.path, 'not JSON');
+      continue;
+    } on FileSystemException {
+      wrong(e.path, 'not readable');
+      continue;
+    }
+    final a = await Attestation.check(json, trust);
+    if (a == null) {
+      wrong(e.path, 'signature, signer or form');
+      continue;
+    }
+    if (_attestationPath(dir, a) != e.path) {
+      wrong(e.path, 'should be ${_attestationPath(dir, a)}');
+      continue;
+    }
+    out.add(a);
+  }
+  if (bad > 0) _fail('$bad bad entries in $dir');
+  if (Attestation.capped(out).length < out.length) {
+    _fail(
+      '$dir: more than ${Attestation.maxPerSource} attestations; a catalog '
+      'carries at most that many',
+    );
+  }
+  return out;
+}
+
+/// `attestations/` in the repository this tool is in.
+String get _defaultAttestations =>
+    '${File.fromUri(Platform.script).parent.parent.path}/attestations';
+
+final _publisherName = RegExp(r'^[a-z0-9][a-z0-9._-]{0,63}$');
+
+/// The ways a key may be checked (docs/attestations.md in the app
+/// repository writes a new one down before it is used).
+const _methods = {'official-website'};
+
+/// Signs an attestation and writes it to the attestations folder.
+Future<void> _attest(_Args args) async {
+  final keyFrom = args.req('--key');
+  final dir = args.opt('--attestations') ?? _defaultAttestations;
+  final from = args.opt('--from');
+  final withdraw = args.flag('--withdraw');
+  var publisher = args.opt('--publisher');
+  final checked = args.opt('--checked') ?? _now().substring(0, 10);
+  final method = args.opt('--method') ?? 'official-website';
+  final given = _trust(args);
+  final keyFiles = args.all('--keys');
+  if (args.positional().isNotEmpty) _strayArgument();
+  if (withdraw && from != null) {
+    _fail(
+      '--withdraw takes --publisher, not --from: it names the newest '
+      'attestation\'s key',
+    );
+  }
+  String? key, url;
+  var title = <String, String>{};
+  if (from != null) {
+    // The values from the issue, never through the shell.
+    final Object? j;
+    try {
+      j = jsonDecode(File(from).readAsStringSync());
+    } on Object {
+      _fail('$from: not a readable JSON file');
+    }
+    if (j is! Map ||
+        j.keys.any((k) => !{'publisher', 'key', 'title', 'url'}.contains(k))) {
+      _fail('$from: only publisher, key, title and url');
+    }
+    final Map<Object?, Object?> m = j;
+    String? text(String field) {
+      final v = m[field];
+      if (v == null) return null;
+      if (v is! String) _fail('$from: "$field" must be text');
+      return v.trim();
+    }
+
+    final named = text('publisher');
+    if (named == null) _fail('$from: "publisher" is missing');
+    if (publisher != null && publisher != named) {
+      _fail('--publisher and $from name different publishers');
+    }
+    publisher = named;
+    key = text('key');
+    url = text('url');
+    if (j['title'] case final Map t) {
+      for (final e in t.entries) {
+        if (e.key is! String || e.value is! String) {
+          _fail('$from: "title" must map languages to text');
+        }
+        title[e.key as String] = (e.value as String).trim();
+      }
+    } else if (j['title'] != null) {
+      _fail('$from: "title" must map languages to text');
+    }
+  }
+  if (publisher == null) _fail('Give --from FILE (or --publisher to withdraw)');
+  if (!_methods.contains(method)) {
+    _fail('--method $method is not written down in docs/attestations.md');
+  }
+  final today = _now().substring(0, 10);
+  if (!RegExp(r'^\d{4}-\d{2}-\d{2}$').hasMatch(checked) ||
+      DateTime.tryParse(checked) == null) {
+    _fail('--checked $checked: give the day as YYYY-MM-DD');
+  }
+  if (checked.compareTo(today) > 0) {
+    _fail('--checked $checked is in the future');
+  }
+  final trust = given.withStatements(await _keys(keyFiles, given));
+  final existing =
+      (await _attestationsIn(
+          dir,
+          trust,
+        )).where((a) => a.publisher == publisher).toList()
+        ..sort((a, b) => a.signedAt.compareTo(b.signedAt));
+  final newest = existing.isEmpty
+      ? null
+      : attestationFor(
+          publisher,
+          existing.last.key,
+          existing,
+          const [],
+        ).attestation;
+  if (withdraw) {
+    if (newest == null) _fail('$publisher: no attestation to take back');
+    if (newest.withdrawn) _fail('$publisher: already withdrawn');
+    // The newest attestation's key, so the withdrawal reads clearly.
+    key ??= newest.key;
+    title = {};
+    url = null;
+  } else {
+    if (from == null) _fail('Give --from FILE: the values from the issue');
+    if (title['ja'] == null || title['en'] == null) {
+      _fail('$from: title needs ja and en');
+    }
+    if (url == null) _fail('$from: url, the page where the key was checked');
+    if (newest != null && !newest.withdrawn && newest.key != key) {
+      stderr.writeln(
+        'Note: $publisher had an attestation for another key '
+        '(${newest.key}); this one replaces it.',
+      );
+    }
+  }
+  if (key == null) _fail('No publisher key (in $from: "key")');
+  final signer = await keyPairFromSeed(await _readKey(keyFrom));
+  final Attestation a;
+  try {
+    a = await Attestation.sign(
+      publisher: publisher,
+      key: key,
+      title: title,
+      checked: checked,
+      method: method,
+      url: url,
+      signed: _now(),
+      signer: signer,
+      withdrawn: withdraw,
+    );
+  } on ArgumentError catch (e) {
+    _fail('Not an attestation the app would accept: ${e.message}');
+  } on FormatException catch (e) {
+    _fail('The publisher key: ${e.message}');
+  }
+  // Only a key the app trusts for Lychnion makes attestations that count.
+  if (await Attestation.check(a.json, trust) == null) {
+    _fail(
+      'The key given is not trusted for Lychnion (wrong 1Password item, or '
+      '--public-key / --keys missing after a key replacement)',
+    );
+  }
+  // A file that would not decide (a clock behind the newest file) is
+  // never written: a withdrawal must win.
+  if (existing.any((e) => !a.signedAt.isAfter(e.signedAt))) {
+    _fail(
+      'This would be signed at ${a.signed}, not after the newest file for '
+      '$publisher: check the clock',
+    );
+  }
+  final path = _attestationPath(dir, a);
+  if (File(path).existsSync()) _fail('$path exists already');
+  await File(path).parent.create();
+  await File(
+    path,
+  ).writeAsString('${const JsonEncoder.withIndent('  ').convert(a.json)}\n');
+  stdout.writeln(
+    '$path${withdraw ? ' (withdrawal of the attestation for ${a.key})' : ''}',
+  );
+}
+
+/// Every attestation in FOLDER must be valid and at its own path (CI).
+Future<void> _checkAttestations(_Args args) async {
+  final given = _trust(args);
+  final keyFiles = args.all('--keys');
+  final rest = args.positional();
+  if (rest.isEmpty) _fail('Usage: check-attestations FOLDER');
+  final trust = given.withStatements(await _keys(keyFiles, given));
+  final all = await _attestationsIn(rest.first, trust);
+  // A clock far ahead writes a file that decides over every later one.
+  final soon = DateTime.now().add(const Duration(days: 1));
+  final ahead = [
+    for (final a in all)
+      if (a.signedAt.isAfter(soon)) a,
+  ];
+  for (final a in ahead) {
+    stderr.writeln('BAD  ${a.publisher} ${a.signed}: signed in the future');
+  }
+  if (ahead.isNotEmpty) _fail('${ahead.length} attestations from the future');
+  for (final a in all) {
+    final r = attestationFor(a.publisher, a.key, all, const []);
+    final decides = r.attestation?.id == a.id;
+    stdout.writeln(
+      'ok   ${a.publisher} ${a.signed}'
+      '${a.withdrawn ? ' withdrawn' : ''}'
+      '${decides ? ' (decides)' : ' (replaced by a newer one)'}',
+    );
+  }
+  stdout.writeln('${all.length} attestations');
 }
