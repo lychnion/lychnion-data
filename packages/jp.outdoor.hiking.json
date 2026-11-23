@@ -2,7 +2,7 @@
   "id": "jp.outdoor.hiking",
   "title": "登山（基本）",
   "language": "ja",
-  "version": "2026.11.3",
+  "version": "2026.11.10",
   "area": ["JP"],
   "note": "First outdoor package: getting lost, lightning, heat, ticks, hornets and volcanoes, from national government pages under PDL1.0. Bears and the 政府広報 mountain article stay in jp.bousai.core.",
   "sources": [

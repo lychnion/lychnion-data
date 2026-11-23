@@ -3,7 +3,7 @@
   "title": "応急手当（海外の資料）",
   "language": "en",
   "region": "US",
-  "version": "2026.11.1",
+  "version": "2026.11.10",
   "note": "First foreign package: universal first aid that Japan has no reusable source for (snake bites, hypothermia, frostbite, heat illness, altitude). US government manuals, public domain (17 U.S.C. 105), 'Approved for public release; distribution is unlimited'. Chosen with the source list of the Survival LLM project (github.com/anonnerdfrenzy/survival-llm, SOURCES.md, checked 2026-10-24). Only the civilian first-aid chapters; snapshots made with tool/pdf_sections.py.",
   "sources": [
     {
