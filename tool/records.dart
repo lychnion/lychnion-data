@@ -45,6 +45,24 @@
 //   # key replacement add --keys keys.json)
 //   dart run tool/records.dart check-records records
 //
+//   # attest that a publisher's key belongs to an official body, after
+//   # checking it (docs/attestations.md in lychnion/lychnion); writes
+//   # attestations/<publisher>/<time>.json for a pull request
+//   op read op://Private/lychnion-package-signing-key/credential \
+//     | dart run tool/records.dart attest --key - \
+//         --publisher jp.city.sendai --publisher-key KEY \
+//         --title-ja 仙台市 --title-en 'Sendai City' \
+//         --url https://www.city.sendai.jp/… [--checked 2026-11-23]
+//   (take it back: the same with --withdraw, which may leave out the
+//   titles, address and key: the newest attestation's key is named)
+//
+//   # check every attestation in the attestations folder (also run by CI)
+//   dart run tool/records.dart check-attestations attestations
+//
+// `catalog` carries every attestation in `attestations/` (or
+// --attestations DIR), and stops when one is bad or would not fit: a
+// withdrawal left out would leave a publisher shown as checked.
+//
 // Mirrors (`--mirror`, repeatable) are nodes that keep files by hash under
 // `blobs/sha256/`. The app tries a file's own address first, then each
 // mirror. They are not signed: the hash in the signed record decides.
@@ -90,6 +108,10 @@ Future<void> main(List<String> argv) async {
       await _verify(args);
     case 'check-records':
       await _checkRecords(args);
+    case 'attest':
+      await _attest(args);
+    case 'check-attestations':
+      await _checkAttestations(args);
     default:
       _fail('Unknown command ${argv.first}');
   }
@@ -249,8 +271,14 @@ String _encode(CatalogDocument c, String out) {
   try {
     // Key statements left out to fit would leave records of a new key
     // with a bad signature, or a stolen key trusted: stop instead.
-    if (c.fitted().keys.length < c.keys.length) {
+    final fitted = c.fitted();
+    if (fitted.keys.length < c.keys.length) {
       _fail('$out: with its key statements it would be over 2 MB');
+    }
+    // Left out to fit, a withdrawal would leave a publisher shown as
+    // checked by Lychnion.
+    if (fitted.attestations.length < c.attestations.length) {
+      _fail('$out: with its attestations it would be over 2 MB');
     }
     return c.encode();
   } on CatalogTooLarge catch (e) {
@@ -484,12 +512,20 @@ Future<void> _catalog(_Args args) async {
   }
   final given = _trust(args);
   final keyFiles = args.all('--keys');
+  final attestationDir = args.opt('--attestations');
   // A mistyped option (--key, --keys=FILE) must not leave a revocation
   // out of the catalog unnoticed.
   if (args.positional() case [final first, ...]) _fail('Unexpected $first');
   final keys = await _keys(keyFiles, given);
   // Records of a successor key count when a statement names it.
   final trust = given.withStatements(keys);
+  // Every attestation (#119); a bad one stops the catalog: better than a
+  // withdrawal silently missing.
+  final attestations = await _attestationsIn(
+    attestationDir ?? 'attestations',
+    trust,
+    required: attestationDir != null,
+  );
   final records = <Map<String, Object?>>[];
   final urls = <String, String>{};
   for (final i in (items['items']! as List).cast<Map>()) {
@@ -523,9 +559,12 @@ Future<void> _catalog(_Args args) async {
     urls: urls,
     mirrors: [for (final m in mirrors) m.endsWith('/') ? m : '$m/'],
     keys: [for (final s in keys) s.json],
+    attestations: [for (final a in attestations) a.json],
   );
   await File(out).writeAsString(_encode(catalog, out));
-  stdout.writeln('$out: ${records.length} records');
+  stdout.writeln(
+    '$out: ${records.length} records, ${attestations.length} attestations',
+  );
 }
 
 /// Writes a static node: the catalog (records verified and unchanged) and
@@ -621,12 +660,22 @@ Future<void> _export(_Args args) async {
       stdout.writeln('copied ${f.name}');
     }
   }
+  // The source catalog's attestations that a key trusted here for
+  // Lychnion signed, as the app passes them on.
+  final attestations = await Attestation.checkAll(j.attestations, trust);
+  if (attestations.length < j.attestations.length) {
+    stderr.writeln(
+      '${j.attestations.length - attestations.length} attestations not '
+      'signed by a trusted key (or repeated), left out',
+    );
+  }
   final catalog = CatalogDocument(
     refresh: j.refresh,
     records: records,
     urls: urls,
     mirrors: mirrors,
     keys: [for (final s in keys) s.json],
+    attestations: [for (final a in attestations) a.json],
   );
   await File(
     '${out.path}/catalog.json',
@@ -648,6 +697,23 @@ Future<void> _verify(_Args args) async {
   if (keys.isNotEmpty) stdout.writeln('${keys.length} key statements');
   final trust = given.withStatements(keys);
   var bad = 0;
+  if (j.attestations.isNotEmpty) {
+    final ok = await Attestation.checkAll(j.attestations, trust);
+    stdout.writeln('${ok.length} attestations');
+    for (final a in ok) {
+      stdout.writeln(
+        'ok   attestation ${a.publisher}'
+        '${a.withdrawn ? ' (withdrawn)' : ''} ${a.signed}',
+      );
+    }
+    if (ok.length < j.attestations.length) {
+      bad += j.attestations.length - ok.length;
+      stdout.writeln(
+        'BAD  ${j.attestations.length - ok.length} attestations: signature, '
+        'form or repeated',
+      );
+    }
+  }
   for (final raw in j.records) {
     final r = await trust.check(raw);
     if (r == null) {
@@ -697,4 +763,155 @@ Future<void> _checkRecords(_Args args) async {
     stdout.writeln('${ok ? 'ok ' : 'BAD'}  $id $version');
   }
   if (bad > 0) _fail('$bad bad records');
+}
+
+/// Attestation files: `attestations/<publisher>/<signed>.json`, where
+/// `<signed>` is the signed time without colons (`20261123T140000+0900`).
+String _attestationPath(String dir, Attestation a) =>
+    '${dir.replaceFirst(RegExp(r'/+$'), '')}/${a.publisher}/${a.signed.replaceAll(RegExp('[-:]'), '')}.json';
+
+/// Every attestation file in [dir], checked with [trust]: each must be
+/// signed by a key trusted for Lychnion and sit at its own path. Any bad
+/// file stops the tool. No folder: none (unless [required]).
+Future<List<Attestation>> _attestationsIn(
+  String dir,
+  TrustedKeys trust, {
+  bool required = false,
+}) async {
+  dir = dir.replaceFirst(RegExp(r'/+$'), '');
+  final d = Directory(dir);
+  if (!d.existsSync()) {
+    if (required) _fail('$dir: no such folder');
+    return const [];
+  }
+  final files =
+      d
+          .listSync(recursive: true)
+          .whereType<File>()
+          .where((f) => f.path.endsWith('.json'))
+          .toList()
+        ..sort((a, b) => a.path.compareTo(b.path));
+  final out = <Attestation>[];
+  final seen = <String>{};
+  var bad = 0;
+  for (final f in files) {
+    final Object? json;
+    try {
+      json = jsonDecode(f.readAsStringSync());
+    } on FormatException {
+      bad++;
+      stderr.writeln('BAD  ${f.path}: not JSON');
+      continue;
+    }
+    final a = await Attestation.check(json, trust);
+    if (a == null) {
+      bad++;
+      stderr.writeln('BAD  ${f.path}: signature, signer or form');
+      continue;
+    }
+    if (_attestationPath(dir, a) != f.path) {
+      bad++;
+      stderr.writeln('BAD  ${f.path}: should be ${_attestationPath(dir, a)}');
+      continue;
+    }
+    if (!seen.add(a.id)) continue;
+    out.add(a);
+  }
+  if (bad > 0) _fail('$bad bad attestations in $dir');
+  if (Attestation.capped(out).length < out.length) {
+    _fail(
+      '$dir: more than ${Attestation.maxPerSource} attestations; a catalog '
+      'carries at most that many',
+    );
+  }
+  return out;
+}
+
+/// Signs an attestation and writes it to the attestations folder.
+Future<void> _attest(_Args args) async {
+  final keyFrom = args.req('--key');
+  final dir = args.opt('--attestations') ?? 'attestations';
+  final publisher = args.req('--publisher');
+  final withdraw = args.flag('--withdraw');
+  var key = args.opt('--publisher-key');
+  final ja = args.opt('--title-ja');
+  final en = args.opt('--title-en');
+  final url = args.opt('--url');
+  final checked = args.opt('--checked') ?? _now().substring(0, 10);
+  final method = args.opt('--method') ?? 'official-website';
+  final given = _trust(args);
+  final keyFiles = args.all('--keys');
+  if (args.positional() case [final first, ...]) _fail('Unexpected $first');
+  final trust = given.withStatements(await _keys(keyFiles, given));
+  final existing = (await _attestationsIn(
+    dir,
+    trust,
+  )).where((a) => a.publisher == publisher).toList();
+  if (withdraw) {
+    // Names the key of the newest attestation, when none is given.
+    if (existing.isEmpty) _fail('$publisher: no attestation to take back');
+    key ??= attestationFor(
+      publisher,
+      existing.first.key,
+      existing,
+      const [],
+    ).attestation?.key;
+  } else {
+    if (ja == null || en == null) _fail('Give --title-ja and --title-en');
+    if (url == null) _fail('Give --url: the page where the key was checked');
+  }
+  if (key == null) _fail('Give --publisher-key');
+  final signer = await keyPairFromSeed(await _readKey(keyFrom));
+  final Attestation a;
+  try {
+    a = await Attestation.sign(
+      publisher: publisher,
+      key: key,
+      title: {'ja': ?ja, 'en': ?en},
+      checked: checked,
+      method: method,
+      url: url,
+      signed: _now(),
+      signer: signer,
+      withdrawn: withdraw,
+    );
+  } on ArgumentError catch (e) {
+    _fail('Not an attestation the app would accept: ${e.message}');
+  } on FormatException catch (e) {
+    _fail('--publisher-key: ${e.message}');
+  }
+  // Only a key the app trusts for Lychnion makes attestations that count.
+  if (await Attestation.check(a.json, trust) == null) {
+    _fail(
+      'The key given is not trusted for Lychnion (wrong 1Password item, or '
+      '--public-key / --keys missing after a key replacement)',
+    );
+  }
+  final path = _attestationPath(dir, a);
+  if (File(path).existsSync()) _fail('$path exists already');
+  await File(path).parent.create(recursive: true);
+  await File(
+    path,
+  ).writeAsString('${const JsonEncoder.withIndent('  ').convert(a.json)}\n');
+  stdout.writeln('$path${withdraw ? ' (withdrawal)' : ''}');
+}
+
+/// Every attestation in FOLDER must be valid and at its own path (CI).
+Future<void> _checkAttestations(_Args args) async {
+  final given = _trust(args);
+  final keyFiles = args.all('--keys');
+  final rest = args.positional();
+  if (rest.isEmpty) _fail('Usage: check-attestations FOLDER');
+  final trust = given.withStatements(await _keys(keyFiles, given));
+  final all = await _attestationsIn(rest.first, trust);
+  for (final a in all) {
+    final r = attestationFor(a.publisher, a.key, all, const []);
+    final decides = identical(r.attestation, a) || r.attestation?.id == a.id;
+    stdout.writeln(
+      'ok   ${a.publisher} ${a.signed}'
+      '${a.withdrawn ? ' withdrawn' : ''}'
+      '${decides ? '' : ' (replaced by a newer one)'}',
+    );
+  }
+  stdout.writeln('${all.length} attestations');
 }

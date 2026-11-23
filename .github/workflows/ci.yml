@@ -64,3 +64,5 @@ jobs:
         run: python -I tool/check_areas.py
       - name: Every signed record verifies
         run: dart run tool/records.dart check-records records
+      - name: Every attestation verifies
+        run: dart run tool/records.dart check-attestations attestations

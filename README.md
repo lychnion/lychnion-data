@@ -8,6 +8,9 @@ This repository holds:
 
 - the **signed records** of every package version (`records/`),
 - Lychnion's **public key** (`keys/lychnion.pub`),
+- Lychnion's **attestations** for official publishers (`attestations/`):
+  signed statements that a publisher's key belongs to a public body, so
+  the app shows it as "Checked by Lychnion",
 - the data files themselves, in the
   [releases](https://github.com/lychnion/lychnion-data/releases),
 - what goes into each package and map area, and the tools that build,
@@ -113,6 +116,28 @@ and a node read. `pubspec.yaml` names the commit it uses (`ref`), so a
 change on the app's `main` never changes the tools by surprise: to move
 it, set `ref` to a newer commit on the app's `main` (never a PR branch:
 it may disappear) and run `dart pub upgrade lychnion_format`.
+
+**Attestations.** After checking a public body's key on its official
+website ([docs/attestations.md](https://github.com/lychnion/lychnion/blob/main/docs/attestations.md)
+in the app repository), the holder of Lychnion's key signs an
+attestation; the file goes into `attestations/` by pull request:
+
+```sh
+op read op://Private/lychnion-package-signing-key/credential \
+  | dart run tool/records.dart attest --key - \
+      --publisher jp.city.sendai --publisher-key <key from the publisher link> \
+      --title-ja 仙台市 --title-en 'Sendai City' --url <the official page>
+# take it back (a newer file; the old one stays)
+op read op://Private/lychnion-package-signing-key/credential \
+  | dart run tool/records.dart attest --key - --publisher jp.city.sendai --withdraw
+```
+
+`catalog` carries every file in `attestations/`, and stops when one is
+bad or when they would not all fit in 2 MB (a withdrawal left out would
+leave a publisher shown as checked). `export` passes on a catalog's
+attestations, `verify` reports them, and CI runs `check-attestations`.
+Applications come in through the issue form "Ask Lychnion to check your
+publisher key".
 
 When Lychnion replaces or revokes its key, the statements go into the
 catalog with `catalog … --keys keys.json`; `export` keeps a catalog's

@@ -37,8 +37,8 @@ packages:
     dependency: "direct main"
     description:
       path: "packages/lychnion_format"
-      ref: be565e8aeb473ee036b169dc11a010ba65437b82
-      resolved-ref: be565e8aeb473ee036b169dc11a010ba65437b82
+      ref: "199b97bfc9537eae4e27580f09a81a96b72bd4e7"
+      resolved-ref: "199b97bfc9537eae4e27580f09a81a96b72bd4e7"
       url: "https://github.com/lychnion/lychnion.git"
     source: git
     version: "1.1.0"
@@ -58,5 +58,13 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.4.0"
+  unorm_dart:
+    dependency: transitive
+    description:
+      name: unorm_dart
+      sha256: b4f4d2aff27d65a5fc37f400d4c09e55d7535359315acbe3b895a9add4de3a23
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.3.3"
 sdks:
   dart: ">=3.12.2 <4.0.0"
