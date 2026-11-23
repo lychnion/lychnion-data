@@ -80,10 +80,13 @@ python3 -I tool/add_translations.py build/packages/jp.bousai.core.sqlite en
 python3 -I tool/add_vectors.py build/packages/jp.bousai.core.sqlite <cache>.vectors.json embeddinggemma-2-Q8_0.gguf
 # and of the English texts, so English questions are compared with English text
 # (lychnion/lychnion#85): a Mac build of the app with --dart-define=EMBED_TEXTS=true
-# writes <ids>-<versions>-<model>@en.vectors.json for all its packages at once;
-# split it per package (before changing a version), then add each part
-python3 -I tool/split_vectors.py <cache>@en.vectors.json build/en-vectors build/packages/*.sqlite
-python3 -I tool/add_vectors.py build/packages/jp.bousai.core.sqlite build/en-vectors/jp.bousai.core.vectors.json embeddinggemma-2-Q8_0.gguf@en
+# writes <ids>-<versions>-<model>@en.vectors.json for all its packages at once.
+# Split it per package before changing any version (the name carries the versions
+# it was made from; a new version also goes into the manifest and items.json, then
+# build_package.py --meta-only); it prints the add_vectors.py command for each part
+python3 -I tool/split_vectors.py <cache>@en.vectors.json build/vectors build/packages/*.sqlite
+python3 -I tool/add_vectors.py build/packages/jp.bousai.core.sqlite \
+  build/vectors/jp.bousai.core.embeddinggemma-2-Q8_0.gguf@en.vectors.json embeddinggemma-2-Q8_0.gguf@en
 
 # a map area → build/maps/ (sites, base map, contour lines, walking routes, inundation tiles)
 python3 -I tool/build_map.py maps/kushimoto.json
