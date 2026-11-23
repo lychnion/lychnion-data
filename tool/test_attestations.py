@@ -173,10 +173,20 @@ class AttestationTest(unittest.TestCase):
         with open(os.path.join(self.att, "README.md"), "w") as f:
             f.write("x")
         self.catalog("--attestations", self.att)
-        # Explicitly none.
-        r, _ = self.catalog("--attestations", os.path.join(self.att, "nope"),
-                            "--no-attestations")
+        # Finder's .DS_Store is skipped, not taken for a renamed file.
+        for where in [self.att, folder]:
+            with open(os.path.join(where, ".DS_Store"), "w") as f:
+                f.write("x")
+        r, _ = self.catalog("--attestations", self.att)
+        self.assertIn("skipped", r.stderr)
+        # Explicitly none; both at once is refused.
+        r, _ = self.catalog("--no-attestations")
         self.assertIn("0 attestations", r.stdout)
+        r, _ = self.catalog("--no-attestations", "--attestations", self.att, ok=False)
+        # Another publisher's catalog (--public-key) carries none by
+        # default, not Lychnion's folder next to the tool.
+        r, _ = self.catalog()
+        self.assertIn("0 attestations (none given)", r.stdout)
 
     def test_changed_or_misplaced_files_are_refused(self):
         path = self.sendai().stdout.strip()
@@ -210,7 +220,27 @@ class AttestationTest(unittest.TestCase):
         self.assertIn("only publisher, key, title and url", r.stderr)
         r = self.attest("--withdraw", "--publisher", "jp.city.sendai", ok=False)
         self.assertIn("no attestation to take back", r.stderr)
+        r = self.attest("--withdraw", "--from", self.application(), ok=False)
+        self.assertIn("not --from", r.stderr)
+        r = self.attest("--from", self.application(), "--publisher", "jp.x",
+                        ok=False)
+        self.assertIn("different publishers", r.stderr)
+        r = self.attest("--from", self.application(publisher=5), ok=False)
+        self.assertIn('"publisher" must be text', r.stderr)
+        r = self.attest("--from", self.application(), "--checked", "20261123",
+                        ok=False)
+        self.assertIn("YYYY-MM-DD", r.stderr)
         self.assertEqual(os.listdir(self.att), [])
+
+    def test_titles_and_key_are_trimmed(self):
+        path = self.attest(
+            "--from",
+            self.application(key=" " + self.city + "\n",
+                             title={"ja": " 仙台市 ", "en": "Sendai City "}),
+        ).stdout.strip()
+        with open(path) as f:
+            a = json.load(f)
+        self.assertEqual(a["title"], {"ja": "仙台市", "en": "Sendai City"})
 
     def test_a_bad_key_is_never_shown(self):
         bad = self.seedText[:-2] + "!!"
@@ -220,6 +250,14 @@ class AttestationTest(unittest.TestCase):
         self.assertIn("not shown", r.stderr)
         # The seed given as a file name by mistake.
         r = self.attest("--from", self.application(), key=self.seedText, ok=False)
+        self.assertNotIn(self.seedText, r.stdout + r.stderr)
+        # Nor in `public`, nor as a stray argument or an option value.
+        r = dart("public", "--key", "-", stdin=bad + "\n", ok=False)
+        self.assertNotIn(bad, r.stdout + r.stderr)
+        r = dart("public", "--key", "-", self.seedText, stdin="x", ok=False)
+        self.assertNotIn(self.seedText, r.stdout + r.stderr)
+        r = dart("public", "--key", "-", "--key=" + self.seedText, stdin="x",
+                 ok=False)
         self.assertNotIn(self.seedText, r.stdout + r.stderr)
 
 

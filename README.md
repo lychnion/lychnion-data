@@ -125,7 +125,9 @@ attestation; the file goes into `attestations/` by pull request.
 The values come from a public issue, so they go into a small JSON file
 (for example `build/sendai.json`, not committed), never onto the command
 line: a pasted `$(...)` or backtick would run in the same shell that
-pipes the key.
+pipes the key. Write the file in an editor (or with a quoted heredoc,
+`cat > build/sendai.json <<'EOF'`), never with `echo` or an unquoted
+heredoc, and never paste issue text into a command.
 
 ```json
 {"publisher": "jp.city.sendai", "key": "<the key from the publisher link>",
@@ -146,10 +148,15 @@ not accept, a method not written down, a check date in the future, a
 second withdrawal, and a file that would not be newer than the
 publisher's newest one (a clock behind).
 
-`catalog` carries every file in `attestations/` (`--no-attestations` for
-a catalog without any). It stops when the folder is missing, when any
+`catalog` carries every file in `attestations/` next to the tool,
+wherever it runs from (`--no-attestations` for a catalog without any;
+another publisher's catalog, with `--public-key`, carries none unless
+`--attestations DIR` is given). Build Lychnion's catalog from an
+up-to-date `main` (`git pull` first): a stale clone leaves out a
+withdrawal merged meanwhile, without an error. It stops when the folder is missing, when any
 entry there is not a valid `<publisher>/<signed time>.json` at its own
-path (a renamed `.bak`, a link), or when they would not all fit in 2 MB:
+path (a renamed `.bak`, a link; Finder's `.DS_Store` is skipped), or
+when they would not all fit in 2 MB:
 a withdrawal left out would leave a publisher shown as checked. `export`
 passes on a catalog's attestations, `verify` reports them, and CI runs
 `check-attestations`. Applications come in through the issue form "Ask
