@@ -40,6 +40,13 @@ body:
     validations:
       required: true
   - type: input
+    id: code
+    attributes:
+      label: Key code
+      description: The key's short code shown in "Publish your own" (8 characters), the same as on your page.
+    validations:
+      required: true
+  - type: input
     id: page
     attributes:
       label: Page on your official website

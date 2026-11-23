@@ -64,5 +64,12 @@ jobs:
         run: python -I tool/check_areas.py
       - name: Every signed record verifies
         run: dart run tool/records.dart check-records records
+      # After a replacement of Lychnion's key its statements are in
+      # keys.json (see the README); attestations of the new key count then.
       - name: Every attestation verifies
-        run: dart run tool/records.dart check-attestations attestations
+        run: |
+          if [ -f keys.json ]; then
+            dart run tool/records.dart check-attestations --keys keys.json attestations
+          else
+            dart run tool/records.dart check-attestations attestations
+          fi

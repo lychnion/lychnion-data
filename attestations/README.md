@@ -5,7 +5,10 @@ official body (lychnion/lychnion#119). One file per signing:
 `<publisher>/<signed time>.json`, written by `tool/records.dart attest`
 and reviewed in a pull request. A newer file for the same publisher
 decides; taking an attestation back is a newer file with
-`"withdrawn": true`. Files are never edited or deleted.
+`"withdrawn": true`. Files are never edited or deleted; only after a
+revocation of Lychnion's own key are its files moved to
+`attestations-lapsed/` (see the main README). Nothing else belongs in
+this folder: `catalog` stops at any other file.
 
 `catalog` carries all of them; CI runs `check-attestations`. Who can get
 one and how Lychnion checks:
