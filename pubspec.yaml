@@ -12,4 +12,4 @@ dependencies:
     git:
       url: https://github.com/lychnion/lychnion.git
       path: packages/lychnion_format
-      ref: 199b97bfc9537eae4e27580f09a81a96b72bd4e7 # lychnion/lychnion main; pinned, see README
+      ref: 5003e5aae61efd3c793541ce5a2f3fcc7f3aab0c # lychnion/lychnion main; pinned, see README

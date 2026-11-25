@@ -37,8 +37,8 @@ packages:
     dependency: "direct main"
     description:
       path: "packages/lychnion_format"
-      ref: "199b97bfc9537eae4e27580f09a81a96b72bd4e7"
-      resolved-ref: "199b97bfc9537eae4e27580f09a81a96b72bd4e7"
+      ref: "5003e5aae61efd3c793541ce5a2f3fcc7f3aab0c"
+      resolved-ref: "5003e5aae61efd3c793541ce5a2f3fcc7f3aab0c"
       url: "https://github.com/lychnion/lychnion.git"
     source: git
     version: "1.1.0"
