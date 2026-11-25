@@ -99,16 +99,21 @@ build/route-venv/bin/pip install osmium pillow pyshp shapely
 build/route-venv/bin/python -I tool/build_routes.py maps/kushimoto.json
 build/route-venv/bin/python -I tool/build_inundation_tiles.py maps/kushimoto.json
 
-# sign the records and write the catalog (key from 1Password, never on disk)
+# sign the records and write the catalog (key from 1Password, never on disk),
+# from an up-to-date main: a stale clone leaves out a newer record or a
+# withdrawal merged meanwhile
+git pull
 dart pub get
 op read op://Private/lychnion-package-signing-key/credential \
   | dart run tool/records.dart sign --key - --items items.json --records records jp.bousai.core
-# the catalog, with Lychnion's signed status (from an up-to-date main)
-git pull
+# the catalog, with Lychnion's signed status (add --keys keys.json when it exists)
 op read op://Private/lychnion-package-signing-key/credential \
   | dart run tool/records.dart catalog --key - --items items.json --records records \
   --base https://github.com/lychnion/lychnion-data/releases/download/<release>/ \
   --out build/catalog.json
+# before it is uploaded or bundled: it must carry the status, and no record
+# may be newer than it
+dart run tool/records.dart verify --release build/catalog.json
 ```
 
 The top of each tool says more. Records and catalogs use the format
@@ -172,7 +177,7 @@ app: a reviewed pull request moves its files to `attestations-lapsed/`
 (kept for the record, never carried) and the ones still wanted are
 signed again with the new key.
 
-**Status.** Every catalog carries Lychnion's signed status
+**Status.** Lychnion's catalog carries Lychnion's signed status
 (lychnion/lychnion#117): the newest version of each item in it,
 Lychnion's own key statements, and the attestations that are withdrawn
 now. It travels unchanged through sticks, bases and nodes, so a phone
@@ -180,11 +185,14 @@ that got the status but an older file knows that something newer exists,
 and a carrier cannot pass on the status without its revocations and
 withdrawals. `catalog` signs it with the key from 1Password (`--key -`,
 as for records) and refuses a key not trusted for Lychnion; without a
-key it stops, unless `--no-status` (tests only). `export` passes a
-catalog's statuses on (none signed more than a day ahead of the clock);
-`verify` reports them and fails when a record is newer than its
-publisher's status in the same catalog (the status was not signed
-again), and notes a newer version held back elsewhere.
+key it stops, unless `--no-status` (tests only: it prints "NO STATUS:
+not for release"); it also stops when the items file names a newer
+version than the signed records (sign it first). `export` passes a
+catalog's statuses on (none signed more than a day ahead of the clock).
+`verify` reports them, and notes a newer version held back elsewhere;
+with `--release` (Lychnion's own catalog, before it is uploaded or
+bundled into the app) it fails when there is no status of Lychnion's or a
+record is newer than it (the catalog was not signed again).
 
 When Lychnion replaces or revokes its key, the statements go into the
 catalog with `catalog … --keys keys.json`; `export` keeps a catalog's

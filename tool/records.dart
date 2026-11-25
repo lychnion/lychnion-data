@@ -43,8 +43,11 @@
 //   and --keys FILE adds more)
 //
 //   # check a catalog's signatures, and local files against it (its own
-//   # key statements apply; --keys FILE adds more)
+//   # key statements apply; --keys FILE adds more). --release: Lychnion's
+//   # own catalog before a release: it must carry Lychnion's status, and
+//   # no record may be newer than that status
 //   dart run tool/records.dart verify build/catalog.json [FOLDER] [--keys FILE]
+//     [--release]
 //
 //   # check every record in the records folder (also run by CI; after a
 //   # key replacement add --keys keys.json)
@@ -537,8 +540,15 @@ Future<Map<String, Object?>> _recordFor(
 }
 
 Future<void> _catalog(_Args args) async {
-  // Before the options are read: another publisher's catalog.
-  final ownKey = args.rest.contains('--public-key');
+  // Before the options are read: another publisher's catalog (not with
+  // Lychnion's own key: that would only skip the checks below).
+  final i = args.rest.indexOf('--public-key');
+  final ownKey =
+      i >= 0 &&
+      !(i + 1 < args.rest.length &&
+          builtInPublishers
+              .keysOf(attesterPublisher)
+              .contains(args.rest[i + 1]));
   final items = _readJson(args.req('--items'));
   final dir = Directory(args.req('--records'));
   final base = args.req('--base');
@@ -596,6 +606,14 @@ Future<void> _catalog(_Args args) async {
       continue;
     }
     if (r.version != i['version']) {
+      // With a status, it would be signed over the older version: sign the
+      // new record first.
+      if (keyFrom != null && isOlder(r.version, '${i['version']}')) {
+        _fail(
+          '$id: newest record is ${r.version}, items file says '
+          '${i['version']}: sign it first',
+        );
+      }
       stderr.writeln(
         '$id: newest record is ${r.version}, items file says ${i['version']}',
       );
@@ -635,7 +653,7 @@ Future<void> _catalog(_Args args) async {
   stdout.writeln(
     '$out: ${records.length} records, ${attestations.length} attestations'
     '${attestationDir == null || noAttestations ? ' (none given)' : ' from ${Directory(attestationDir).absolute.path}'}'
-    '; ${status == null ? 'no status' : 'status signed ${status.signed}'}',
+    '; ${status == null ? 'NO STATUS: not for release' : 'status signed ${status.signed}'}',
   );
 }
 
@@ -742,13 +760,14 @@ Future<void> _export(_Args args) async {
     for (final st in await PublisherStatus.checkAll(j.status, trust))
       ...st.attestations,
   ];
+  final own = await Attestation.checkAll(j.attestations, trust);
   final attestations = await Attestation.checkAll([
     ...j.attestations,
     ...inStatus,
   ], trust);
-  if (attestations.length < j.attestations.length) {
+  if (own.length < j.attestations.length) {
     stderr.writeln(
-      '${j.attestations.length - attestations.length} attestations left '
+      '${j.attestations.length - own.length} attestations left '
       'out: not signed by a trusted key, repeated, or past the limits '
       '(${Attestation.maxPerSource}, or ${Attestation.maxBadSignatures} '
       'bad signatures)',
@@ -782,6 +801,7 @@ Future<void> _export(_Args args) async {
 
 Future<void> _verify(_Args args) async {
   final keyFiles = args.all('--keys');
+  final release = args.flag('--release');
   final given = _trust(args);
   final rest = args.positional();
   if (rest.isEmpty) _fail('Usage: verify CATALOG [FOLDER] [--keys FILE]');
@@ -810,9 +830,24 @@ Future<void> _verify(_Args args) async {
       'or repeated',
     );
   }
+  // As devices see it: none signed more than a day ahead of the clock.
   final newestStatus = {
-    for (final st in PublisherStatus.newest(status)) st.publisher: st,
+    for (final st in PublisherStatus.newest(
+      PublisherStatus.deciding(status, DateTime.now()),
+    ))
+      st.publisher: st,
   };
+  final hasLychnion = j.records.any(
+    (r) => r is Map && r['publisher'] == attesterPublisher,
+  );
+  if (hasLychnion && newestStatus[attesterPublisher] == null) {
+    if (release) {
+      bad++;
+      stdout.writeln("BAD  no status of Lychnion's: not for release");
+    } else {
+      stdout.writeln("     no status of Lychnion's");
+    }
+  }
   if (j.attestations.isNotEmpty) {
     final ok = await Attestation.checkAll(j.attestations, trust);
     stdout.writeln('${ok.length} attestations');
@@ -840,14 +875,16 @@ Future<void> _verify(_Args args) async {
     stdout.writeln('ok   ${r.id} ${r.version} (${r.publisher}, ${r.keyId})');
     // A record newer than its publisher's status in the same catalog: the
     // status was not signed again (phones would think this is old news).
+    // In Lychnion's own catalog before a release (--release) that is an
+    // error; elsewhere (a stick, a node) it can be right, and is noted.
     // A status naming a newer version is fine: it was held back here.
     if (newestStatus[r.publisher] case final st?) {
       final named = st.items[r.id];
       if (named == null || isOlder(named, r.version)) {
-        bad++;
+        if (release) bad++;
         stdout.writeln(
-          'BAD  ${r.id} ${r.version}: the status names '
-          '${named ?? 'no version'}',
+          '${release ? 'BAD ' : '    '} ${r.id} ${r.version}: the status '
+          'names ${named ?? 'no version'} (catalog not signed again?)',
         );
       } else if (st.hasNewer(r.id, r.version)) {
         stdout.writeln('     ${r.id}: version $named exists elsewhere');
@@ -1208,11 +1245,14 @@ Future<PublisherStatus> _signStatus(
       if (r['publisher'] == attesterPublisher)
         r['id']! as String: r['version']! as String,
   };
+  // The deciding attestation of each name (attestationFor picks the newest
+  // for the name first, whichever key is asked about, and returns a
+  // withdrawal before looking at the key): those that are withdrawals.
   final withdrawn = [
     for (final name in {for (final a in attestations) a.publisher})
       if (attestationFor(
             name,
-            attestations.first.key,
+            attestations.firstWhere((a) => a.publisher == name).key,
             attestations,
             const [],
           ).attestation

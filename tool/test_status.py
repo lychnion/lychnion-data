@@ -144,7 +144,12 @@ class StatusTest(unittest.TestCase):
         doc["status"] = old["status"]
         with open(self.out, "w") as f:
             json.dump(doc, f)
-        r = dart("verify", "--public-key", self.pub, self.out, ok=False)
+        # Before a release: an error. Elsewhere (a stick, a node): a note.
+        r = dart("verify", "--public-key", self.pub, self.out, "--release",
+                 ok=False)
+        self.assertIn("BAD  model.test 2026.11.2: the status names 2026.11.1",
+                      r.stdout)
+        r = dart("verify", "--public-key", self.pub, self.out)
         self.assertIn("the status names 2026.11.1", r.stdout)
         # The other way round (a newer version held back here) is fine.
         self.catalog()
@@ -154,6 +159,42 @@ class StatusTest(unittest.TestCase):
             json.dump(old, f)
         r = dart("verify", "--public-key", self.pub, self.out)
         self.assertIn("version 2026.11.2 exists elsewhere", r.stdout)
+
+    def test_release_needs_a_status(self):
+        self.sign("2026.11.1")
+        r = self.catalog("--no-status", key=False)
+        self.assertIn("NO STATUS: not for release", r.stdout)
+        r = dart("verify", "--public-key", self.pub, self.out, "--release",
+                 ok=False)
+        self.assertIn("no status of Lychnion's: not for release", r.stdout)
+        r = dart("verify", "--public-key", self.pub, self.out)
+        self.assertIn("no status of Lychnion's", r.stdout)
+        self.catalog()
+        dart("verify", "--public-key", self.pub, self.out, "--release")
+
+    def test_reattested_publisher_has_no_withdrawal(self):
+        self.sign("2026.11.1")
+        city = dart("keygen").stderr.strip().removeprefix("public key: ")
+        app = os.path.join(self.work, "app.json")
+        with open(app, "w") as f:
+            json.dump({"publisher": "jp.city.x", "key": city,
+                       "title": {"ja": "例市", "en": "Example City"},
+                       "url": "https://www.city.example.lg.jp/"}, f)
+        base = ["--key", self.seed, "--public-key", self.pub,
+                "--attestations", self.att]
+        dart("attest", *base, "--from", app)
+        time.sleep(1)
+        dart("attest", *base, "--withdraw", "--publisher", "jp.city.x")
+        time.sleep(1)
+        dart("attest", *base, "--from", app)
+        self.catalog()
+        self.assertNotIn("attestations", self.doc()["status"][0])
+
+    def test_items_file_newer_than_the_records(self):
+        self.sign("2026.11.1")
+        self.write_items("2026.11.2")
+        r = self.catalog(ok=False)
+        self.assertIn("sign it first", r.stderr)
 
     def test_export_passes_it_on(self):
         self.sign("2026.11.1")
@@ -185,6 +226,16 @@ class StatusTest(unittest.TestCase):
         bad = self.seedText[:-2] + "!!"
         r = self.catalog(stdin=bad + "\n", ok=False)
         self.assertNotIn(bad, r.stdout + r.stderr)
+        # Nor a seed given as a stray argument, as an option value, or as
+        # the --key file name.
+        for extra in [[self.seedText], ["--key=" + self.seedText]]:
+            r = self.catalog(*extra, ok=False)
+            self.assertNotIn(self.seedText, r.stdout + r.stderr)
+        r = dart("catalog", "--key", self.seedText, "--public-key", self.pub,
+                 "--items", self.items, "--records", self.records,
+                 "--base", "https://example.org/", "--out", self.out,
+                 "--attestations", self.att, ok=False)
+        self.assertNotIn(self.seedText, r.stdout + r.stderr)
 
 
 if __name__ == "__main__":
