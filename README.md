@@ -103,7 +103,10 @@ build/route-venv/bin/python -I tool/build_inundation_tiles.py maps/kushimoto.jso
 dart pub get
 op read op://Private/lychnion-package-signing-key/credential \
   | dart run tool/records.dart sign --key - --items items.json --records records jp.bousai.core
-dart run tool/records.dart catalog --items items.json --records records \
+# the catalog, with Lychnion's signed status (from an up-to-date main)
+git pull
+op read op://Private/lychnion-package-signing-key/credential \
+  | dart run tool/records.dart catalog --key - --items items.json --records records \
   --base https://github.com/lychnion/lychnion-data/releases/download/<release>/ \
   --out build/catalog.json
 ```
@@ -168,6 +171,20 @@ of the new key count. If it is **revoked**, its attestations lapse in the
 app: a reviewed pull request moves its files to `attestations-lapsed/`
 (kept for the record, never carried) and the ones still wanted are
 signed again with the new key.
+
+**Status.** Every catalog carries Lychnion's signed status
+(lychnion/lychnion#117): the newest version of each item in it,
+Lychnion's own key statements, and the attestations that are withdrawn
+now. It travels unchanged through sticks, bases and nodes, so a phone
+that got the status but an older file knows that something newer exists,
+and a carrier cannot pass on the status without its revocations and
+withdrawals. `catalog` signs it with the key from 1Password (`--key -`,
+as for records) and refuses a key not trusted for Lychnion; without a
+key it stops, unless `--no-status` (tests only). `export` passes a
+catalog's statuses on (none signed more than a day ahead of the clock);
+`verify` reports them and fails when a record is newer than its
+publisher's status in the same catalog (the status was not signed
+again), and notes a newer version held back elsewhere.
 
 When Lychnion replaces or revokes its key, the statements go into the
 catalog with `catalog … --keys keys.json`; `export` keeps a catalog's

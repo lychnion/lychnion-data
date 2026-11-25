@@ -19,15 +19,20 @@
 //         --items items.json --records records \
 //         jp.bousai.core jp.map.kushimoto
 //
-//   # newest record of every item → catalog.json
-//   dart run tool/records.dart catalog --items items.json \
+//   # newest record of every item → catalog.json, with Lychnion's signed
+//   # status (lychnion/lychnion#117: the newest version of each item, its
+//   # key statements and withdrawn attestations), so phones can tell when
+//   # a carrier held something back
+//   op read op://Private/lychnion-package-signing-key/credential \
+//     | dart run tool/records.dart catalog --key - --items items.json \
 //     --records records \
 //     --base https://github.com/lychnion/lychnion-data/releases/download/2026.11.2/ \
 //     --out build/catalog.json \
 //     [--mirror https://mirror.example.org/lychnion/ ...] \
 //     [--keys keys.json ...]
 //   (--keys: key statements of a replaced or revoked key, as the desktop
-//   app writes them; only those made by a trusted key are taken)
+//   app writes them; only those made by a trusted key are taken.
+//   --no-status instead of --key: a catalog without a status, for tests)
 //
 //   # a static node: catalog.json plus every file as blobs/sha256/<hash>,
 //   # for a USB stick or any web host (files found in the FOLDERs by name)
@@ -312,6 +317,10 @@ String _encode(CatalogDocument c, String out) {
     if (fitted.attestations.length < c.attestations.length) {
       _fail('$out: with its attestations it would be over 2 MB');
     }
+    // Left out, a status would hide that a carrier held something back.
+    if (fitted.status.length < c.status.length) {
+      _fail('$out: with its status it would be over 2 MB');
+    }
     return c.encode();
   } on CatalogTooLarge catch (e) {
     _fail('$out: $e (the app refuses larger catalogs)');
@@ -548,6 +557,17 @@ Future<void> _catalog(_Args args) async {
   final keyFiles = args.all('--keys');
   final givenDir = args.opt('--attestations');
   final noAttestations = args.flag('--no-attestations');
+  final keyFrom = args.opt('--key');
+  final noStatus = args.flag('--no-status');
+  if (keyFrom != null && noStatus) _fail('--key and --no-status: give one');
+  // Lychnion's catalog always carries its status: without one, phones
+  // cannot tell that a carrier held a newer version back.
+  if (keyFrom == null && !noStatus && !ownKey) {
+    _fail(
+      "Give --key - (Lychnion's key from 1Password) to sign the status, or "
+      '--no-status',
+    );
+  }
   if (noAttestations && givenDir != null) {
     _fail('--attestations and --no-attestations: give one');
   }
@@ -557,7 +577,7 @@ Future<void> _catalog(_Args args) async {
   final attestationDir = givenDir ?? (ownKey ? null : _defaultAttestations);
   // A mistyped option (--key, --keys=FILE) must not leave a revocation
   // out of the catalog unnoticed.
-  if (args.positional() case [final first, ...]) _fail('Unexpected $first');
+  if (args.positional().isNotEmpty) _strayArgument();
   final keys = await _keys(keyFiles, given);
   // Records of a successor key count when a statement names it.
   final trust = given.withStatements(keys);
@@ -591,6 +611,15 @@ Future<void> _catalog(_Args args) async {
       if (url[f.name] != null) urls[f.sha256] = url[f.name]!;
     }
   }
+  final status = keyFrom == null
+      ? null
+      : await _signStatus(
+          keyFrom,
+          records: records,
+          keys: keys,
+          attestations: attestations,
+          trust: trust,
+        );
   final catalog = CatalogDocument(
     base: base,
     refresh: refresh,
@@ -600,11 +629,13 @@ Future<void> _catalog(_Args args) async {
     mirrors: [for (final m in mirrors) m.endsWith('/') ? m : '$m/'],
     keys: [for (final s in keys) s.json],
     attestations: [for (final a in attestations) a.json],
+    status: [?status?.json],
   );
   await File(out).writeAsString(_encode(catalog, out));
   stdout.writeln(
     '$out: ${records.length} records, ${attestations.length} attestations'
-    '${attestationDir == null || noAttestations ? ' (none given)' : ' from ${Directory(attestationDir).absolute.path}'}',
+    '${attestationDir == null || noAttestations ? ' (none given)' : ' from ${Directory(attestationDir).absolute.path}'}'
+    '; ${status == null ? 'no status' : 'status signed ${status.signed}'}',
   );
 }
 
@@ -621,7 +652,11 @@ Future<void> _export(_Args args) async {
   final rest = args.positional();
   if (rest.isEmpty) _fail('Usage: export CATALOG --out DIR [FOLDER...]');
   final j = _readCatalog(rest.first);
-  final keys = await _keys(keyFiles, given, j.keys);
+  final keys = await _withStatusKeys(
+    await _keys(keyFiles, given, j.keys),
+    given,
+    j.status,
+  );
   final trust = given.withStatements(keys);
   final folders = rest.skip(1).toList();
   // Where the source catalog gets each file, for files not exported.
@@ -703,7 +738,14 @@ Future<void> _export(_Args args) async {
   }
   // The source catalog's attestations that a key trusted here for
   // Lychnion signed, as the app passes them on.
-  final attestations = await Attestation.checkAll(j.attestations, trust);
+  final inStatus = [
+    for (final st in await PublisherStatus.checkAll(j.status, trust))
+      ...st.attestations,
+  ];
+  final attestations = await Attestation.checkAll([
+    ...j.attestations,
+    ...inStatus,
+  ], trust);
   if (attestations.length < j.attestations.length) {
     stderr.writeln(
       '${j.attestations.length - attestations.length} attestations left '
@@ -712,6 +754,14 @@ Future<void> _export(_Args args) async {
       'bad signatures)',
     );
   }
+  // Statuses (#117): the newest of each publisher, none signed far ahead
+  // of this computer's clock (a stolen key's could push the real one out).
+  final status = PublisherStatus.newest(
+    PublisherStatus.deciding(
+      await PublisherStatus.checkAll(j.status, trust),
+      DateTime.now(),
+    ),
+  );
   final catalog = CatalogDocument(
     refresh: j.refresh,
     records: records,
@@ -719,6 +769,7 @@ Future<void> _export(_Args args) async {
     mirrors: mirrors,
     keys: [for (final s in keys) s.json],
     attestations: [for (final a in attestations) a.json],
+    status: [for (final st in status) st.json],
   );
   await File(
     '${out.path}/catalog.json',
@@ -736,10 +787,32 @@ Future<void> _verify(_Args args) async {
   if (rest.isEmpty) _fail('Usage: verify CATALOG [FOLDER] [--keys FILE]');
   final j = _readCatalog(rest.first);
   final folder = rest.length > 1 ? rest[1] : null;
-  final keys = await _keys(keyFiles, given, j.keys);
+  final keys = await _withStatusKeys(
+    await _keys(keyFiles, given, j.keys),
+    given,
+    j.status,
+  );
   if (keys.isNotEmpty) stdout.writeln('${keys.length} key statements');
   final trust = given.withStatements(keys);
   var bad = 0;
+  final status = await PublisherStatus.checkAll(j.status, trust);
+  for (final st in status) {
+    stdout.writeln(
+      'ok   status ${st.publisher} ${st.signed}: ${st.items.length} items'
+      '${st.keys.isEmpty ? '' : ', ${st.keys.length} key statements'}'
+      '${st.attestations.isEmpty ? '' : ', ${st.attestations.length} withdrawals'}',
+    );
+  }
+  if (status.length < j.status.length) {
+    bad += j.status.length - status.length;
+    stdout.writeln(
+      'BAD  ${j.status.length - status.length} statuses: signature, form '
+      'or repeated',
+    );
+  }
+  final newestStatus = {
+    for (final st in PublisherStatus.newest(status)) st.publisher: st,
+  };
   if (j.attestations.isNotEmpty) {
     final ok = await Attestation.checkAll(j.attestations, trust);
     stdout.writeln('${ok.length} attestations');
@@ -765,6 +838,21 @@ Future<void> _verify(_Args args) async {
       continue;
     }
     stdout.writeln('ok   ${r.id} ${r.version} (${r.publisher}, ${r.keyId})');
+    // A record newer than its publisher's status in the same catalog: the
+    // status was not signed again (phones would think this is old news).
+    // A status naming a newer version is fine: it was held back here.
+    if (newestStatus[r.publisher] case final st?) {
+      final named = st.items[r.id];
+      if (named == null || isOlder(named, r.version)) {
+        bad++;
+        stdout.writeln(
+          'BAD  ${r.id} ${r.version}: the status names '
+          '${named ?? 'no version'}',
+        );
+      } else if (st.hasNewer(r.id, r.version)) {
+        stdout.writeln('     ${r.id}: version $named exists elsewhere');
+      }
+    }
     if (folder == null) continue;
     for (final f in r.files) {
       final file = File('$folder/${f.name}');
@@ -1081,4 +1169,78 @@ Future<void> _checkAttestations(_Args args) async {
     );
   }
   stdout.writeln('${all.length} attestations');
+}
+
+/// [keys] and the key statements inside the statuses in [rawStatus] that a
+/// trusted key made (#117): whoever passed on a status passed those on.
+Future<List<KeyStatement>> _withStatusKeys(
+  List<KeyStatement> keys,
+  TrustedKeys given,
+  List<Object?> rawStatus,
+) async {
+  final trust = given.withStatements(keys);
+  final status = await PublisherStatus.checkAll(rawStatus, trust);
+  if (status.isEmpty) return keys;
+  final seen = {for (final k in keys) k.id};
+  return [
+    ...keys,
+    for (final k in await relevantStatements(trust, [
+      for (final st in status) ...st.keys,
+    ]))
+      if (seen.add(k.id)) k,
+  ];
+}
+
+/// Lychnion's status for a catalog of [records] (#117): the newest version
+/// of each of its items, its own key statements in [keys], and the
+/// attestations that are withdrawn now (the deciding one for each
+/// publisher), signed with the key from [keyFrom]. Refused when that key is
+/// not one [trust] has for Lychnion.
+Future<PublisherStatus> _signStatus(
+  String keyFrom, {
+  required List<Map<String, Object?>> records,
+  required List<KeyStatement> keys,
+  required List<Attestation> attestations,
+  required TrustedKeys trust,
+}) async {
+  final items = <String, String>{
+    for (final r in records)
+      if (r['publisher'] == attesterPublisher)
+        r['id']! as String: r['version']! as String,
+  };
+  final withdrawn = [
+    for (final name in {for (final a in attestations) a.publisher})
+      if (attestationFor(
+            name,
+            attestations.first.key,
+            attestations,
+            const [],
+          ).attestation
+          case final a? when a.withdrawn)
+        a,
+  ];
+  final signer = await keyPairFromSeed(await _readKey(keyFrom));
+  final PublisherStatus status;
+  try {
+    status = await PublisherStatus.sign(
+      publisher: attesterPublisher,
+      signed: _now(),
+      items: items,
+      signer: signer,
+      keys: [
+        for (final k in keys)
+          if (k.publisher == attesterPublisher) k,
+      ],
+      attestations: withdrawn,
+    );
+  } on ArgumentError catch (e) {
+    _fail('Not a status the app would accept: ${e.message}');
+  }
+  if (await PublisherStatus.check(status.json, trust) == null) {
+    _fail(
+      'The key given is not trusted for Lychnion (wrong 1Password item, or '
+      '--public-key / --keys missing after a key replacement)',
+    );
+  }
+  return status;
 }
