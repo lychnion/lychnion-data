@@ -172,6 +172,26 @@ class StatusTest(unittest.TestCase):
         self.catalog()
         dart("verify", "--public-key", self.pub, self.out, "--release")
 
+    def test_lychnions_own_key_never_skips_the_checks(self):
+        self.sign("2026.11.1")
+        with open(os.path.join(ROOT, "keys", "lychnion.pub")) as f:
+            builtin = f.read().strip()
+        # Also spelled with padding: the same key.
+        for key in [builtin, builtin + "="]:
+            r = dart("catalog", "--public-key", key, "--items", self.items,
+                     "--records", self.records, "--base", "https://example.org/",
+                     "--out", self.out, "--no-attestations", ok=False)
+            self.assertIn("--no-status", r.stderr, key)
+
+    def test_release_catalog_without_records_needs_a_status_too(self):
+        with open(self.items, "w") as f:
+            json.dump({"publisher": "lychnion", "items": []}, f)
+        os.makedirs(self.records, exist_ok=True)
+        self.catalog("--no-status", key=False)
+        r = dart("verify", "--public-key", self.pub, self.out, "--release",
+                 ok=False)
+        self.assertIn("no status of Lychnion's: not for release", r.stdout)
+
     def test_reattested_publisher_has_no_withdrawal(self):
         self.sign("2026.11.1")
         city = dart("keygen").stderr.strip().removeprefix("public key: ")

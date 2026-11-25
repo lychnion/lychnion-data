@@ -541,14 +541,24 @@ Future<Map<String, Object?>> _recordFor(
 
 Future<void> _catalog(_Args args) async {
   // Before the options are read: another publisher's catalog (not with
-  // Lychnion's own key: that would only skip the checks below).
+  // Lychnion's own key, however it is spelled: that would only skip the
+  // checks below).
   final i = args.rest.indexOf('--public-key');
-  final ownKey =
+  String? canon(String k) {
+    try {
+      return TrustedKeys.canonicalKey(k);
+    } on FormatException {
+      return null;
+    }
+  }
+
+  final given0 = i >= 0 && i + 1 < args.rest.length
+      ? canon(args.rest[i + 1])
+      : null;
+  final othersCatalog =
       i >= 0 &&
-      !(i + 1 < args.rest.length &&
-          builtInPublishers
-              .keysOf(attesterPublisher)
-              .contains(args.rest[i + 1]));
+      !(given0 != null &&
+          builtInPublishers.keysOf(attesterPublisher).contains(given0));
   final items = _readJson(args.req('--items'));
   final dir = Directory(args.req('--records'));
   final base = args.req('--base');
@@ -572,7 +582,7 @@ Future<void> _catalog(_Args args) async {
   if (keyFrom != null && noStatus) _fail('--key and --no-status: give one');
   // Lychnion's catalog always carries its status: without one, phones
   // cannot tell that a carrier held a newer version back.
-  if (keyFrom == null && !noStatus && !ownKey) {
+  if (keyFrom == null && !noStatus && !othersCatalog) {
     _fail(
       "Give --key - (Lychnion's key from 1Password) to sign the status, or "
       '--no-status',
@@ -584,7 +594,8 @@ Future<void> _catalog(_Args args) async {
   // Lychnion's catalog: the attestations next to this tool, wherever it
   // runs from. Another publisher's (--public-key): none unless given,
   // since Lychnion's would not verify with its key.
-  final attestationDir = givenDir ?? (ownKey ? null : _defaultAttestations);
+  final attestationDir =
+      givenDir ?? (othersCatalog ? null : _defaultAttestations);
   // A mistyped option (--key, --keys=FILE) must not leave a revocation
   // out of the catalog unnoticed.
   if (args.positional().isNotEmpty) _strayArgument();
@@ -840,12 +851,18 @@ Future<void> _verify(_Args args) async {
   final hasLychnion = j.records.any(
     (r) => r is Map && r['publisher'] == attesterPublisher,
   );
-  if (hasLychnion && newestStatus[attesterPublisher] == null) {
+  // Lychnion's own catalog (--release) always needs it, also when every
+  // record was left out.
+  if ((hasLychnion || release) && newestStatus[attesterPublisher] == null) {
+    final ahead = status.any((st) => st.publisher == attesterPublisher);
+    final why = ahead
+        ? "Lychnion's status is signed too far ahead of this clock"
+        : "no status of Lychnion's";
     if (release) {
       bad++;
-      stdout.writeln("BAD  no status of Lychnion's: not for release");
+      stdout.writeln('BAD  $why: not for release');
     } else {
-      stdout.writeln("     no status of Lychnion's");
+      stdout.writeln('     $why');
     }
   }
   if (j.attestations.isNotEmpty) {
@@ -1273,8 +1290,8 @@ Future<PublisherStatus> _signStatus(
       ],
       attestations: withdrawn,
     );
-  } on ArgumentError catch (e) {
-    _fail('Not a status the app would accept: ${e.message}');
+  } on ArgumentError {
+    _fail('Not a status the app would accept (too many items or entries?)');
   }
   if (await PublisherStatus.check(status.json, trust) == null) {
     _fail(
