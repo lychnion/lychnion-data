@@ -219,7 +219,7 @@ op read op://Private/lychnion-everyday-key/credential \
 # → build/grant-request.json, and it prints the new key: note it
 # (on paper, or read it out), separately from the file
 # 2. with the root: check the request, sign it, add it to keys/lychnion.json
-dart run tool/records.dart grant --key - --from build/grant-request.json \
+dart run tool/records.dart grant --key /Volumes/ROOT-A/lychnion-root.lychnion-key --from build/grant-request.json \
     --expect-key <the new key noted in step 1>
 # commit keys/lychnion.json
 ```
@@ -254,10 +254,31 @@ Start signing with the everyday key only once the app release with key
 scopes is out and most phones have it: older builds ignore grants, so
 they would not take records signed by it.
 
+**The offline root** (lychnion/lychnion#118; the whole procedure is in
+`docs/key-custody.md` in the app repository). The root lives only as an
+encrypted key backup on two USB sticks, never in 1Password or on a disk:
+
+```sh
+# once: the backup, from the key in 1Password (the passphrase is asked
+# twice at the terminal, never shown)
+op read op://Private/lychnion-package-signing-key/credential \
+  | dart run tool/records.dart backup --key - \
+      --out /Volumes/ROOT-A/lychnion-root.lychnion-key
+# check that it opens (prints the root's public key)
+dart run tool/records.dart public --key /Volumes/ROOT-A/lychnion-root.lychnion-key
+```
+
+Any command takes the root as `--key FILE.lychnion-key` and asks for the
+passphrase at the terminal. The backup carries no ready-made revocation
+(the app's own backups do): whoever finds a stick can do nothing with it
+without the passphrase, not even revoke Lychnion's root.
+`keygen --1password --title lychnion-everyday-key` makes the everyday
+key as a 1Password item of its own.
+
 If a granted key is lost or stolen, the root revokes it:
 
 ```sh
-dart run tool/records.dart revoke-key --key - --revoked <its public key>
+dart run tool/records.dart revoke-key --key /Volumes/ROOT-A/lychnion-root.lychnion-key --revoked <its public key>
 # commit keys/lychnion.json and publish a catalog: phones learn of the
 # revocation from Lychnion's status
 ```
