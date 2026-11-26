@@ -124,31 +124,42 @@ PF="$T/pass"; B="$T/root.lychnion-key"
 pass() { printf '%s\n' "$@" >"$PF"; }
 pass "short" "short"
 expect_fail_says "backup refuses a short passphrase" "shorter than" \
-  bash -c "echo $ROOT | LYCHNION_PASSPHRASE_FILE=$PF dart run tool/records.dart backup --key - --out $B"
+  bash -c "echo $ROOT | LYCHNION_TEST=1 LYCHNION_PASSPHRASE_FILE=$PF dart run tool/records.dart backup --key - --out $B"
 pass "correct horse battery" "correct horse batterY"
 expect_fail_says "backup refuses differing passphrases" "differ" \
-  bash -c "echo $ROOT | LYCHNION_PASSPHRASE_FILE=$PF dart run tool/records.dart backup --key - --out $B"
+  bash -c "echo $ROOT | LYCHNION_TEST=1 LYCHNION_PASSPHRASE_FILE=$PF dart run tool/records.dart backup --key - --out $B"
 pass "correct horse battery" "correct horse battery"
 expect_ok "backup writes the root's key backup" \
-  bash -c "echo $ROOT | LYCHNION_PASSPHRASE_FILE=$PF dart run tool/records.dart backup --key - --out $B"
+  bash -c "echo $ROOT | LYCHNION_TEST=1 LYCHNION_PASSPHRASE_FILE=$PF dart run tool/records.dart backup --key - --out $B"
 grep -q '"revocation"' "$B" && bad "the backup has no ready-made revocation" || ok "the backup has no ready-made revocation"
 grep -q "$ROOT" "$B" && bad "the backup does not show the key" || ok "the backup does not show the key"
+grep -q "even without the passphrase" "$B" && bad "its warning says it can't revoke" || ok "its warning says it can't revoke"
+pass "correct horse battery" "correct horse battery"
+expect_fail_says "backup needs the stick's folder to exist" "is the stick mounted" \
+  bash -c "echo $ROOT | LYCHNION_TEST=1 LYCHNION_PASSPHRASE_FILE=$PF dart run tool/records.dart backup --key - --out $T/nostick/r.lychnion-key"
+expect_fail_says "the passphrase file is for tests only" "tests only" \
+  bash -c "LYCHNION_PASSPHRASE_FILE=$PF dart run tool/records.dart public --key $B"
+echo "$ROOT" >"$T/seed.lychnion-key"
+expect_fail_says "a seed file named like a backup is refused" "Not a key backup" \
+  R public --key "$T/seed.lychnion-key"
+expect_fail_says "keygen --title needs --1password" "only with --1password" \
+  R keygen --title lychnion-everyday-key
 pass "correct horse battery" "correct horse battery"
 expect_fail_says "backup never overwrites" "not overwritten" \
-  bash -c "echo $ROOT | LYCHNION_PASSPHRASE_FILE=$PF dart run tool/records.dart backup --key - --out $B"
+  bash -c "echo $ROOT | LYCHNION_TEST=1 LYCHNION_PASSPHRASE_FILE=$PF dart run tool/records.dart backup --key - --out $B"
 pass "correct horse battery"
 expect_ok "public opens the backup" \
-  bash -c "LYCHNION_PASSPHRASE_FILE=$PF dart run tool/records.dart public --key $B"
+  bash -c "LYCHNION_TEST=1 LYCHNION_PASSPHRASE_FILE=$PF dart run tool/records.dart public --key $B"
 grep -q "^$RP\$" "$T/out" && ok "to the root's public key" || bad "to the root's public key"
 pass "wrong horse battery"
 expect_fail_says "a wrong passphrase does not open it" "does not open" \
-  bash -c "LYCHNION_PASSPHRASE_FILE=$PF dart run tool/records.dart public --key $B"
+  bash -c "LYCHNION_TEST=1 LYCHNION_PASSPHRASE_FILE=$PF dart run tool/records.dart public --key $B"
 THIRD=$(R keygen 2>"$T/tp"); TP=$(sed 's/public key: //' "$T/tp")
 expect_ok "grant-request for a third key" \
   bash -c "echo $THIRD | dart run tool/records.dart grant-request --key - --scope data --public-key $RP --out $T/req3.json"
 pass "correct horse battery"
 expect_ok "the root grants from its key backup" \
-  bash -c "LYCHNION_PASSPHRASE_FILE=$PF dart run tool/records.dart grant --key $B --from $T/req3.json --expect-key $TP --keys-file $K --public-key $RP"
+  bash -c "LYCHNION_TEST=1 LYCHNION_PASSPHRASE_FILE=$PF dart run tool/records.dart grant --key $B --from $T/req3.json --expect-key $TP --keys-file $K --public-key $RP"
 
 # Lychnion's own keys/lychnion.json, found next to the tool wherever it
 # runs from. Only when the repository has none (CI, a clean checkout):

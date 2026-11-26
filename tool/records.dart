@@ -1,8 +1,11 @@
 // Signs package records and assembles the download catalog.
 //
-// Records and catalogs: docs/distribution.md in lychnion/lychnion. The private key is in
-// 1Password (item `lychnion-package-signing-key`, field `credential`) and
-// is read from stdin, so it never touches the disk:
+// Records and catalogs: docs/distribution.md in lychnion/lychnion. A
+// private key comes from 1Password (field `credential`) on stdin, so it
+// never touches the disk; Lychnion's offline root comes from its
+// encrypted key backup on a USB stick (`--key FILE.lychnion-key`, the
+// passphrase typed at the terminal; docs/key-custody.md in the app
+// repository):
 //
 //   # once: make the key pair and store it in 1Password
 //   dart run tool/records.dart keygen --1password \
@@ -216,9 +219,7 @@ class _Args {
 Future<String> _readKey(String from) async {
   // The offline root (lychnion/lychnion#118): an encrypted key backup on
   // a USB stick, opened with its passphrase typed at the terminal.
-  if (from != '-' && from.endsWith(KeyBackup.extension)) {
-    return _openBackup(from);
-  }
+  if (from != '-' && _isBackupFile(from)) return _openBackup(from);
   final String k;
   try {
     k = from == '-'
@@ -249,7 +250,11 @@ Future<String> _readKey(String from) async {
 Future<void> _keygen(_Args args) async {
   // A typo (--1pasword) must not print a bare seed instead of the item.
   final onePassword = args.flag('--1password');
-  final title = args.opt('--title') ?? 'lychnion-package-signing-key';
+  final titleArg = args.opt('--title');
+  if (titleArg != null && !onePassword) {
+    _fail('--title names the 1Password item: only with --1password');
+  }
+  final title = titleArg ?? 'lychnion-package-signing-key';
   if (!RegExp(r'^[a-z0-9][a-z0-9-]{0,63}$').hasMatch(title)) {
     _fail('--title: lowercase letters, digits and hyphens');
   }
@@ -1745,14 +1750,32 @@ Future<void> _checkKeys(_Args args) async {
   );
 }
 
+/// Whether the --key file at [path] is a key backup: by its name, or by
+/// its content (a seed file is a single line, a backup is JSON).
+bool _isBackupFile(String path) {
+  if (path.toLowerCase().endsWith(KeyBackup.extension)) return true;
+  try {
+    final j = jsonDecode(File(path).readAsStringSync());
+    return j is Map && j['type'] == KeyBackup.type;
+  } on Object {
+    return false;
+  }
+}
+
 /// The seed in the key backup at [path], opened with the passphrase typed
-/// at the terminal.
+/// at the terminal. The file is checked before the passphrase is asked.
 Future<String> _openBackup(String path) async {
   final String text;
   try {
     text = File(path).readAsStringSync();
   } on FileSystemException {
     _fail('Could not read the key backup (name not shown)');
+  }
+  try {
+    final j = jsonDecode(text);
+    if (j is! Map || j['type'] != KeyBackup.type) throw const FormatException();
+  } on Object {
+    _fail('Not a key backup, or a damaged one');
   }
   try {
     final k = await KeyBackup.open(text, _askPassphrase('Passphrase: '));
@@ -1768,51 +1791,110 @@ Future<String> _openBackup(String path) async {
   }
 }
 
+/// Passphrases asked so far in this run (the test hook takes one line of
+/// its file per prompt).
+var _asked = 0;
+
 /// A passphrase typed at the terminal, not shown (`/dev/tty`: stdin may
-/// carry the key). Tests give a file instead (LYCHNION_PASSPHRASE_FILE,
-/// for tests only: a passphrase must never be in a file in real use).
+/// carry the key). The terminal is set back however the program ends,
+/// also on Ctrl-C.
+///
+/// Tests only: with LYCHNION_TEST=1, LYCHNION_PASSPHRASE_FILE gives the
+/// passphrases instead, one line per prompt (never in real use: a
+/// passphrase must not be in a file).
 String _askPassphrase(String prompt) {
   final testFile = Platform.environment['LYCHNION_PASSPHRASE_FILE'];
   if (testFile != null) {
-    final lines = File(testFile).readAsLinesSync();
-    if (lines.isEmpty) _fail('LYCHNION_PASSPHRASE_FILE is empty');
-    // One passphrase per prompt, in order (the file is rewritten without
-    // the line used).
-    File(testFile).writeAsStringSync(lines.skip(1).map((l) => '$l\n').join());
-    return lines.first;
+    if (Platform.environment['LYCHNION_TEST'] != '1') {
+      _fail('LYCHNION_PASSPHRASE_FILE is for tests only (LYCHNION_TEST=1)');
+    }
+    stderr.writeln('WARNING: passphrase from LYCHNION_PASSPHRASE_FILE (tests)');
+    List<String> lines;
+    try {
+      lines = File(testFile).readAsLinesSync();
+    } on FileSystemException {
+      _fail('LYCHNION_PASSPHRASE_FILE cannot be read');
+    }
+    if (_asked >= lines.length)
+      _fail('LYCHNION_PASSPHRASE_FILE: too few lines');
+    return lines[_asked++];
   }
-  final tty = File('/dev/tty');
   RandomAccessFile raf;
   try {
-    raf = tty.openSync();
+    raf = File('/dev/tty').openSync();
   } on FileSystemException {
     _fail('Type the passphrase at a terminal (no terminal here)');
   }
-  stderr.write(prompt);
-  Process.runSync('sh', ['-c', 'stty -echo < /dev/tty']);
+  String stty(String args) {
+    final r = Process.runSync('sh', ['-c', 'stty $args < /dev/tty']);
+    if (r.exitCode != 0) {
+      raf.closeSync();
+      _fail('Could not turn off the terminal echo: nothing asked');
+    }
+    return (r.stdout as String).trim();
+  }
+
+  final saved = stty('-g');
+  // Ctrl-C or a kill while asking: set the terminal back first.
+  final subs = [
+    for (final sig in [ProcessSignal.sigint, ProcessSignal.sigterm])
+      sig.watch().listen((_) {
+        Process.runSync('sh', ['-c', 'stty $saved < /dev/tty']);
+        stderr.writeln();
+        exit(130);
+      }),
+  ];
   final bytes = <int>[];
+  var cancelled = false;
   try {
-    for (
-      var b = raf.readByteSync();
-      b != -1 && b != 10;
-      b = raf.readByteSync()
-    ) {
+    stty('-echo');
+    stderr.write(prompt);
+    for (var b = raf.readByteSync(); b != 10; b = raf.readByteSync()) {
+      // Ctrl-C or Ctrl-D: the read ends without Enter.
+      if (b == -1) {
+        cancelled = true;
+        break;
+      }
       if (b != 13) bytes.add(b);
     }
   } finally {
-    Process.runSync('sh', ['-c', 'stty echo < /dev/tty']);
+    Process.runSync('sh', ['-c', 'stty $saved < /dev/tty']);
+    for (final s in subs) {
+      s.cancel();
+    }
     raf.closeSync();
     stderr.writeln();
   }
-  return utf8.decode(bytes, allowMalformed: true);
+  if (cancelled) _fail('Cancelled: no passphrase given');
+  try {
+    return utf8.decode(bytes);
+  } on FormatException {
+    _fail('The passphrase is not UTF-8 text (terminal encoding?)');
+  }
 }
+
+/// The warning written into the root's key backup instead of the app's,
+/// which says the file can revoke the key without the passphrase.
+const _rootWarning = {
+  'en':
+      'This file holds Lychnion\'s root key, encrypted. Keep it offline, '
+      'on this stick, in a safe place. Never put it on a computer\'s disk, '
+      'a server or in a repository. Without the passphrase it can neither '
+      'sign nor revoke anything.',
+  'ja':
+      'このファイルには Lychnion のルート鍵が暗号化されて入っています。'
+      'この USB メモリに入れたまま、安全な場所にオフラインで保管してください。'
+      'パソコンのディスク、サーバー、リポジトリには置かないでください。'
+      'パスフレーズがなければ、署名も鍵の無効化もできません。',
+};
 
 /// Writes an encrypted backup of the key on stdin (`--key -`, from
 /// 1Password) to `--out FILE.lychnion-key`, for the offline root
-/// (lychnion/lychnion#118; docs/key-custody.md in lychnion/lychnion). The
-/// passphrase is asked twice at the terminal. Unlike the app's backups it
-/// carries no ready-made revocation: whoever finds a stick must not be
-/// able to revoke Lychnion's root without the passphrase.
+/// (lychnion/lychnion#118; docs/key-custody.md there). The passphrase is
+/// asked twice at the terminal. Unlike the app's backups it carries no
+/// ready-made revocation: whoever finds a stick must not be able to revoke
+/// Lychnion's root without the passphrase. The file is read back from the
+/// stick and opened before the command says it is done.
 Future<void> _backup(_Args args) async {
   final keyFrom = args.req('--key');
   final out = args.req('--out');
@@ -1822,7 +1904,14 @@ Future<void> _backup(_Args args) async {
   if (!out.endsWith(KeyBackup.extension)) {
     _fail('--out: the file name ends in ${KeyBackup.extension}');
   }
-  if (File(out).existsSync()) _fail('$out exists: not overwritten');
+  final dir = File(out).parent;
+  if (!dir.existsSync()) {
+    _fail('${dir.path} does not exist: is the stick mounted?');
+  }
+  if (FileSystemEntity.typeSync(out, followLinks: false) !=
+      FileSystemEntityType.notFound) {
+    _fail('$out exists: not overwritten');
+  }
   final seed = await _readKey(keyFrom);
   final pass = _askPassphrase(
     'Passphrase (at least ${KeyBackup.minPassphraseLength} characters): ',
@@ -1835,6 +1924,8 @@ Future<void> _backup(_Args args) async {
       seed: seed,
       passphrase: pass,
       signed: _now(),
+      // The most the app reads: the root is opened rarely, on a computer.
+      kdf: const KeyBackupKdf(memory: 131072, iterations: 4),
     );
   } on ArgumentError catch (e) {
     _fail(
@@ -1845,17 +1936,34 @@ Future<void> _backup(_Args args) async {
     );
   }
   final j = (jsonDecode(text) as Map).cast<String, Object?>()
-    ..remove('revocation');
+    ..remove('revocation')
+    ..['warning'] = _rootWarning;
   text = '${const JsonEncoder.withIndent('  ').convert(j)}\n';
-  // Opened again before it is trusted: a backup that does not open is
-  // worse than none.
-  final back = await KeyBackup.open(text, pass);
-  if (back.seed != seed) _fail('The backup does not open to the same key');
-  await File(out).parent.create(recursive: true);
-  await File(out).writeAsString(text);
-  stdout.writeln(
-    'Key backup of $name (${back.publicKey}) → $out, without a ready-made '
-    'revocation. Copy it to the second stick, and check that '
-    '`public --key $out` opens it there.',
-  );
+  // Created only if it does not exist yet (no race with another run).
+  final f = File(out);
+  try {
+    f.createSync(exclusive: true);
+  } on FileSystemException {
+    _fail('$out exists or cannot be created: not overwritten');
+  }
+  try {
+    await f.writeAsString(text, flush: true);
+    Process.runSync('chmod', ['600', out]);
+    // Read back from the stick and opened: a backup that does not open is
+    // worse than none.
+    final back = await KeyBackup.open(await f.readAsString(), pass);
+    if (back.seed != seed) throw const FormatException();
+    stdout.writeln(
+      'Key backup of $name (${back.publicKey}) → $out, read back and '
+      'opened. Copy it to the second stick, and check there with '
+      '`public --key <copy>`.',
+    );
+  } on Object {
+    try {
+      f.deleteSync();
+    } on FileSystemException {
+      // Reported below.
+    }
+    _fail('$out could not be written and read back: removed. Try again.');
+  }
 }

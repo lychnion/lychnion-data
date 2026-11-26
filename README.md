@@ -256,7 +256,9 @@ they would not take records signed by it.
 
 **The offline root** (lychnion/lychnion#118; the whole procedure is in
 `docs/key-custody.md` in the app repository). The root lives only as an
-encrypted key backup on two USB sticks, never in 1Password or on a disk:
+encrypted key backup on two USB sticks, never on a disk; its passphrase
+is in 1Password, apart from the sticks, and split on paper (SLIP-39, 2 of
+3). Once both sticks open, the root's 1Password item is deleted:
 
 ```sh
 # once: the backup, from the key in 1Password (the passphrase is asked
@@ -273,7 +275,11 @@ passphrase at the terminal. The backup carries no ready-made revocation
 (the app's own backups do): whoever finds a stick can do nothing with it
 without the passphrase, not even revoke Lychnion's root.
 `keygen --1password --title lychnion-everyday-key` makes the everyday
-key as a 1Password item of its own.
+key as a 1Password item of its own (without `--title` the item gets the
+root's old name, `lychnion-package-signing-key`). The backup is written
+with the strongest Argon2id cost the app reads, read back from the stick
+and opened before `backup` says it is done; it never overwrites a file,
+and refuses a folder that does not exist (a stick not mounted).
 
 If a granted key is lost or stolen, the root revokes it:
 
