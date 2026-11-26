@@ -219,7 +219,7 @@ op read op://Private/lychnion-everyday-key/credential \
 # → build/grant-request.json, and it prints the new key: note it
 # (on paper, or read it out), separately from the file
 # 2. with the root: check the request, sign it, add it to keys/lychnion.json
-dart run tool/records.dart grant --key - --from build/grant-request.json \
+dart run tool/records.dart grant --key /Volumes/<stick>/lychnion-root.lychnion-key --from build/grant-request.json \
     --expect-key <the new key noted in step 1>
 # commit keys/lychnion.json
 ```
@@ -254,10 +254,45 @@ Start signing with the everyday key only once the app release with key
 scopes is out and most phones have it: older builds ignore grants, so
 they would not take records signed by it.
 
+**The offline root** (lychnion/lychnion#118; the whole procedure is in
+`docs/key-custody.md` in the app repository). The root lives only as an
+encrypted key backup on two USB sticks, never on the computer's disk; its passphrase
+is in 1Password, apart from the sticks, and split on paper (SLIP-39, 2 of
+3). The root's 1Password item is deleted only at the end of the move in
+`docs/key-custody.md`, once data releases are signed with the everyday
+key (until then, `sign` and `catalog` still use it):
+
+```sh
+# once: the backup, from the key in 1Password (the passphrase is asked
+# twice at the terminal, never shown)
+op read op://Private/lychnion-package-signing-key/credential \
+  | dart run tool/records.dart backup --key - \
+      --out /Volumes/<stick>/lychnion-root.lychnion-key
+# check that it opens (prints the root's public key)
+dart run tool/records.dart public --key /Volumes/<stick>/lychnion-root.lychnion-key
+```
+
+Any command takes the root as `--key FILE.lychnion-key` and asks for the
+passphrase at the terminal. The backup carries no ready-made revocation
+(the app's own backups do): whoever finds a stick can do nothing with it
+without the passphrase, not even revoke Lychnion's root.
+`keygen --1password --title lychnion-everyday-key` makes the everyday
+key as a 1Password item of its own (without `--title` the item gets the
+root's old name, `lychnion-package-signing-key`). The backup is written
+with the strongest Argon2id cost the app reads, and opened again before
+it gets its name; eject the stick, plug it in again and check it with
+`public --key` (the system may still hold the file in memory). `backup`
+never overwrites a file, and refuses a folder that does not exist (a
+stick not mounted). To make the same root again under a new passphrase
+(a stolen 1Password, a lost paper part), give the old backup instead of
+`-`: `backup --key /Volumes/<stick>/lychnion-root.lychnion-key --out
+/Volumes/<new stick>/lychnion-root.lychnion-key` asks for the old
+passphrase, then the new one twice.
+
 If a granted key is lost or stolen, the root revokes it:
 
 ```sh
-dart run tool/records.dart revoke-key --key - --revoked <its public key>
+dart run tool/records.dart revoke-key --key /Volumes/<stick>/lychnion-root.lychnion-key --revoked <its public key>
 # commit keys/lychnion.json and publish a catalog: phones learn of the
 # revocation from Lychnion's status
 ```
