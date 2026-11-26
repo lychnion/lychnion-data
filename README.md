@@ -216,20 +216,29 @@ ever on the other one's computer:
 op read op://Private/lychnion-everyday-key/credential \
   | dart run tool/records.dart grant-request --key - \
       --scope data,models,safety-lines,attestations
-# → build/grant-request.json; carry it to the root's computer
+# → build/grant-request.json, and it prints the new key: note it
+# (on paper, or read it out), separately from the file
 # 2. with the root: check the request, sign it, add it to keys/lychnion.json
-dart run tool/records.dart grant --key - --from build/grant-request.json
+dart run tool/records.dart grant --key - --from build/grant-request.json \
+    --expect-key <the new key noted in step 1>
 # commit keys/lychnion.json
 ```
 
-`grant` shows the key and scopes it grants, refuses a request for
-another root, one listing `keys`, and one changed after the new key
-signed it. Every command (`sign`, `catalog`, `verify`, `export`,
-`check-records`, `attest`) reads `keys/lychnion.json` by itself, so a
-release can't leave a grant or revocation out, and CI checks it with
-`check-keys`. `sign` uses every key Lychnion trusts to find an item's
-newest version, and refuses a key without the item's scope (a package
-also needs `safety-lines`: without it the app would drop its alerts).
+`grant` signs nothing unless the request grants the key given with
+`--expect-key`, so a request swapped on the way is refused. It also
+refuses a request for another root, one listing `keys`, and one changed
+after the new key signed it. Every command (`sign`, `catalog`, `export`,
+`check-records`, `attest`, and `verify` without `--release`) reads
+`keys/lychnion.json` by itself, next to the tool wherever it runs from,
+and stops when an entry in it is not valid or not made by a key the app
+trusts; CI checks it with `check-keys`. `verify --release` takes only
+the statements the catalog carries, so a catalog without them fails.
+`sign` uses every key Lychnion trusts to find an item's newest version,
+and refuses a key without the item's scope (a package also needs
+`safety-lines`: without it the app would drop its alerts). When the
+root is replaced, its replacement goes into `keys/lychnion.json` too
+(or pass `--keys keys.json`; the key tools take it as well), or `sign`
+and `grant` won't know the new root.
 
 Start signing with the everyday key only once the app release with key
 scopes is out and most phones have it: older builds ignore grants, so
