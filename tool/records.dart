@@ -70,6 +70,24 @@
 //   # check every attestation in the attestations folder (also run by CI)
 //   dart run tool/records.dart check-attestations attestations
 //
+//   # grant the everyday key scopes (lychnion/lychnion#125; README "The
+//   # root and the everyday key"). Step 1, with the new key: a request
+//   op read op://Private/lychnion-everyday-key/credential \
+//     | dart run tool/records.dart grant-request --key - \
+//         --scope data,models,safety-lines,attestations
+//         [--root KEY] [--out build/grant-request.json]
+//   # step 2, with the root: check it, sign it, add it to keys/lychnion.json
+//   # (--expect-key: the new key step 1 printed, noted apart from the file)
+//   dart run tool/records.dart grant --key - --from build/grant-request.json
+//       --expect-key KEY
+//   # the root revokes a granted key that was lost or stolen
+//   dart run tool/records.dart revoke-key --key - --revoked KEY
+//   # check keys/lychnion.json (also run by CI)
+//   dart run tool/records.dart check-keys
+//
+// Every command reads keys/lychnion.json (Lychnion's grants and
+// revocations) by itself, next to the --keys files.
+//
 // `catalog` carries every attestation in `attestations/` (or
 // --attestations DIR; --no-attestations for a catalog without any), and
 // stops when one is bad, a file there is not an attestation at its own
@@ -88,6 +106,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:crypto/crypto.dart' as crypto;
+import 'package:cryptography/cryptography.dart' show Ed25519;
 import 'package:lychnion_format/lychnion_format.dart';
 
 const _refresh =
@@ -123,6 +142,14 @@ Future<void> main(List<String> argv) async {
       await _attest(args);
     case 'check-attestations':
       await _checkAttestations(args);
+    case 'grant-request':
+      await _grantRequest(args);
+    case 'grant':
+      await _grant(args);
+    case 'revoke-key':
+      await _revokeKey(args);
+    case 'check-keys':
+      await _checkKeys(args);
     default:
       _fail('Unknown command ${argv.first}');
   }
@@ -265,8 +292,15 @@ Future<List<KeyStatement>> _keys(
   List<String> files,
   TrustedKeys trust, [
   List<Object?> more = const [],
+  bool lychnion = true,
 ]) async {
-  final given = <Object?>[...more];
+  // Lychnion's own grants and revocations (keys/lychnion.json), unless
+  // [lychnion] is false (verify --release: the catalog must carry them
+  // itself): a release must never leave them out.
+  final given = <Object?>[
+    ...more,
+    if (lychnion) ...await _lychnionStatements(),
+  ];
   final perFile = <String, Set<String>>{};
   for (final f in files) {
     final String text;
@@ -408,7 +442,13 @@ Future<PackageRecord?> _newest(
   for (final f in d.listSync().whereType<File>()) {
     if (!f.path.endsWith('.json')) continue;
     final r = await trust.check(jsonDecode(f.readAsStringSync()));
-    if (r == null) _fail('${f.path}: bad record or signature');
+    if (r == null) {
+      _fail(
+        '${f.path}: bad record or signature (signed by a revoked key, or one '
+        'without the scope? Remove it and sign the item again, at a version '
+        'at least as high as the removed one)',
+      );
+    }
     if (r.id != id) _fail('${f.path}: record of ${r.id}');
     if (best == null || compareVersions(r.version, best.version) > 0) {
       best = r;
@@ -423,6 +463,8 @@ Map<String, Object?> _withoutSignature(Map<String, Object?> j) =>
 
 Future<void> _sign(_Args args) async {
   final keyFrom = args.req('--key');
+  final given = _trust(args);
+  final keyFiles = args.all('--keys');
   final items = _readJson(args.req('--items'));
   final dir = Directory(args.req('--records'));
   // Contours after their maps: a map signed in the same call is the one
@@ -434,14 +476,44 @@ Future<void> _sign(_Args args) async {
   if (ids.isEmpty) _fail('Name the items to sign.');
   final pair = await keyPairFromSeed(await _readKey(keyFrom));
   final publisher = items['publisher']! as String;
-  final trust = TrustedKeys({
-    publisher: [await publicKeyOf(pair)],
-  });
+  final signer = TrustedKeys.canonicalKey(await publicKeyOf(pair));
+  // Lychnion's items: every key Lychnion trusts (the root and the keys it
+  // granted, keys/lychnion.json), so the newest version is found whoever
+  // signed it, and the signer must hold the scope of each item.
+  final TrustedKeys trust;
+  if (given.known.contains(publisher)) {
+    trust = given.withStatements(await _keys(keyFiles, given));
+    if (!trust.keysOf(publisher).contains(signer)) {
+      _fail(
+        'The key given is not trusted for $publisher (wrong 1Password item, '
+        'or its grant missing in $_lychnionKeys?)',
+      );
+    }
+  } else {
+    trust = TrustedKeys({
+      publisher: [signer],
+    });
+  }
+  final scopes = {
+    for (final s in KeyScope.all)
+      if (trust.keysFor(publisher, s).contains(signer)) s,
+  };
   final byId = {
     for (final i in items['items']! as List) (i as Map)['id'] as String: i,
   };
   for (final id in ids) {
     final item = byId[id] ?? _fail('$id: not in the items file');
+    // A package's official safety lines count only from a key holding
+    // safety-lines (#125): signed without it, the lines would be dropped.
+    final kind = item['kind'] as String?;
+    for (final need in [
+      KeyScope.forKind(kind ?? ''),
+      if (kind == 'package') KeyScope.safetyLines,
+    ]) {
+      if (!scopes.contains(need)) {
+        _fail('$id: the key given does not hold the scope "$need"');
+      }
+    }
     final unsigned = await _recordFor(publisher, item.cast());
     final version = unsigned['version']! as String;
     if (id.endsWith('.contours')) {
@@ -819,7 +891,10 @@ Future<void> _verify(_Args args) async {
   final j = _readCatalog(rest.first);
   final folder = rest.length > 1 ? rest[1] : null;
   final keys = await _withStatusKeys(
-    await _keys(keyFiles, given, j.keys),
+    // --release: only what the catalog itself carries, so a catalog
+    // without a grant or revocation of Lychnion's fails here instead of
+    // passing on this computer's keys/lychnion.json.
+    await _keys(keyFiles, given, j.keys, !release),
     given,
     j.status,
   );
@@ -1172,8 +1247,9 @@ Future<void> _attest(_Args args) async {
   // Only a key the app trusts for Lychnion makes attestations that count.
   if (await Attestation.check(a.json, trust) == null) {
     _fail(
-      'The key given is not trusted for Lychnion (wrong 1Password item, or '
-      '--public-key / --keys missing after a key replacement)',
+      'The key given is not trusted for Lychnion, or lacks the scope '
+      '(wrong 1Password item, a key granted without it, or --public-key / '
+      '--keys missing after a key replacement)',
     );
   }
   // A file that would not decide (a clock behind the newest file) is
@@ -1295,9 +1371,351 @@ Future<PublisherStatus> _signStatus(
   }
   if (await PublisherStatus.check(status.json, trust) == null) {
     _fail(
-      'The key given is not trusted for Lychnion (wrong 1Password item, or '
-      '--public-key / --keys missing after a key replacement)',
+      'The key given is not trusted for Lychnion, or lacks the scope '
+      '(wrong 1Password item, a key granted without it, or --public-key / '
+      '--keys missing after a key replacement)',
     );
   }
   return status;
+}
+
+/// Lychnion's own key statements: grants by its root, revocations of
+/// granted keys, and replacements of the root (#125), committed so every
+/// catalog carries them. Found next to this tool, wherever it runs from.
+String get _lychnionKeys =>
+    '${File.fromUri(Platform.script).parent.parent.path}/keys/lychnion.json';
+
+/// The statements in [path] ([_lychnionKeys] when not given); none when
+/// it does not exist, unless [required]. Stops when an entry is not a
+/// valid statement, and, for [_lychnionKeys], when one is not made by a
+/// key the app trusts: a grant or revocation left out silently is worse
+/// than no release.
+Future<List<KeyStatement>> _lychnionStatements({
+  String? path,
+  bool required = false,
+}) async {
+  final p = path ?? _lychnionKeys;
+  final f = File(p);
+  if (!f.existsSync()) {
+    if (required) _fail('$p: no such keys file');
+    return const [];
+  }
+  final text = f.readAsStringSync();
+  Object? raw;
+  try {
+    raw = (jsonDecode(text) as Map)['keys'];
+  } on Object {
+    _fail('$p: not a keys file ({"keys": [...]})');
+  }
+  final parsed = await KeysFile.parse(text);
+  if (raw is! List || parsed.length != raw.length) {
+    _fail('$p: an entry is not a valid key statement');
+  }
+  if (path == null) {
+    final foreign = await _foreignStatements(builtInPublishers, parsed);
+    if (foreign.isNotEmpty) {
+      _fail(
+        '$p: ${foreign.length} statement(s) by a key the publisher\'s root '
+        'or its grants and replacements do not lead to: run check-keys',
+      );
+    }
+  }
+  return parsed;
+}
+
+/// The statements of [all] made by a key that neither [given] nor the
+/// statements of [all] lead to: not the publisher's root, nor a key a
+/// grant or replacement in [all] names (from a known key). Such a
+/// statement is another publisher's or a test key's, in the wrong file.
+/// What counts of the rest is decided by the app's own rules
+/// (relevantStatements): a former root's grants lapse, a revoked key's
+/// statements stop counting; they stay in the file, for the record.
+Future<List<KeyStatement>> _foreignStatements(
+  TrustedKeys given,
+  List<KeyStatement> all,
+) async {
+  final known = <String, Set<String>>{
+    for (final p in given.known) p: given.keysOf(p).toSet(),
+  };
+  for (var grew = true; grew;) {
+    grew = false;
+    for (final s in all) {
+      if (s.newKey == null) continue;
+      final k = known[s.publisher];
+      if (k != null &&
+          k.contains(TrustedKeys.canonicalKey(s.maker)) &&
+          k.add(TrustedKeys.canonicalKey(s.newKey!))) {
+        grew = true;
+      }
+    }
+  }
+  return [
+    for (final s in all)
+      if (!(known[s.publisher]?.contains(TrustedKeys.canonicalKey(s.maker)) ??
+          false))
+        s,
+  ];
+}
+
+String _b64(List<int> b) => base64Url.encode(b).replaceAll('=', '');
+
+/// The keys `grant` and `revoke-key` check against. `--public-key` (tests)
+/// only with `--keys-file`: a test root's statement must never land in
+/// Lychnion's keys/lychnion.json.
+TrustedKeys _trustForKeyFile(_Args args, String? file) {
+  final testKey = args.rest.contains('--public-key');
+  String norm(String f) {
+    final a = File(f).absolute;
+    try {
+      return a.resolveSymbolicLinksSync();
+    } on FileSystemException {
+      return a.uri.normalizePath().toFilePath();
+    }
+  }
+
+  if (testKey && (file == null || norm(file) == norm(_lychnionKeys))) {
+    _fail('--public-key needs --keys-file (never Lychnion\'s own file)');
+  }
+  return _trust(args);
+}
+
+/// [given] with Lychnion's statements and those of the `--keys` [files].
+///
+/// `grant` and `revoke-key` take no `--keys`: what they write must count
+/// with keys/lychnion.json alone.
+Future<TrustedKeys> _withKeys(TrustedKeys given, List<String> files) async =>
+    given.withStatements(await _keys(files, given));
+
+/// Step 1 of a grant, with the key to be granted (`--key`): signs the
+/// grant as that key (its countersignature) and writes the request for
+/// the root to sign in step 2 (`grant`). Neither key has to be on the
+/// other one's computer.
+Future<void> _grantRequest(_Args args) async {
+  final keyFrom = args.req('--key');
+  final publisher = args.opt('--publisher') ?? attesterPublisher;
+  final scopeArg = args.req('--scope');
+  final out = args.opt('--out') ?? 'build/grant-request.json';
+  final rootArg = args.opt('--root');
+  final given = _trust(args);
+  if (args.positional().isNotEmpty) _strayArgument();
+  final scope = {for (final x in scopeArg.split(',')) x.trim()}..remove('');
+  for (final x in scope) {
+    if (!KeyScope.grantable.contains(x)) {
+      _fail(
+        '--scope $x: not a scope a grant may list '
+        '(${KeyScope.grantable.join(', ')})',
+      );
+    }
+  }
+  if (scope.isEmpty) _fail('--scope: name at least one scope');
+  // The root that will sign: the current one (the built-in key or its
+  // newest successor), unless --root names it.
+  final trust = await _withKeys(given, const []);
+  final roots = trust.currentRootsOf(publisher);
+  String? root;
+  if (rootArg != null) {
+    try {
+      root = TrustedKeys.canonicalKey(rootArg);
+    } on Object {
+      _fail('--root: not a public key');
+    }
+  } else if (roots.length == 1) {
+    root = roots.single;
+  }
+  if (root == null) {
+    _fail('$publisher has no single current root: give --root KEY');
+  }
+  final pair = await keyPairFromSeed(await _readKey(keyFrom));
+  final newKey = await publicKeyOf(pair);
+  if (TrustedKeys.canonicalKey(newKey) == root) {
+    _fail('The key given is the root itself: give the key to be granted');
+  }
+  final sorted = scope.toList()..sort();
+  final j = <String, Object?>{
+    'format': KeyStatement.format,
+    'type': KeyStatementType.grant.name,
+    'publisher': publisher,
+    'old': root,
+    'new': newKey,
+    'scope': sorted,
+    'signed': _now(),
+  };
+  final sig = await Ed25519().sign(
+    utf8.encode(canonicalJson(j)),
+    keyPair: pair,
+  );
+  j['new_signature'] = _b64(sig.bytes);
+  final f = File(out);
+  await f.parent.create(recursive: true);
+  await f.writeAsString('${const JsonEncoder.withIndent('  ').convert(j)}\n');
+  stdout.writeln(
+    'Grant request → $out: $publisher key $newKey, scope '
+    '${sorted.join(', ')}, for the root $root to sign.\n'
+    'Note the key: on the root\'s computer, grant takes it as '
+    '--expect-key $newKey, so a request swapped on the way is refused.',
+  );
+}
+
+/// Step 2 of a grant, with the root (`--key`): checks the request from
+/// `grant-request` against the key it should grant (`--expect-key`, noted
+/// in step 1), signs it, and adds the grant to [_lychnionKeys].
+Future<void> _grant(_Args args) async {
+  final keyFrom = args.req('--key');
+  final from = args.req('--from');
+  final expect = args.req('--expect-key');
+  final file = args.opt('--keys-file');
+  final given = _trustForKeyFile(args, file);
+  if (args.positional().isNotEmpty) _strayArgument();
+  Map<String, Object?> j;
+  try {
+    j = (jsonDecode(File(from).readAsStringSync()) as Map)
+        .cast<String, Object?>();
+  } on Object {
+    _fail('$from: not a grant request');
+  }
+  const fields = {
+    'format',
+    'type',
+    'publisher',
+    'old',
+    'new',
+    'scope',
+    'signed',
+    'new_signature',
+  };
+  if (j.keys.toSet().difference(fields).isNotEmpty ||
+      !fields.every(j.containsKey) ||
+      j['type'] != KeyStatementType.grant.name ||
+      j['old'] is! String ||
+      j['new'] is! String ||
+      j['scope'] is! List ||
+      (j['scope']! as List).any((x) => !KeyScope.grantable.contains(x))) {
+    _fail('$from: not a grant request (or it lists a scope a grant may not)');
+  }
+  String expected;
+  try {
+    expected = TrustedKeys.canonicalKey(expect);
+  } on Object {
+    _fail('--expect-key: not a public key');
+  }
+  if (TrustedKeys.canonicalKey(j['new']! as String) != expected) {
+    _fail(
+      '$from grants ${j['new']}, not --expect-key: not the request made in '
+      'step 1 (swapped on the way?). Nothing signed.',
+    );
+  }
+  final pair = await keyPairFromSeed(await _readKey(keyFrom));
+  final root = await publicKeyOf(pair);
+  if (TrustedKeys.canonicalKey(root) !=
+      TrustedKeys.canonicalKey(j['old']! as String)) {
+    _fail('$from asks for the root ${j['old']}, not the key given');
+  }
+  final text = canonicalJson(Map.of(j)..remove('new_signature'));
+  final sig = await Ed25519().sign(utf8.encode(text), keyPair: pair);
+  j['signature'] = _b64(sig.bytes);
+  final s = await KeyStatement.check(j);
+  if (s == null) {
+    _fail('$from: the request\'s countersignature is not valid');
+  }
+  final written = await _addStatement(
+    given,
+    file,
+    s,
+    'The grant would not count: the key given is not the current root of '
+    '${s.publisher}',
+  );
+  stdout.writeln(
+    'Granted ${s.publisher} key ${s.newKey}: ${s.scope.join(', ')} → '
+    '$written. Commit it; every catalog carries it from now on.',
+  );
+}
+
+/// The root (`--key`) revokes a key it granted (`--revoked KEY`) and adds
+/// the revocation to [_lychnionKeys].
+Future<void> _revokeKey(_Args args) async {
+  final keyFrom = args.req('--key');
+  final revokedArg = args.req('--revoked');
+  final publisher = args.opt('--publisher') ?? attesterPublisher;
+  final file = args.opt('--keys-file');
+  final given = _trustForKeyFile(args, file);
+  if (args.positional().isNotEmpty) _strayArgument();
+  String revoked;
+  try {
+    revoked = TrustedKeys.canonicalKey(revokedArg);
+  } on Object {
+    _fail('--revoked: not a public key (not shown: it may be a key)');
+  }
+  final pair = await keyPairFromSeed(await _readKey(keyFrom));
+  if (TrustedKeys.canonicalKey(await publicKeyOf(pair)) == revoked) {
+    _fail(
+      '--revoked is the root itself: a root is revoked with its own key '
+      '(a revocation by the key itself), not with revoke-key',
+    );
+  }
+  final s = await KeyStatement.revoke(
+    publisher: publisher,
+    revoked: revoked,
+    by: pair,
+    signed: _now(),
+  );
+  final written = await _addStatement(
+    given,
+    file,
+    s,
+    'The revocation would not count: the key given is not the current root '
+    'of $publisher, or the key named is not one it granted',
+  );
+  stdout.writeln(
+    'Revoked $publisher key $revoked → $written. Commit it and publish a '
+    'catalog: phones learn of it from the status.',
+  );
+}
+
+/// Adds [s] to the keys file [file] ([_lychnionKeys] when not given) when
+/// it counts after the statements already there (made by a current root
+/// of [given]); stops with [whyNot] otherwise. The file holds all of the
+/// publisher's key statements, its root's replacements too, so whatever
+/// counts here counts for every later command. Returns the file written.
+Future<String> _addStatement(
+  TrustedKeys given,
+  String? file,
+  KeyStatement s,
+  String whyNot,
+) async {
+  final existing = await _lychnionStatements(path: file);
+  final trust = given.withStatements(
+    await relevantStatements(given, existing, max: existing.length + 1),
+  );
+  if ((await relevantStatements(trust, [s])).every((k) => k.id != s.id)) {
+    _fail(whyNot);
+  }
+  final out = file ?? _lychnionKeys;
+  await File(out).parent.create(recursive: true);
+  await File(out).writeAsString(KeysFile.encode([...existing, s]));
+  return out;
+}
+
+/// Every entry of [_lychnionKeys] (or the file given, which must exist) is
+/// a valid statement made by a key the app trusts (also run by CI).
+Future<void> _checkKeys(_Args args) async {
+  final given = _trust(args);
+  final pos = args.positional();
+  if (pos.length > 1) _fail('Give at most one keys file');
+  final file = pos.isEmpty ? _lychnionKeys : pos.single;
+  final all = await _lychnionStatements(path: file, required: pos.isNotEmpty);
+  final bad = await _foreignStatements(given, all);
+  for (final s in bad) {
+    stderr.writeln(
+      '$file: ${s.type.name} of ${s.newKey ?? s.oldKey} is not made by a '
+      'key the publisher\'s root or its grants and replacements lead to',
+    );
+  }
+  if (bad.isNotEmpty) exit(1);
+  final counted = await relevantStatements(given, all, max: all.length + 1);
+  final idle = all.length - counted.length;
+  stdout.writeln(
+    '${all.length} key statements'
+    '${idle > 0 ? ' ($idle no longer count: a former root\'s, or a revoked '
+              'key\'s)' : ''}',
+  );
 }

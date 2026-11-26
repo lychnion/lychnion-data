@@ -18,7 +18,7 @@ packages:
     source: hosted
     version: "3.0.8"
   cryptography:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: cryptography
       sha256: "3eda3029d34ec9095a27a198ac9785630fe525c0eb6a49f3d575272f8e792ef0"
@@ -37,8 +37,8 @@ packages:
     dependency: "direct main"
     description:
       path: "packages/lychnion_format"
-      ref: "5003e5aae61efd3c793541ce5a2f3fcc7f3aab0c"
-      resolved-ref: "5003e5aae61efd3c793541ce5a2f3fcc7f3aab0c"
+      ref: "11916a9d2afe6cb66bb7bc2ef053e88c70a062bf"
+      resolved-ref: "11916a9d2afe6cb66bb7bc2ef053e88c70a062bf"
       url: "https://github.com/lychnion/lychnion.git"
     source: git
     version: "1.1.0"
