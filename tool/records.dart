@@ -1754,10 +1754,19 @@ Future<void> _checkKeys(_Args args) async {
 /// its content (a seed file is a single line, a backup is JSON).
 bool _isBackupFile(String path) {
   if (path.toLowerCase().endsWith(KeyBackup.extension)) return true;
+  // Only a regular file, and only its start: a pipe (`--key <(op read
+  // …)`, /dev/stdin) can be read once, and that read is the key's.
+  if (FileSystemEntity.typeSync(path) != FileSystemEntityType.file) {
+    return false;
+  }
   try {
-    final j = jsonDecode(File(path).readAsStringSync());
-    return j is Map && j['type'] == KeyBackup.type;
-  } on Object {
+    final raf = File(path).openSync();
+    final head = raf.readSync(64 * 1024);
+    raf.closeSync();
+    return utf8
+        .decode(head, allowMalformed: true)
+        .contains('"type": "${KeyBackup.type}"');
+  } on FileSystemException {
     return false;
   }
 }
@@ -1835,33 +1844,37 @@ String _askPassphrase(String prompt) {
   }
 
   final saved = stty('-g');
-  // Ctrl-C or a kill while asking: set the terminal back first.
-  final subs = [
-    for (final sig in [ProcessSignal.sigint, ProcessSignal.sigterm])
-      sig.watch().listen((_) {
-        Process.runSync('sh', ['-c', 'stty $saved < /dev/tty']);
-        stderr.writeln();
-        exit(130);
-      }),
-  ];
+  if (saved.isEmpty) {
+    raf.closeSync();
+    _fail('Could not read the terminal settings: nothing asked');
+  }
   final bytes = <int>[];
   var cancelled = false;
   try {
-    stty('-echo');
+    // No echo, no signal keys, key by key: a signal cannot reach this
+    // program while it waits in a blocking read, so Ctrl-C, Ctrl-D,
+    // Ctrl-\ and Ctrl-Z come as keys and cancel here; the terminal is
+    // set back below.
+    stty('-echo -isig -icanon min 1 time 0');
     stderr.write(prompt);
-    for (var b = raf.readByteSync(); b != 10; b = raf.readByteSync()) {
-      // Ctrl-C or Ctrl-D: the read ends without Enter.
-      if (b == -1) {
+    for (
+      var b = raf.readByteSync();
+      b != 10 && b != 13;
+      b = raf.readByteSync()
+    ) {
+      if (b == -1 || b == 3 || b == 4 || b == 28 || b == 26) {
         cancelled = true;
         break;
       }
-      if (b != 13) bytes.add(b);
+      if (b == 127 || b == 8) {
+        // Backspace: the last character, whole (UTF-8).
+        while (bytes.isNotEmpty && (bytes.removeLast() & 0xC0) == 0x80) {}
+        continue;
+      }
+      bytes.add(b);
     }
   } finally {
-    Process.runSync('sh', ['-c', 'stty $saved < /dev/tty']);
-    for (final s in subs) {
-      s.cancel();
-    }
+    Process.runSync('sh', ['-c', "stty '$saved' < /dev/tty"]);
     raf.closeSync();
     stderr.writeln();
   }
@@ -1939,31 +1952,54 @@ Future<void> _backup(_Args args) async {
     ..remove('revocation')
     ..['warning'] = _rootWarning;
   text = '${const JsonEncoder.withIndent('  ').convert(j)}\n';
-  // Created only if it does not exist yet (no race with another run).
-  final f = File(out);
+  // Written to FILE.part first and renamed only once it was read back
+  // from the stick and opened: a stopped run leaves no file of the real
+  // name, only a .part to delete.
+  final part = '$out.part';
+  final f = File(part);
   try {
     f.createSync(exclusive: true);
   } on FileSystemException {
-    _fail('$out exists or cannot be created: not overwritten');
+    _fail(
+      '$part exists (an earlier run stopped?) or cannot be created: '
+      'delete it and try again',
+    );
   }
+  String? problem;
   try {
     await f.writeAsString(text, flush: true);
-    Process.runSync('chmod', ['600', out]);
-    // Read back from the stick and opened: a backup that does not open is
-    // worse than none.
     final back = await KeyBackup.open(await f.readAsString(), pass);
     if (back.seed != seed) throw const FormatException();
-    stdout.writeln(
-      'Key backup of $name (${back.publicKey}) → $out, read back and '
-      'opened. Copy it to the second stick, and check there with '
-      '`public --key <copy>`.',
-    );
   } on Object {
+    problem = 'could not be written and read back';
+  }
+  if (problem == null &&
+      FileSystemEntity.typeSync(out, followLinks: false) !=
+          FileSystemEntityType.notFound) {
+    problem = 'exists now (another run?)';
+  }
+  if (problem == null) {
+    try {
+      f.renameSync(out);
+    } on FileSystemException {
+      problem = 'could not be renamed to $out';
+    }
+  }
+  if (problem != null) {
     try {
       f.deleteSync();
     } on FileSystemException {
-      // Reported below.
+      _fail('$part $problem, and could NOT be removed: delete it by hand');
     }
-    _fail('$out could not be written and read back: removed. Try again.');
+    _fail('$part $problem: removed. Try again.');
   }
+  // Only the owner may read it, where the stick supports it (FAT does
+  // not: the content is encrypted either way).
+  final owner = Process.runSync('chmod', ['600', out]).exitCode == 0;
+  stdout.writeln(
+    'Key backup of $name → $out, read back and opened'
+    '${owner ? '' : ' (this stick has no file permissions; it is encrypted)'}'
+    '. Copy it to the second stick, and check there with '
+    '`public --key <copy>`.',
+  );
 }

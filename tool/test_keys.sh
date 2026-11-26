@@ -133,7 +133,22 @@ expect_ok "backup writes the root's key backup" \
   bash -c "echo $ROOT | LYCHNION_TEST=1 LYCHNION_PASSPHRASE_FILE=$PF dart run tool/records.dart backup --key - --out $B"
 grep -q '"revocation"' "$B" && bad "the backup has no ready-made revocation" || ok "the backup has no ready-made revocation"
 grep -q "$ROOT" "$B" && bad "the backup does not show the key" || ok "the backup does not show the key"
-grep -q "even without the passphrase" "$B" && bad "its warning says it can't revoke" || ok "its warning says it can't revoke"
+grep -q "even without the passphrase" "$B" && bad "the app's warning is gone" || ok "the app's warning is gone"
+grep -q "neither sign nor revoke" "$B" && ok "the root's warning is in" || bad "the root's warning is in"
+[ "$(python3 -c 'import os,sys; print(oct(os.stat(sys.argv[1]).st_mode & 0o777))' "$B")" = 0o600 ] \
+  && ok "only the owner may read it" || bad "only the owner may read it"
+[ -e "$B.part" ] && bad "no .part left" || ok "no .part left"
+cp "$B" "$T/renamed.bak"
+pass "correct horse battery"
+expect_ok "a renamed backup opens (by its content)" \
+  bash -c "LYCHNION_TEST=1 LYCHNION_PASSPHRASE_FILE=$PF dart run tool/records.dart public --key $T/renamed.bak"
+expect_ok "a key from a pipe still works (--key <(...))" \
+  bash -c "dart run tool/records.dart public --key <(printf %s $ROOT)"
+grep -q "^$RP\$" "$T/out" && ok "to the right key" || bad "to the right key"
+touch "$T/stale.lychnion-key.part"
+pass "correct horse battery" "correct horse battery"
+expect_fail_says "a stale .part from a stopped run is named" "delete it and try again" \
+  bash -c "echo $ROOT | LYCHNION_TEST=1 LYCHNION_PASSPHRASE_FILE=$PF dart run tool/records.dart backup --key - --out $T/stale.lychnion-key"
 pass "correct horse battery" "correct horse battery"
 expect_fail_says "backup needs the stick's folder to exist" "is the stick mounted" \
   bash -c "echo $ROOT | LYCHNION_TEST=1 LYCHNION_PASSPHRASE_FILE=$PF dart run tool/records.dart backup --key - --out $T/nostick/r.lychnion-key"

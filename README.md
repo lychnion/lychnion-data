@@ -256,7 +256,7 @@ they would not take records signed by it.
 
 **The offline root** (lychnion/lychnion#118; the whole procedure is in
 `docs/key-custody.md` in the app repository). The root lives only as an
-encrypted key backup on two USB sticks, never on a disk; its passphrase
+encrypted key backup on two USB sticks, never on the computer's disk; its passphrase
 is in 1Password, apart from the sticks, and split on paper (SLIP-39, 2 of
 3). Once both sticks open, the root's 1Password item is deleted:
 
