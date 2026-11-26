@@ -7,9 +7,11 @@ environment:
 
 dependencies:
   crypto: ^3.0.8
+  # Ed25519: the countersignature of a grant request (records.dart).
+  cryptography: ^2.9.0
   # Signed records, the same code the app uses.
   lychnion_format:
     git:
       url: https://github.com/lychnion/lychnion.git
       path: packages/lychnion_format
-      ref: 5003e5aae61efd3c793541ce5a2f3fcc7f3aab0c # lychnion/lychnion main; pinned, see README
+      ref: 11916a9d2afe6cb66bb7bc2ef053e88c70a062bf # lychnion/lychnion main; pinned, see README

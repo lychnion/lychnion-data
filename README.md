@@ -201,6 +201,52 @@ fail `verify`. `catalog` and `export` refuse to write a catalog over
 2 MB with its key statements, as the app refuses to read one (and
 leaving statements out could leave a stolen key trusted).
 
+**The root and the everyday key** (lychnion/lychnion#125). Lychnion's
+built-in key is its *root*. The root can grant another key some
+*scopes*: `data` (guides, maps, contour lines, the status), `models`,
+`safety-lines` (the official alerts in a package) and `attestations`.
+Only the root grants, revokes or replaces keys; the scope `keys` cannot
+be granted. The everyday key holds all four scopes, so the root is
+needed only for these key changes and can stay offline (#118). A grant
+needs two signatures, and they are made in two steps, so neither key is
+ever on the other one's computer:
+
+```sh
+# 1. with the new everyday key (on the everyday computer): a request
+op read op://Private/lychnion-everyday-key/credential \
+  | dart run tool/records.dart grant-request --key - \
+      --scope data,models,safety-lines,attestations
+# → build/grant-request.json; carry it to the root's computer
+# 2. with the root: check the request, sign it, add it to keys/lychnion.json
+dart run tool/records.dart grant --key - --from build/grant-request.json
+# commit keys/lychnion.json
+```
+
+`grant` shows the key and scopes it grants, refuses a request for
+another root, one listing `keys`, and one changed after the new key
+signed it. Every command (`sign`, `catalog`, `verify`, `export`,
+`check-records`, `attest`) reads `keys/lychnion.json` by itself, so a
+release can't leave a grant or revocation out, and CI checks it with
+`check-keys`. `sign` uses every key Lychnion trusts to find an item's
+newest version, and refuses a key without the item's scope (a package
+also needs `safety-lines`: without it the app would drop its alerts).
+
+Start signing with the everyday key only once the app release with key
+scopes is out and most phones have it: older builds ignore grants, so
+they would not take records signed by it.
+
+If a granted key is lost or stolen, the root revokes it:
+
+```sh
+dart run tool/records.dart revoke-key --key - --revoked <its public key>
+# commit keys/lychnion.json and publish a catalog: phones learn of the
+# revocation from Lychnion's status
+```
+
+Everything the revoked key signed then stops counting: `sign` and
+`check-records` stop at those records; remove them and sign the items
+again with another key. Revoke a key only when it is lost or stolen.
+
 **Area.** A package or map area can say which places it is for, as ISO
 3166 codes: `"area": ["JP"]` for Japan, `["JP-30"]` for Wakayama. No area
 means anywhere (first aid). Package manifests set it by hand; map areas

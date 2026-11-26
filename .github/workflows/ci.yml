@@ -62,6 +62,15 @@ jobs:
         env:
           LYCHNION_REGIONS: app/assets/regions/regions.sqlite
         run: python -I tool/check_areas.py
+      # Lychnion's grants and revocations of its keys (#125): every entry is
+      # made by the current root, and the grant tools work end to end.
+      - name: Key statements verify
+        run: |
+          if [ -f keys/lychnion.json ]; then
+            dart run tool/records.dart check-keys
+          fi
+      - name: Key tools work end to end
+        run: bash tool/test_keys.sh
       - name: Every signed record verifies
         run: |
           if [ -f keys.json ]; then
