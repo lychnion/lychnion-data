@@ -230,15 +230,23 @@ refuses a request for another root, one listing `keys`, and one changed
 after the new key signed it. Every command (`sign`, `catalog`, `export`,
 `check-records`, `attest`, and `verify` without `--release`) reads
 `keys/lychnion.json` by itself, next to the tool wherever it runs from,
-and stops when an entry in it is not valid or not made by a key the app
-trusts; CI checks it with `check-keys`. `verify --release` takes only
-the statements the catalog carries, so a catalog without them fails.
-`sign` uses every key Lychnion trusts to find an item's newest version,
-and refuses a key without the item's scope (a package also needs
-`safety-lines`: without it the app would drop its alerts). When the
-root is replaced, its replacement goes into `keys/lychnion.json` too
-(or pass `--keys keys.json`; the key tools take it as well), or `sign`
-and `grant` won't know the new root.
+and stops when an entry in it is not valid or not made by a key of
+Lychnion's chain (its root and the root's replacements); CI checks it
+with `check-keys` (a missing file means no statements: the review of the
+pull request that deletes it is the guard). `verify --release` takes
+only the statements the catalog carries (and `--keys` files given to it),
+so a catalog without them fails. `sign` uses every key Lychnion trusts
+to find an item's newest version, and refuses a key without the item's
+scope (a package also needs `safety-lines`: without it the app would
+drop its alerts).
+
+`keys/lychnion.json` holds all of Lychnion's key statements, so
+`grant` and `revoke-key` take no `--keys`: what they write must count
+with that file alone. When the root is replaced, the replacement goes
+into it too. The old root's grants and revocations then lapse (they stay
+in the file, and `check-keys` counts them as lapsed): grant the everyday
+key again with the new root, and revoke again what is still to be
+revoked.
 
 Start signing with the everyday key only once the app release with key
 scopes is out and most phones have it: older builds ignore grants, so

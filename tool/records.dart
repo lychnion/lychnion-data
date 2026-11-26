@@ -1412,24 +1412,71 @@ Future<List<KeyStatement>> _lychnionStatements({
     _fail('$p: an entry is not a valid key statement');
   }
   if (path == null) {
-    final kept = await relevantStatements(
-      builtInPublishers,
-      parsed,
-      max: parsed.length + 1,
-    );
-    if (kept.length != parsed.length) {
+    final foreign = await _foreignStatements(builtInPublishers, parsed);
+    if (foreign.isNotEmpty) {
       _fail(
-        '$p: ${parsed.length - kept.length} statement(s) not made by a key '
-        'the app trusts (or not by the current root): run check-keys',
+        '$p: ${foreign.length} statement(s) not made by a key of the '
+        'publisher\'s chain: run check-keys',
       );
     }
   }
   return parsed;
 }
 
+/// The statements of [all] that [given] does not take and that are not a
+/// former root's either: made by a key that is not in its publisher's
+/// root chain (the root and its replacements in [all]). A former root's
+/// grants and revocations lapse when it is replaced (the new root grants
+/// again), so they are kept in the file, but count no more.
+Future<List<KeyStatement>> _foreignStatements(
+  TrustedKeys given,
+  List<KeyStatement> all,
+) async {
+  final kept = {
+    for (final k in await relevantStatements(given, all, max: all.length + 1))
+      k.id,
+  };
+  final chain = <String, Set<String>>{
+    for (final p in given.known) p: given.keysOf(p).toSet(),
+  };
+  for (var grew = true; grew;) {
+    grew = false;
+    for (final s in all) {
+      if (s.type != KeyStatementType.replace) continue;
+      final c = chain[s.publisher];
+      if (c != null &&
+          c.contains(TrustedKeys.canonicalKey(s.oldKey)) &&
+          c.add(TrustedKeys.canonicalKey(s.newKey!))) {
+        grew = true;
+      }
+    }
+  }
+  return [
+    for (final s in all)
+      if (!kept.contains(s.id) &&
+          !(chain[s.publisher]?.contains(TrustedKeys.canonicalKey(s.maker)) ??
+              false))
+        s,
+  ];
+}
+
 String _b64(List<int> b) => base64Url.encode(b).replaceAll('=', '');
 
+/// The keys `grant` and `revoke-key` check against. `--public-key` (tests)
+/// only with `--keys-file`: a test root's statement must never land in
+/// Lychnion's keys/lychnion.json.
+TrustedKeys _trustForKeyFile(_Args args, String? file) {
+  final testKey = args.rest.contains('--public-key');
+  if (testKey && file == null) {
+    _fail('--public-key needs --keys-file (never Lychnion\'s own file)');
+  }
+  return _trust(args);
+}
+
 /// [given] with Lychnion's statements and those of the `--keys` [files].
+///
+/// `grant` and `revoke-key` take no `--keys`: what they write must count
+/// with keys/lychnion.json alone.
 Future<TrustedKeys> _withKeys(TrustedKeys given, List<String> files) async =>
     given.withStatements(await _keys(files, given));
 
@@ -1444,7 +1491,6 @@ Future<void> _grantRequest(_Args args) async {
   final out = args.opt('--out') ?? 'build/grant-request.json';
   final rootArg = args.opt('--root');
   final given = _trust(args);
-  final keyFiles = args.all('--keys');
   if (args.positional().isNotEmpty) _strayArgument();
   final scope = {for (final x in scopeArg.split(',')) x.trim()}..remove('');
   for (final x in scope) {
@@ -1458,7 +1504,7 @@ Future<void> _grantRequest(_Args args) async {
   if (scope.isEmpty) _fail('--scope: name at least one scope');
   // The root that will sign: the current one (the built-in key or its
   // newest successor), unless --root names it.
-  final trust = await _withKeys(given, keyFiles);
+  final trust = await _withKeys(given, const []);
   final roots = trust.currentRootsOf(publisher);
   String? root;
   if (rootArg != null) {
@@ -1512,8 +1558,7 @@ Future<void> _grant(_Args args) async {
   final from = args.req('--from');
   final expect = args.req('--expect-key');
   final file = args.opt('--keys-file');
-  final given = _trust(args);
-  final keyFiles = args.all('--keys');
+  final given = _trustForKeyFile(args, file);
   if (args.positional().isNotEmpty) _strayArgument();
   Map<String, Object?> j;
   try {
@@ -1568,7 +1613,6 @@ Future<void> _grant(_Args args) async {
   }
   final written = await _addStatement(
     given,
-    keyFiles,
     file,
     s,
     'The grant would not count: the key given is not the current root of '
@@ -1587,8 +1631,7 @@ Future<void> _revokeKey(_Args args) async {
   final revokedArg = args.req('--revoked');
   final publisher = args.opt('--publisher') ?? attesterPublisher;
   final file = args.opt('--keys-file');
-  final given = _trust(args);
-  final keyFiles = args.all('--keys');
+  final given = _trustForKeyFile(args, file);
   if (args.positional().isNotEmpty) _strayArgument();
   String revoked;
   try {
@@ -1611,7 +1654,6 @@ Future<void> _revokeKey(_Args args) async {
   );
   final written = await _addStatement(
     given,
-    keyFiles,
     file,
     s,
     'The revocation would not count: the key given is not the current root '
@@ -1624,22 +1666,19 @@ Future<void> _revokeKey(_Args args) async {
 }
 
 /// Adds [s] to the keys file [file] ([_lychnionKeys] when not given) when
-/// it counts after the statements already there and in the `--keys`
-/// [keyFiles] (made by a current root of [given]); stops with [whyNot]
-/// otherwise. Returns the file written.
+/// it counts after the statements already there (made by a current root
+/// of [given]); stops with [whyNot] otherwise. The file holds all of the
+/// publisher's key statements, its root's replacements too, so whatever
+/// counts here counts for every later command. Returns the file written.
 Future<String> _addStatement(
   TrustedKeys given,
-  List<String> keyFiles,
   String? file,
   KeyStatement s,
   String whyNot,
 ) async {
   final existing = await _lychnionStatements(path: file);
   final trust = given.withStatements(
-    await relevantStatements(given, [
-      ...existing,
-      ...await _keys(keyFiles, given),
-    ]),
+    await relevantStatements(given, existing, max: existing.length + 1),
   );
   if ((await relevantStatements(trust, [s])).every((k) => k.id != s.id)) {
     _fail(whyNot);
@@ -1658,18 +1697,18 @@ Future<void> _checkKeys(_Args args) async {
   if (pos.length > 1) _fail('Give at most one keys file');
   final file = pos.isEmpty ? _lychnionKeys : pos.single;
   final all = await _lychnionStatements(path: file, required: pos.isNotEmpty);
-  final kept = await relevantStatements(given, all, max: all.length + 1);
-  final keptIds = {for (final k in kept) k.id};
-  final bad = [
-    for (final s in all)
-      if (!keptIds.contains(s.id)) s,
-  ];
+  final bad = await _foreignStatements(given, all);
   for (final s in bad) {
     stderr.writeln(
       '$file: ${s.type.name} of ${s.newKey ?? s.oldKey} is not made by a '
-      'key the app trusts (or not by the current root)',
+      'key of the publisher\'s chain',
     );
   }
   if (bad.isNotEmpty) exit(1);
-  stdout.writeln('${all.length} key statements');
+  final counted = await relevantStatements(given, all, max: all.length + 1);
+  final lapsed = all.length - counted.length;
+  stdout.writeln(
+    '${all.length} key statements'
+    '${lapsed > 0 ? ' ($lapsed of a former root: lapsed)' : ''}',
+  );
 }
