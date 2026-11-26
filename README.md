@@ -219,7 +219,7 @@ op read op://Private/lychnion-everyday-key/credential \
 # → build/grant-request.json, and it prints the new key: note it
 # (on paper, or read it out), separately from the file
 # 2. with the root: check the request, sign it, add it to keys/lychnion.json
-dart run tool/records.dart grant --key /Volumes/ROOT-A/lychnion-root.lychnion-key --from build/grant-request.json \
+dart run tool/records.dart grant --key /Volumes/<stick>/lychnion-root.lychnion-key --from build/grant-request.json \
     --expect-key <the new key noted in step 1>
 # commit keys/lychnion.json
 ```
@@ -258,16 +258,18 @@ they would not take records signed by it.
 `docs/key-custody.md` in the app repository). The root lives only as an
 encrypted key backup on two USB sticks, never on the computer's disk; its passphrase
 is in 1Password, apart from the sticks, and split on paper (SLIP-39, 2 of
-3). Once both sticks open, the root's 1Password item is deleted:
+3). The root's 1Password item is deleted only at the end of the move in
+`docs/key-custody.md`, once data releases are signed with the everyday
+key (until then, `sign` and `catalog` still use it):
 
 ```sh
 # once: the backup, from the key in 1Password (the passphrase is asked
 # twice at the terminal, never shown)
 op read op://Private/lychnion-package-signing-key/credential \
   | dart run tool/records.dart backup --key - \
-      --out /Volumes/ROOT-A/lychnion-root.lychnion-key
+      --out /Volumes/<stick>/lychnion-root.lychnion-key
 # check that it opens (prints the root's public key)
-dart run tool/records.dart public --key /Volumes/ROOT-A/lychnion-root.lychnion-key
+dart run tool/records.dart public --key /Volumes/<stick>/lychnion-root.lychnion-key
 ```
 
 Any command takes the root as `--key FILE.lychnion-key` and asks for the
@@ -284,7 +286,7 @@ and refuses a folder that does not exist (a stick not mounted).
 If a granted key is lost or stolen, the root revokes it:
 
 ```sh
-dart run tool/records.dart revoke-key --key /Volumes/ROOT-A/lychnion-root.lychnion-key --revoked <its public key>
+dart run tool/records.dart revoke-key --key /Volumes/<stick>/lychnion-root.lychnion-key --revoked <its public key>
 # commit keys/lychnion.json and publish a catalog: phones learn of the
 # revocation from Lychnion's status
 ```

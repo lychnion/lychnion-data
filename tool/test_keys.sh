@@ -147,7 +147,7 @@ expect_ok "a key from a pipe still works (--key <(...))" \
 grep -q "^$RP\$" "$T/out" && ok "to the right key" || bad "to the right key"
 touch "$T/stale.lychnion-key.part"
 pass "correct horse battery" "correct horse battery"
-expect_fail_says "a stale .part from a stopped run is named" "delete it and try again" \
+expect_fail_says "a stale .part from a stopped run is named" "delete it first" \
   bash -c "echo $ROOT | LYCHNION_TEST=1 LYCHNION_PASSPHRASE_FILE=$PF dart run tool/records.dart backup --key - --out $T/stale.lychnion-key"
 pass "correct horse battery" "correct horse battery"
 expect_fail_says "backup needs the stick's folder to exist" "is the stick mounted" \

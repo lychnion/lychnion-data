@@ -18,11 +18,14 @@ TOOL = os.path.join(ROOT, 'tool', 'records.dart')
 PASS = 'a long test passphrase'
 
 
-@unittest.skipUnless(shutil.which('dart') and sys.platform != 'win32',
-                     'needs dart and a pty')
+@unittest.skipUnless(sys.platform != 'win32', 'needs a pty')
 class PassphraseOnATerminal(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
+        if not shutil.which('dart'):
+            if os.environ.get('CI'):
+                raise AssertionError('dart is missing in CI')
+            raise unittest.SkipTest('needs dart')
         cls.tmp = tempfile.mkdtemp()
         keygen = subprocess.run(['dart', TOOL, 'keygen'], cwd=ROOT,
                                 capture_output=True, text=True, check=True)
@@ -53,7 +56,7 @@ class PassphraseOnATerminal(unittest.TestCase):
             os.environ.pop('LYCHNION_PASSPHRASE_FILE', None)
             os.execvp('sh', ['sh', '-c', script])
         out = b''
-        deadline = time.time() + 120
+        deadline = time.time() + 60
         typed = False
         while time.time() < deadline:
             ready, _, _ = select.select([fd], [], [], 1)
@@ -97,6 +100,21 @@ class PassphraseOnATerminal(unittest.TestCase):
         keys = (PASS[:-1] + 'X\x7f' + PASS[-1]).encode() + b'\r'
         out = self.run_on_pty(keys)
         self.assertIn(self.public, out)
+        self.assert_terminal_set_back(out)
+
+    def test_backspace_takes_a_whole_character(self):
+        keys = (PASS + 'あ').encode() + b'\x7f\r'
+        out = self.run_on_pty(keys)
+        self.assertIn(self.public, out)
+
+    def test_pasted_cr_lf(self):
+        out = self.run_on_pty(PASS.encode() + b'\r\n')
+        self.assertIn(self.public, out)
+        self.assert_terminal_set_back(out)
+
+    def test_arrow_key_cancels(self):
+        out = self.run_on_pty(b'abc\x1b[D')
+        self.assertIn('special keys', out)
         self.assert_terminal_set_back(out)
 
     def test_ctrl_c_cancels(self):
