@@ -87,8 +87,8 @@ class StatusTest(unittest.TestCase):
 
     def sign(self, version):
         self.write_items(version)
-        dart("sign", "--key", self.seed, "--items", self.items,
-             "--records", self.records, "model.test")
+        dart("sign", "--key", self.seed, "--public-key", self.pub,
+             "--items", self.items, "--records", self.records, "model.test")
 
     def catalog(self, *extra, ok=True, key=True, stdin=None):
         k = (["--key", "-" if stdin is not None else self.seed] if key else [])

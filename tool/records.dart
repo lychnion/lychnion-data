@@ -1415,47 +1415,44 @@ Future<List<KeyStatement>> _lychnionStatements({
     final foreign = await _foreignStatements(builtInPublishers, parsed);
     if (foreign.isNotEmpty) {
       _fail(
-        '$p: ${foreign.length} statement(s) not made by a key of the '
-        'publisher\'s chain: run check-keys',
+        '$p: ${foreign.length} statement(s) by a key the publisher\'s root '
+        'or its grants and replacements do not lead to: run check-keys',
       );
     }
   }
   return parsed;
 }
 
-/// The statements of [all] that [given] does not take and that are not a
-/// former root's either: made by a key that is not in its publisher's
-/// root chain (the root and its replacements in [all]). A former root's
-/// grants and revocations lapse when it is replaced (the new root grants
-/// again), so they are kept in the file, but count no more.
+/// The statements of [all] made by a key that neither [given] nor the
+/// statements of [all] lead to: not the publisher's root, nor a key a
+/// grant or replacement in [all] names (from a known key). Such a
+/// statement is another publisher's or a test key's, in the wrong file.
+/// What counts of the rest is decided by the app's own rules
+/// (relevantStatements): a former root's grants lapse, a revoked key's
+/// statements stop counting; they stay in the file, for the record.
 Future<List<KeyStatement>> _foreignStatements(
   TrustedKeys given,
   List<KeyStatement> all,
 ) async {
-  final kept = {
-    for (final k in await relevantStatements(given, all, max: all.length + 1))
-      k.id,
-  };
-  final chain = <String, Set<String>>{
+  final known = <String, Set<String>>{
     for (final p in given.known) p: given.keysOf(p).toSet(),
   };
   for (var grew = true; grew;) {
     grew = false;
     for (final s in all) {
-      if (s.type != KeyStatementType.replace) continue;
-      final c = chain[s.publisher];
-      if (c != null &&
-          c.contains(TrustedKeys.canonicalKey(s.oldKey)) &&
-          c.add(TrustedKeys.canonicalKey(s.newKey!))) {
+      if (s.newKey == null) continue;
+      final k = known[s.publisher];
+      if (k != null &&
+          k.contains(TrustedKeys.canonicalKey(s.maker)) &&
+          k.add(TrustedKeys.canonicalKey(s.newKey!))) {
         grew = true;
       }
     }
   }
   return [
     for (final s in all)
-      if (!kept.contains(s.id) &&
-          !(chain[s.publisher]?.contains(TrustedKeys.canonicalKey(s.maker)) ??
-              false))
+      if (!(known[s.publisher]?.contains(TrustedKeys.canonicalKey(s.maker)) ??
+          false))
         s,
   ];
 }
@@ -1467,7 +1464,16 @@ String _b64(List<int> b) => base64Url.encode(b).replaceAll('=', '');
 /// Lychnion's keys/lychnion.json.
 TrustedKeys _trustForKeyFile(_Args args, String? file) {
   final testKey = args.rest.contains('--public-key');
-  if (testKey && file == null) {
+  String norm(String f) {
+    final a = File(f).absolute;
+    try {
+      return a.resolveSymbolicLinksSync();
+    } on FileSystemException {
+      return a.uri.normalizePath().toFilePath();
+    }
+  }
+
+  if (testKey && (file == null || norm(file) == norm(_lychnionKeys))) {
     _fail('--public-key needs --keys-file (never Lychnion\'s own file)');
   }
   return _trust(args);
@@ -1701,14 +1707,15 @@ Future<void> _checkKeys(_Args args) async {
   for (final s in bad) {
     stderr.writeln(
       '$file: ${s.type.name} of ${s.newKey ?? s.oldKey} is not made by a '
-      'key of the publisher\'s chain',
+      'key the publisher\'s root or its grants and replacements lead to',
     );
   }
   if (bad.isNotEmpty) exit(1);
   final counted = await relevantStatements(given, all, max: all.length + 1);
-  final lapsed = all.length - counted.length;
+  final idle = all.length - counted.length;
   stdout.writeln(
     '${all.length} key statements'
-    '${lapsed > 0 ? ' ($lapsed of a former root: lapsed)' : ''}',
+    '${idle > 0 ? ' ($idle no longer count: a former root\'s, or a revoked '
+              'key\'s)' : ''}',
   );
 }

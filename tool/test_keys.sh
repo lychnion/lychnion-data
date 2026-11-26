@@ -2,7 +2,11 @@
 # End-to-end test of grant-request / grant / check-keys / sign / revoke-key
 # with throwaway keys (also run by CI). Run from the repository root.
 set -u
+cd "$(dirname "$0")/.." || exit 1
 T=$(mktemp -d "${TMPDIR:-/tmp}/grant-e2e.XXXXXX")
+LK=keys/lychnion.json
+made=
+trap 'rm -rf "$T"; [ -n "$made" ] && rm -f "$LK"' EXIT
 R() { dart run tool/records.dart "$@"; }
 pass=0; fail=0
 ok() { echo "PASS: $1"; pass=$((pass+1)); }
@@ -69,7 +73,7 @@ expect_fail_says "grant refuses a request changed after the countersignature" "c
 expect_ok "grant signs and adds the grant" \
   bash -c "echo $ROOT | dart run tool/records.dart grant --key - --from $T/req.json --expect-key $EP --keys-file $K --public-key $RP"
 expect_ok "check-keys accepts the file" R check-keys "$K" --public-key "$RP"
-expect_fail_says "check-keys refuses it against another root" "publisher's chain" R check-keys "$K" --public-key "$NP"
+expect_fail_says "check-keys refuses it against another root" "lead to" R check-keys "$K" --public-key "$NP"
 expect_fail_says "check-keys refuses a missing file" "no such keys file" R check-keys "$T/missing.json" --public-key "$RP"
 
 expect_ok "the granted key signs a model" \
@@ -110,13 +114,14 @@ expect_ok "the root signs once it is removed" \
 
 expect_fail_says "grant with a test key needs --keys-file" "needs --keys-file" \
   bash -c "echo $ROOT | dart run tool/records.dart grant --key - --from $T/req.json --expect-key $EP --public-key $RP"
+expect_fail_says "and not Lychnion's own file" "needs --keys-file" \
+  bash -c "echo $ROOT | dart run tool/records.dart grant --key - --from $T/req.json --expect-key $EP --public-key $RP --keys-file ./keys/../keys/lychnion.json"
 
 # Lychnion's own keys/lychnion.json, found next to the tool wherever it
 # runs from. Only when the repository has none (CI, a clean checkout):
 # the test file is removed again on exit.
-LK=keys/lychnion.json
 if [ ! -e "$LK" ]; then
-  trap 'rm -f "$LK"' EXIT
+  made=1
   TOOL="$PWD/tool/records.dart"
   echo '{"keys": [{"bogus": 1}]}' >"$LK"
   expect_fail_says "a broken keys/lychnion.json stops check-records" "not a valid key statement" \
@@ -125,9 +130,9 @@ if [ ! -e "$LK" ]; then
     bash -c "cd '$T' && dart '$TOOL' check-keys"
   # Statements by a key outside Lychnion's chain (the test root's).
   cp "$K" "$LK"
-  expect_fail_says "statements by a foreign key stop check-keys" "publisher's chain" \
+  expect_fail_says "statements by a foreign key stop check-keys" "lead to" \
     R check-keys
-  expect_fail_says "and every other command" "publisher's chain" \
+  expect_fail_says "and every other command" "do not lead to" \
     R check-records records
   rm -f "$LK"
   expect_ok "no keys/lychnion.json: check-keys passes" R check-keys
@@ -135,6 +140,5 @@ else
   echo "SKIP: keys/lychnion.json exists; its own tests need a clean checkout"
 fi
 
-rm -rf "$T"
 echo "passed $pass, failed $fail"
 [ $fail -eq 0 ]
