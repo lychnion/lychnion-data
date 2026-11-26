@@ -45,10 +45,14 @@ class PassphraseOnATerminal(unittest.TestCase):
     def tearDownClass(cls):
         shutil.rmtree(cls.tmp)
 
-    def run_on_pty(self, keys):
-        """Runs `public --key BACKUP` on a pty, types [keys] once it asks,
-        and returns everything shown, then the terminal settings after."""
-        script = (f'dart "{TOOL}" public --key "{self.backup}"; '
+    def run_on_pty(self, keys, command=None, steps=None):
+        """Runs [command] (default `public --key BACKUP`) on a pty. For each
+        (prompt, keys) of [steps] (default one: 'Passphrase:', [keys]) it
+        waits for the prompt and types the keys. Returns everything shown,
+        then the terminal settings after."""
+        command = command or f'public --key "{self.backup}"'
+        steps = list(steps or [(b'Passphrase:', keys)])
+        script = (f'dart "{TOOL}" {command}; '
                   'echo "exit=$?"; stty -a')
         pid, fd = pty.fork()
         if pid == 0:
@@ -57,7 +61,7 @@ class PassphraseOnATerminal(unittest.TestCase):
             os.execvp('sh', ['sh', '-c', script])
         out = b''
         deadline = time.time() + 60
-        typed = False
+        seen = 0
         while time.time() < deadline:
             ready, _, _ = select.select([fd], [], [], 1)
             if not ready:
@@ -69,10 +73,10 @@ class PassphraseOnATerminal(unittest.TestCase):
             if not chunk:
                 break
             out += chunk
-            if not typed and b'Passphrase:' in out:
+            if steps and out.find(steps[0][0], seen) >= 0:
+                seen = out.find(steps[0][0], seen) + len(steps[0][0])
                 time.sleep(0.5)
-                os.write(fd, keys)
-                typed = True
+                os.write(fd, steps.pop(0)[1])
         else:
             os.kill(pid, signal.SIGKILL)
         os.waitpid(pid, 0)
@@ -110,6 +114,21 @@ class PassphraseOnATerminal(unittest.TestCase):
     def test_pasted_cr_lf(self):
         out = self.run_on_pty(PASS.encode() + b'\r\n')
         self.assertIn(self.public, out)
+        self.assert_terminal_set_back(out)
+
+    def test_cr_lf_paste_does_not_reach_the_next_prompt(self):
+        # Three prompts: the old passphrase pasted with CR LF, then the
+        # new one twice. Without the drain the LF would answer "New".
+        new = 'another long passphrase'
+        out_file = os.path.join(self.tmp, 'again.lychnion-key')
+        out = self.run_on_pty(None, command=(
+            f'backup --key "{self.backup}" --out "{out_file}"'), steps=[
+            (b'Passphrase:', PASS.encode() + b'\r\n'),
+            (b'New passphrase', new.encode() + b'\r'),
+            (b'Again:', new.encode() + b'\r'),
+        ])
+        self.assertIn('written and opened again', out)
+        self.assertIn('exit=0', out)
         self.assert_terminal_set_back(out)
 
     def test_arrow_key_cancels(self):

@@ -279,9 +279,15 @@ without the passphrase, not even revoke Lychnion's root.
 `keygen --1password --title lychnion-everyday-key` makes the everyday
 key as a 1Password item of its own (without `--title` the item gets the
 root's old name, `lychnion-package-signing-key`). The backup is written
-with the strongest Argon2id cost the app reads, read back from the stick
-and opened before `backup` says it is done; it never overwrites a file,
-and refuses a folder that does not exist (a stick not mounted).
+with the strongest Argon2id cost the app reads, and opened again before
+it gets its name; eject the stick, plug it in again and check it with
+`public --key` (the system may still hold the file in memory). `backup`
+never overwrites a file, and refuses a folder that does not exist (a
+stick not mounted). To make the same root again under a new passphrase
+(a stolen 1Password, a lost paper part), give the old backup instead of
+`-`: `backup --key /Volumes/<stick>/lychnion-root.lychnion-key --out
+/Volumes/<new stick>/lychnion-root.lychnion-key` asks for the old
+passphrase, then the new one twice.
 
 If a granted key is lost or stolen, the root revokes it:
 

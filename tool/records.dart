@@ -1895,7 +1895,7 @@ String _askPassphrase(String prompt) {
         bytes.clear();
         continue;
       }
-      if (b < 0x20 || b == 0x7f) {
+      if (b < 0x20) {
         // Arrow keys and other special keys would end up in the
         // passphrase unseen.
         cancelled =
@@ -1907,9 +1907,12 @@ String _askPassphrase(String prompt) {
     }
     drain();
   } finally {
-    Process.runSync('sh', ['-c', "stty '$saved' < /dev/tty"]);
+    final back = Process.runSync('sh', ['-c', "stty '$saved' < /dev/tty"]);
     raf.closeSync();
     stderr.writeln();
+    if (back.exitCode != 0) {
+      stderr.writeln('Could not set the terminal back: run `stty sane`');
+    }
   }
   if (cancelled != null) _fail(cancelled);
   try {
@@ -1935,18 +1938,26 @@ const _rootWarning = {
 };
 
 /// Writes an encrypted backup of the key on stdin (`--key -`, from
-/// 1Password) to `--out FILE.lychnion-key`, for the offline root
-/// (lychnion/lychnion#118; docs/key-custody.md there). The passphrase is
-/// asked twice at the terminal. Unlike the app's backups it carries no
-/// ready-made revocation: whoever finds a stick must not be able to revoke
-/// Lychnion's root without the passphrase. The file is read back from the
-/// stick and opened before the command says it is done.
+/// 1Password), or of the key in an existing backup (`--key
+/// FILE.lychnion-key`: the same key under a new passphrase), to `--out
+/// FILE.lychnion-key`, for the offline root (lychnion/lychnion#118;
+/// docs/key-custody.md there). The new passphrase is asked twice at the
+/// terminal. Unlike the app's backups it carries no ready-made
+/// revocation: whoever finds a stick must not be able to revoke
+/// Lychnion's root without the passphrase. The file is written, opened
+/// again, and only then given its name; the command then says to eject
+/// the stick and check it again (the system may still hold it in memory).
 Future<void> _backup(_Args args) async {
   final keyFrom = args.req('--key');
   final out = args.req('--out');
   final name = args.opt('--publisher') ?? attesterPublisher;
   if (args.positional().isNotEmpty) _strayArgument();
-  if (keyFrom != '-') _fail('--key -: the key comes from stdin (op read)');
+  // From 1Password (stdin), or from an existing key backup, to make it
+  // again under a new passphrase (docs/key-custody.md, a stolen
+  // 1Password or a lost paper part).
+  if (keyFrom != '-' && !_isBackupFile(keyFrom)) {
+    _fail('--key: - (from op read) or a key backup FILE.lychnion-key');
+  }
   if (!out.endsWith(KeyBackup.extension)) {
     _fail('--out: the file name ends in ${KeyBackup.extension}');
   }
@@ -1964,7 +1975,8 @@ Future<void> _backup(_Args args) async {
   }
   final seed = await _readKey(keyFrom);
   final pass = _askPassphrase(
-    'Passphrase (at least ${KeyBackup.minPassphraseLength} characters): ',
+    '${keyFrom == '-' ? '' : 'New '}passphrase (at least '
+    '${KeyBackup.minPassphraseLength} characters): ',
   );
   if (_askPassphrase('Again: ') != pass) _fail('The passphrases differ');
   String text;
@@ -1989,9 +2001,9 @@ Future<void> _backup(_Args args) async {
     ..remove('revocation')
     ..['warning'] = _rootWarning;
   text = '${const JsonEncoder.withIndent('  ').convert(j)}\n';
-  // Written to FILE.part first and renamed only once it was read back
-  // from the stick and opened: a stopped run leaves no file of the real
-  // name, only a .part to delete.
+  // Written to FILE.part first and renamed only once it was written and
+  // opened again: a stopped run leaves no file of the real name, only a
+  // .part to delete.
   final part = '$out.part';
   final f = File(part);
   try {

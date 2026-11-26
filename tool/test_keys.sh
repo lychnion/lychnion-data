@@ -169,6 +169,17 @@ grep -q "^$RP\$" "$T/out" && ok "to the root's public key" || bad "to the root's
 pass "wrong horse battery"
 expect_fail_says "a wrong passphrase does not open it" "does not open" \
   bash -c "LYCHNION_TEST=1 LYCHNION_PASSPHRASE_FILE=$PF dart run tool/records.dart public --key $B"
+# The same root again under a new passphrase (a stolen 1Password).
+pass "correct horse battery" "a brand new passphrase" "a brand new passphrase"
+expect_ok "backup makes the root again from a backup, new passphrase" \
+  bash -c "LYCHNION_TEST=1 LYCHNION_PASSPHRASE_FILE=$PF dart run tool/records.dart backup --key $B --out $T/rekeyed.lychnion-key"
+pass "a brand new passphrase"
+expect_ok "the new backup opens with the new passphrase" \
+  bash -c "LYCHNION_TEST=1 LYCHNION_PASSPHRASE_FILE=$PF dart run tool/records.dart public --key $T/rekeyed.lychnion-key"
+grep -q "^$RP\$" "$T/out" && ok "to the same root" || bad "to the same root"
+pass "correct horse battery"
+expect_fail_says "and not with the old one" "does not open" \
+  bash -c "LYCHNION_TEST=1 LYCHNION_PASSPHRASE_FILE=$PF dart run tool/records.dart public --key $T/rekeyed.lychnion-key"
 THIRD=$(R keygen 2>"$T/tp"); TP=$(sed 's/public key: //' "$T/tp")
 expect_ok "grant-request for a third key" \
   bash -c "echo $THIRD | dart run tool/records.dart grant-request --key - --scope data --public-key $RP --out $T/req3.json"
